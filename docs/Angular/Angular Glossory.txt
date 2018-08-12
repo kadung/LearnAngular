@@ -1,0 +1,31 @@
+- Ref:
+    1. 
+
+---------------------------------------------------------------------------------------------------
+    Overview
+---------------------------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------------------------
+    Angular Component
+---------------------------------------------------------------------------------------------------
++ In our Angular apps, we write HTML markup that becomes our interactive application, but browser 
+only understands a limited set of markup tags, for example <b>, <select>, <form>, ... and all have 
+functionality defined by our browser creator.
+
++ What if we want to teach the browser new tags? What if we wanted to have a <weather> tag that
+shows the weather? Or what if we want to create a <login> tag that shows a login panel? This is the 
+fundamental idea behind components: we will teach browser new tags that have custom functionality 
+attached to them. 
+
++ In conlusion, we can define our own HTML tags and give them custom functionality in Angular which
+also call Angluar Component
+
++ A basic Component has two parts:
+    1. A Component decorator
+    2. A component definition class
+
+---------------------------------------------------------------------------------------------------
+    Angular 
+---------------------------------------------------------------------------------------------------
