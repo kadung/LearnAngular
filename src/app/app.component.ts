@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 
+// Component Metadata: which is used
 @Component({
-  selector: 'app-root',
+  selector: 'pm-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
+// Function class = controller
 export class AppComponent {
-  title = 'Angular Test for Learning ';
+  title = 'Angular: Getting Started';
 }

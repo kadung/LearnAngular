@@ -31,11 +31,11 @@
 -------------------------------------------------------------------------------------------------------
     src folder
 -------------------------------------------------------------------------------------------------------
-+ app folder: 
-    - app.component.css         CSS stylesheet
-    - app.component.html        HTML template
-    - app.component.spec.ts     unit test
-    - app.component.ts
++ app folder: contais all components and each component is a folder which contains bewlow files:
+    - app.component.css         Component CSS stylesheet
+    - app.component.html        Component HTML template
+    - app.component.spec.ts     Component unit test
+    - app.component.ts          Component metadata and functional class
 
 + app/app.modules.ts: declare each thing you create in Angular, and group them together
 

@@ -1,0 +1,67 @@
+Ref:
+    1. https://www.typescriptlang.org/docs/handbook/modules.html
+
+-------------------------------------------------------------------------------------------------------
+    Overview
+-------------------------------------------------------------------------------------------------------
++ Good authors divide their books into chapters and sections; good programmers divide their programs 
+into modules. Like a book chapter, modules are just clusters of words (or code, as the case may be).
+
++ Modules are highly self-contained with distinct functionality, allowing them to be shuffled, 
+removed, or added as necessary, without disrupting the system as a whole.
+
+
+-------------------------------------------------------------------------------------------------------
+    Module pattern
+-------------------------------------------------------------------------------------------------------
++ Module pattern is used to mimic the concept of classes so that we can store both public and private 
+methods and variables inside a single object.
+
++ Similar to how classes are used in other programming languages like Java or Python, module allows us 
+to create a public facing API for the methods that we want to expose to the world, while still 
+encapsulating private variables and methods in a closure scope.
+
+-------------------------------------------------------------------------------------------------------
+    Module in Typescript
+-------------------------------------------------------------------------------------------------------
++ In TypeScript, just as in ECMAScript 2015, any file containing a top-level import or export is 
+considered a module. Modules are executed within their own scope, not in the global scope; this means 
+that variables, functions, classes, etc. declared in a module are not visible outside the module.
+
++ Conversely, a file without any top-level import or export declarations is treated as a script whose 
+contents are available in the global scope and it can be used by other modules without any restriction.
+To import these modules, use:
+    import "./my-module.js";
+
++ If you want any declaration (such as a variable, function, class, type alias, or interface) to be
+visible outside the module, you have to export it with "export" keyword form as below:
+    1. Export a single class: 
+        export const numberRegexp = /^[0-9]+$/;
+        export class ZipCodeValidator implements StringValidator {
+            isAcceptable(s: string) {
+            return s.length === 5 && numberRegexp.test(s);
+            }
+        }
+
+    2. Export can also be renamed
+        class ZipCodeValidator implements StringValidator {
+            isAcceptable(s: string) {
+                return s.length === 5 && numberRegexp.test(s);
+            }
+        }
+        export { ZipCodeValidator };
+        export { ZipCodeValidator as mainValidator };
+
++ If you want to use a variable, function, class, interface, etc. exported from a different module, it 
+has to be imported using "import" keyword form as below:
+    1. Import a single export from a module
+        import { ZipCodeValidator } from "./ZipCodeValidator";
+        let myValidator = new ZipCodeValidator();
+
+    2. Imports can also be renamed
+        import { ZipCodeValidator as ZCV } from "./ZipCodeValidator";
+        let myValidator = new ZCV();
+
+    3. Import the entire module into a single variable, and use it to access the module exports
+        import * as validator from "./ZipCodeValidator";
+        let myValidator = new validator.ZipCodeValidator();

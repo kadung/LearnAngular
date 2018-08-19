@@ -4,12 +4,6 @@
 ---------------------------------------------------------------------------------------------------
     Overview
 ---------------------------------------------------------------------------------------------------
-
-
-
----------------------------------------------------------------------------------------------------
-    Angular Component
----------------------------------------------------------------------------------------------------
 + In our Angular apps, we write HTML markup that becomes our interactive application, but browser 
 only understands a limited set of markup tags, for example <b>, <select>, <form>, ... and all have 
 functionality defined by our browser creator.
@@ -19,12 +13,26 @@ shows the weather? Or what if we want to create a <login> tag that shows a login
 fundamental idea behind components: we will teach browser new tags that have custom functionality 
 attached to them. 
 
-+ In conlusion, we can define our own HTML tags and give them custom functionality in Angular which
-also call Angluar Component
 
-+ A basic Component has two parts:
-    1. A Component decorator
-    2. A component definition class
+---------------------------------------------------------------------------------------------------
+    Angular Component
+---------------------------------------------------------------------------------------------------
++ Angluar Component includes:
+    1. Template:
+        - It defines a view layout for this component.
+        - It creates with HTML and CSS.
+        - It includes data binding and directives.
+    2. Class: 
+        - It is the code supporting the view which contains:
+            . Properties or data element in the view 
+            . Methods which are the functions for the logic needed by the view
+        - It creates with TypeScript.
+    3. Metadata:
+        - It defines additional data for the component:
+            . HTML tag name for component
+            . Which class and view are associated in this component
+        - It is defined with Component decorator which contains in the class
+
 
 ---------------------------------------------------------------------------------------------------
     Angular 
