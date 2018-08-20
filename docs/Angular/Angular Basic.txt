@@ -17,21 +17,51 @@ attached to them.
 ---------------------------------------------------------------------------------------------------
     Angular Component
 ---------------------------------------------------------------------------------------------------
-+ Angluar Component includes:
-    1. Template:
++ Angluar Component includes 2 parts:
+    1. Template: 
+        - It creates with HTML and CSS (app.component.css and app.component.html).
         - It defines a view layout for this component.
-        - It creates with HTML and CSS.
         - It includes data binding and directives.
     2. Class: 
+        - It creates with TypeScript (app.component.test).
         - It is the code supporting the view which contains:
             . Properties or data element in the view 
             . Methods which are the functions for the logic needed by the view
-        - It creates with TypeScript.
-    3. Metadata:
-        - It defines additional data for the component:
+        - It contains metadata which defines additional data for the component:
             . HTML tag name for component
-            . Which class and view are associated in this component
-        - It is defined with Component decorator which contains in the class
+            . Which class and template are associated in this component
+
++ A class becomes an Angluar component when it has the component metadata. Angular needs that 
+metadata to understand how to instantiate the component.
+
++ Component's metadata is defined with the Angluar component function. In TypeScript, component
+function is attached to the class as a decorator .
+    
++ A decorator is a function that add metadata to a class, its member or its method agruments. A 
+decorator is always prefix with @ sign.
+
++ For example, app.component.ts has below code:
+    // Before we use an external function or class, we define where to find it. Since we use @Component
+    // decorator, we have import the module which contains this function
+    import { Component } from '@angular/core';
+
+    // @Component decorator identify the class as Angular component. Since decorator is a function, we 
+    // always add parentheses. We also pass an object to component function as indicated with the curly 
+    // brace, this object has many properties but we only use 2 properties in this example
+    @Component({     
+        // Define the component's directive name (custom HTML tag name). 
+        selector: 'pm-root',
+        // Whenever this component's directive name is used in any HTML, Angular renders this component
+        // template which located as below
+        templateUrl: './app.component.html',
+        styleUrls: ['./app.component.css']
+    })
+
+    // Define and export this Angular module so other Angluar module can also use it
+    export class AppComponent {
+        title = 'Angular: Getting Started';
+    }
+
 
 
 ---------------------------------------------------------------------------------------------------
