@@ -17,7 +17,7 @@ attached to them.
 ---------------------------------------------------------------------------------------------------
     Angular Component
 ---------------------------------------------------------------------------------------------------
-+ Angluar Component includes 2 parts:
++ Angular Component includes 2 parts:
     1. Template: 
         - It creates with HTML and CSS (app.component.css and app.component.html).
         - It defines a view layout for this component.
@@ -31,10 +31,10 @@ attached to them.
             . HTML tag name for component
             . Which class and template are associated in this component
 
-+ A class becomes an Angluar component when it has the component metadata. Angular needs that 
++ A class becomes an Angular component when it has the component metadata. Angular needs that 
 metadata to understand how to instantiate the component.
 
-+ Component's metadata is defined with the Angluar component function. In TypeScript, component
++ Component's metadata is defined with the Angular component function. In TypeScript, component
 function is attached to the class as a decorator .
     
 + A decorator is a function that add metadata to a class, its member or its method agruments. A 
@@ -45,7 +45,7 @@ decorator is always prefix with @ sign.
     // decorator, we have import the module which contains this function
     import { Component } from '@angular/core';
 
-    // @Component decorator identify the class as Angular component. Since decorator is a function, we 
+    // Component decorator identify the class as Angular component. Since decorator is a function, we 
     // always add parentheses. We also pass an object to component function as indicated with the curly 
     // brace, this object has many properties but we only use 2 properties in this example
     @Component({     
@@ -57,12 +57,52 @@ decorator is always prefix with @ sign.
         styleUrls: ['./app.component.css']
     })
 
-    // Define and export this Angular module so other Angluar module can also use it
+    // Define Angular component using Class and export this class so other Angular module can also 
+    // use it by import this class.
+    // Name of the class is also the name of this Angular component 
     export class AppComponent {
         title = 'Angular: Getting Started';
     }
 
 
+---------------------------------------------------------------------------------------------------
+    Angular Module
+---------------------------------------------------------------------------------------------------
++ Angular module helps to organize Angular application into cohesive blocks of functionality and
+provide boudaries in Angular application.
+
++ Angular module provides a template resolution environment which means that when Angular compiler 
+see a directive in a template, it look to the Angular module for the definition. So we delare our 
+Angular component in am Angular module so that the compiler can find it.
+
++ We also use Angular module to Bootstrap our startup component.
+
++ For example, app.module.ts has below code:
+    import { BrowserModule } from '@angular/platform-browser';
+    import { NgModule } from '@angular/core';
+    import { AppComponent } from './app.component';
+
+    // NgModule decorator identify the class as Angular module. For the NgModule decorator, the
+    // properties are arrays
+    @NgModule({
+        // declarations array defines which component belongs to this module. By default, the root
+        // application component AppComponent belongs to the application's root Angular module.
+        // If we want to use other component, we have to add other component class in here.
+        declarations: [ AppComponent ],
+
+        // imports array defines modules which is available to all components that belongs this 
+        // Angular module. BrowserModule must be imported
+        imports: [ BrowserModule ],
+
+        // bootstrap array defines the startup component of the application. The startup component
+        // should contains the selector which we use in root index.html
+        bootstrap: [AppComponent]
+    })
+
+    // Define Angular module using Class and export this class so other Angular module can also 
+    // use it by import this class.
+    export class AppModule { }
+    
 
 ---------------------------------------------------------------------------------------------------
     Angular 
