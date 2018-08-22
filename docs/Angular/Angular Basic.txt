@@ -1,9 +1,9 @@
 - Ref:
     1. 
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
     Overview
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 + In our Angular apps, we write HTML markup that becomes our interactive application, but browser 
 only understands a limited set of markup tags, for example <b>, <select>, <form>, ... and all have 
 functionality defined by our browser creator.
@@ -14,9 +14,9 @@ fundamental idea behind components: we will teach browser new tags that have cus
 attached to them. 
 
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
     Angular Component
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 + Angular Component includes 2 parts:
     1. Template: 
         - It creates with HTML and CSS (app.component.css and app.component.html).
@@ -49,7 +49,7 @@ decorator is always prefix with @ sign.
     // always add parentheses. We also pass an object to component function as indicated with the curly 
     // brace, this object has many properties but we only use 2 properties in this example
     @Component({     
-        // Define the component's directive name (custom HTML tag name). 
+        // Define the component's directive name (custom HTML tag name of this component). 
         selector: 'pm-root',
         // Whenever this component's directive name is used in any HTML, Angular renders this component
         // template which located as below
@@ -65,9 +65,9 @@ decorator is always prefix with @ sign.
     }
 
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
     Angular Module
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 + Angular module helps to organize Angular application into cohesive blocks of functionality and
 provide boudaries in Angular application.
 
@@ -104,6 +104,45 @@ Angular component in am Angular module so that the compiler can find it.
     export class AppModule { }
     
 
+----------------------------------------------------------------------------------------------------
+    Templates
+----------------------------------------------------------------------------------------------------
++ Learn HTML
++ Learn CSS library: bootstrap, saas, ...
+
+
+----------------------------------------------------------------------------------------------------
+    Binding
+----------------------------------------------------------------------------------------------------
++ Binding cordinates communication between the component's class and its template. Data binding has
+two type:
+    - One-Way Data-Binding: use to displays read only data.
+    - Two-Way Data-Binding:
+
++ Interpolation is identified with double curly brace with an template expression in the middle and 
+it is One-Way Data-Binding from component's class property to template. Interpolation supports for:
+    - Binding simple property:
+        <h1>{{pageTitle}}</h1>
+    - Concatenation:
+        <h1>{{"Title is " + pageTitle}}</h1>
+    - Simple caculation:
+        <h1>{{10 + 20}}</h1>
+    - Call a class method:
+        <h1>{{"Title is " + getpageTitle()}}</h1>
+    - Element property assignment:
+        <h1 innerText = {{pageTitle}}></h1>
+
+
 ---------------------------------------------------------------------------------------------------
-    Angular 
+    Templates
+---------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+    Templates
+---------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+    Templates
 ---------------------------------------------------------------------------------------------------
