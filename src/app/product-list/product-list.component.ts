@@ -13,6 +13,14 @@ export class ProductListComponent implements OnInit {
   }
 
   pageTitle: String = "Product list";
+
+  showImage:boolean = false;
+
+  listFilter:String = "cart";
+
+  imageWidth:number = 50;
+  imageMargin:number = 2;
+
   products: any[] = [
     {
       "productId": 1,
@@ -35,4 +43,8 @@ export class ProductListComponent implements OnInit {
       "imageUrl": "https://openclipart.org/image/300px/svg_to_png/58471/garden_cart.png"
     }
   ]
+
+  tongleImage(): void {
+    this.showImage = !this.showImage;
+  }
 }

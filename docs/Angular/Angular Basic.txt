@@ -85,13 +85,13 @@ Angular component in am Angular module so that the compiler can find it.
     // NgModule decorator identify the class as Angular module. For the NgModule decorator, the
     // properties are arrays
     @NgModule({
-        // declarations array defines which component belongs to this module. By default, the root
-        // application component AppComponent belongs to the application's root Angular module.
-        // If we want to use other component, we have to add other component class in here.
+        // Delare your custom components which you want to use in this application, then all
+        // components see and use
         declarations: [ AppComponent ],
 
-        // imports array defines modules which is available to all components that belongs this 
-        // Angular module. BrowserModule must be imported
+        // Add Angular modules or 3rd party modules which we want to use to your application then
+        // components see and use
+        // BrowserModule must be imported.
         imports: [ BrowserModule ],
 
         // bootstrap array defines the startup component of the application. The startup component
@@ -116,22 +116,54 @@ Angular component in am Angular module so that the compiler can find it.
 ----------------------------------------------------------------------------------------------------
 + Binding cordinates communication between the component's class and its template. Data binding has
 two type:
-    - One-Way Data-Binding: use to displays read only data.
-    - Two-Way Data-Binding:
+    - One-Way Data-Binding
+    - Two-Way Data-Binding
 
-+ Interpolation is identified with double curly brace with an template expression in the middle and 
-it is One-Way Data-Binding from component's class property to template. Interpolation supports for:
-    - Binding simple property:
-        <h1>{{pageTitle}}</h1>
-    - Concatenation:
-        <h1>{{"Title is " + pageTitle}}</h1>
-    - Simple caculation:
-        <h1>{{10 + 20}}</h1>
-    - Call a class method:
-        <h1>{{"Title is " + getpageTitle()}}</h1>
-    - Element property assignment:
-        <h1 innerText = {{pageTitle}}></h1>
++ Interpolation:
+    - It is identified with an template expression in the middle of double curly brace
+    - It is is One-Way Data-Binding from component's class property to template. 
+    - It supports multiple:
+        - Binding simple property:
+            <h1>{{pageTitle}}</h1>
+        - Concatenation:
+            <h1>{{"Title is " + pageTitle}}</h1>
+        - Simple caculation:
+            <h1>{{10 + 20}}</h1>
+        - Call a class method:
+            <h1>{{"Title is " + getpageTitle()}}</h1>
+        - Element property assignment:
+            <h1 innerText = {{pageTitle}}></h1>
 
++ Property binding:
+    - It sets a property/attribute of an element to the value of a template expression. When setting 
+    an element property to a non-string data value, you must use property binding.
+    - It is identified with element property/attribute in square brackets.
+    - It is is One-Way Data-Binding from component's class property to template. 
+    - Example:
+        <img [src] = 'product.imageUrl'>       // Equals to <img src = {{product.imageUrl}}>
+
++ Event binding:
+    - It is the response for any DOM events which are trigger by user action such as clicking a link, 
+    pushing a button, or entering text.
+    - List of DOM event: https://developer.mozilla.org/en-US/docs/Web/Events 
+    - It is is One-Way Data-Binding from template to component's class property. 
+    - To bind to a DOM event, surround the DOM event name in parentheses and assign a quoted template 
+    statement to it.
+        <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event 
+
++ Two way data biding:
+    - It is achieved by enclosing ngModel directive in square brackets then parentheses. Square 
+    brackets indicates property binding from the class property and Parentheses indicates event 
+    binding which send notification of the user action back to the class property. Then we assign 
+    this to a template property which we want 2 way data binding on.
+        [(ngModel)] = "listProperty";
+    - ngModel locates in FormsModule in @angular/forms, so remember to include this in your module:
+        import {FormsModule} from '@angular/forms';
+        ...
+        imports: [
+            BrowserModule,
+            FormsModule
+        ]
 
 ---------------------------------------------------------------------------------------------------
     Directive
@@ -158,7 +190,7 @@ it is One-Way Data-Binding from component's class property to template. Interpol
 
 
 ---------------------------------------------------------------------------------------------------
-    Templates
+    Transform data with Pipe
 ---------------------------------------------------------------------------------------------------
 
 
