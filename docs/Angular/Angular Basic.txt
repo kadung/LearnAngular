@@ -107,12 +107,12 @@ Angular component in am Angular module so that the compiler can find it.
 ----------------------------------------------------------------------------------------------------
     Templates
 ----------------------------------------------------------------------------------------------------
-+ Learn HTML
-+ Learn CSS library: bootstrap, saas, ...
++ HTML
++ CSS library: bootstrap, saas, awesome font,...
 
 
 ----------------------------------------------------------------------------------------------------
-    Binding
+    Data Binding
 ----------------------------------------------------------------------------------------------------
 + Binding cordinates communication between the component's class and its template. Data binding has
 two type:
@@ -134,8 +134,27 @@ it is One-Way Data-Binding from component's class property to template. Interpol
 
 
 ---------------------------------------------------------------------------------------------------
-    Templates
+    Directive
 ---------------------------------------------------------------------------------------------------
++ Angular directive allows us to extend HTML. Angular directive includes:
+    1. Custom directive:
+        - It is custome HTML element (Angular component).
+    
+    2. Build-in directive:
+        a. Structural Directives:
+            - It is Angular custom HTML attribute which provides if and for logic which locate
+            inside BrowserModule package.
+            - It is used to change the DOM layout by adding, removing or manipulating DOM elements.
+            - It is delared with an asterisk (*) precedes the directive attribute.
+                . *ngIf: if logic. Note: Element is removed from the DOM if condition is false value
+                . *ngFor: for logic repeats a portion of DOM tree once for each item in an iterable
+                list. 
+        
+        b. Attribute Directives:
+            - It is a HTML attribute which responds for HTML style.
+            - It changes the appearance or behavior of an element, component, or another directive.
+
++ Structural and Attribute directives must be declared in Angular Modules same as component.
 
 
 ---------------------------------------------------------------------------------------------------
