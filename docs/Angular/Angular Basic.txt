@@ -192,7 +192,19 @@ two type:
 ---------------------------------------------------------------------------------------------------
     Transform data with Pipe
 ---------------------------------------------------------------------------------------------------
++ A pipe takes in data as input and transforms it to a desired output. Example, the date pile:
+    <p>My birthday is {{birthday_variable | date }}     
 
++ A pile can has no or multiple parameters:
+    <p>Total cost is {{cost | curency:'USD':'symbol':'1.2-2'}}
+
++ Angular build-in pipes: https://angular.io/api?type=pipe
+
++ Pile can be chained together. Example, to display the birthday in uppercase, the birthday is 
+chained to the DatePipe and on to the UpperCasePipe:
+    <p>My birthday is {{birthday_variable | date:'fullDate' | uppercase}}     
+
++ You can write your own custom pipes:
 
 ---------------------------------------------------------------------------------------------------
     Templates
