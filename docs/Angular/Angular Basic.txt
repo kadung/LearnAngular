@@ -198,14 +198,27 @@ two type:
 + A pile can has no or multiple parameters:
     <p>Total cost is {{cost | curency:'USD':'symbol':'1.2-2'}}
 
-+ Angular build-in pipes: https://angular.io/api?type=pipe
-
 + Pile can be chained together. Example, to display the birthday in uppercase, the birthday is 
 chained to the DatePipe and on to the UpperCasePipe:
     <p>My birthday is {{birthday_variable | date:'fullDate' | uppercase}}     
 
-+ You can write your own custom pipes:
++ Angular build-in pipes: https://angular.io/api?type=pipe
+
+
++ You can write your own custom pipes: https://angular.io/guide/pipes#custom-pipes
 
 ---------------------------------------------------------------------------------------------------
-    Templates
+    Interface
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+    
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+    
 ---------------------------------------------------------------------------------------------------

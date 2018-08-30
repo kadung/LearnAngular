@@ -1,0 +1,59 @@
+Ref:
+    1. 
+
+---------------------------------------------------------------------------------------------------
+    Definition
+---------------------------------------------------------------------------------------------------
++ Transpiler or source to source compiler, are the tool that read source code written in one 
+programming language, and produce the equivalent code in another language. Languages you write that 
+transpile to JavaScript are often called compile-to-JS languages, and are said to target JavaScript.
+
+---------------------------------------------------------------------------------------------------
+    Interface
+---------------------------------------------------------------------------------------------------
++ An interface is a specification identify a related set of properties and methods (abstract method
+only).
+
++ A class implements the specification from the interface which means the class includes code for
+each properties and methods in the interface.
+
++ Interface can be used as a data type since interface does not have any implement class. So you 
+should create a bussines object class if you want any implemented methods for your new data type
+
+
++ Javascript (ES5 and ES2015) does not support interface, only Typescript does, so interfaces are 
+transpiled out and are not found in resulting Javascript after transpiling.
+
+---------------------------------------------------------------------------------------------------
+    Syntax
+---------------------------------------------------------------------------------------------------
++ Example interface:
+    export interface IProduct {
+        productID: number;
+        producetname: String;
+        releaseDate: date;
+        calculateDiscount(percent: number): number;
+    }
+
+    - export keyword: make the interface available for use anywhere in the application.
+    - interface keyword: define new interface.
+    - IProduct: interface name.
+
++ To use an interface as new data type:
+    - Import the interface
+    - Use interface name as a new data type:
+        products: IProduct[] = [...]
+
++ Implement an interface:
+    export class Product implements IProduct{
+        constructor(
+            public productID:number,
+            publicproducetname: String,
+            public releaseDate: date,
+            public productID:number,
+        ){}
+
+        calculateDiscount(percent: number): number{
+            return this.price - (this.price * percent);
+        }
+    }
