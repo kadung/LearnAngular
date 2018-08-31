@@ -208,7 +208,7 @@ chained to the DatePipe and on to the UpperCasePipe:
 + You can write your own custom pipes: https://angular.io/guide/pipes#custom-pipes
 
 ---------------------------------------------------------------------------------------------------
-    Interface
+    Component Lifecycle Hooks
 ---------------------------------------------------------------------------------------------------
 
 
