@@ -7,21 +7,37 @@ import {IProduct} from './product'
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-
-  constructor() { }
+  
+  constructor() {
+    this.filteredProducts = this.products;
+  }
 
   ngOnInit() {
+    console.log("Init action !!!");
   }
 
   pageTitle: String = "Product list";
 
   showImage:boolean = false;
-
-  listFilter:String = "cart";
-
   imageWidth:number = 50;
   imageMargin:number = 2;
 
+  _listFilter: string;
+  get listFilter(): string{
+    return this._listFilter;
+  }
+  set listFilter(value: string){
+    this._listFilter = value;
+    this.filteredProducts = this._listFilter ? this.performFilter(this._listFilter) : this.products;
+  }
+
+  performFilter(filteredBy: string): IProduct[] {
+    filteredBy = filteredBy.toLowerCase();
+    return this.products.filter((product: IProduct) => product.productName.toLowerCase()
+            .indexOf(filteredBy)!== -1);
+  }
+
+  filteredProducts: IProduct[];
   products: IProduct[] = [
     {
       "productId": 1,
@@ -47,5 +63,9 @@ export class ProductListComponent implements OnInit {
 
   tongleImage(): void {
     this.showImage = !this.showImage;
+  }
+
+  starNotify(value: string): void{
+    console.log(value);
   }
 }

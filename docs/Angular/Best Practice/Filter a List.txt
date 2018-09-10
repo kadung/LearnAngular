@@ -1,0 +1,30 @@
+Ref:
+    1. Angular.io
+
+-------------------------------------------------------------------------------------------------------
++ Angular team strongly recommend to move filter and sort logic into the component
+
++ For example:
+    - We have a "products" variable which contains all data query from backend service. 
+    - We have a "fiterCriteria" variable which contains filtered value from user.
+    - To do the filter the list of products:
+        1. Define new variable "filteredProducts" which contains filtered value from "products". We do 
+        not do the filter direct on "products" variable because we will lose our original data and only
+        get it back until we query the backend service again.
+
+        2. To identify when user changes the filter criteria, we change the "fiterCriteria" variable to
+        into a getter and a setter variable and we also perform filter logic with the change value in 
+        the setter method:
+            _fiterCriteria: string;
+            get fiterCriteria(): string{
+                return this._fiterCriteria;
+            }
+            set fiterCriteria(value: string): string{
+                return this._fiterCriteria = value;
+                // Filter logic with value (filter criteria)
+            }
+        Getter and Setter variable work just like the simple variable. 
+            - When the data binding needs the value, it will call the getter to get the value
+            - When user modifies the value, the data binding calls the setter to send the change value
+
+        3. Set default value for filteredProducts = products in component constructor
