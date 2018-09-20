@@ -1,0 +1,10 @@
+Ref:
+    1. https://toidicodedao.com/2015/11/03/dependency-injection-va-inversion-of-control-phan-1-dinh-nghia/
+    2. 
+
+---------------------------------------------------------------------------------------------------
+    Singleton
+---------------------------------------------------------------------------------------------------
++ Intent:
+    - Ensure a class only has one instance, and provide a global point of access to it.
+    - Lazy initialization and global access are necessary.

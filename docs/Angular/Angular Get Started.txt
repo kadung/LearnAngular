@@ -315,5 +315,73 @@ view.
 
 
 ---------------------------------------------------------------------------------------------------
-    
+    Services and Dependency Injection
 ---------------------------------------------------------------------------------------------------
++ A service is class with focus purpose to do something specific and do it well. It is used for:
+    - Implement functionality that is independent from any particular component.
+    - Provide shared data or logic across component.
+    - Encapsulate external interaction such as data access.
+Example: logging service, data service, application configuration, ...
+
++ Dependency Injection (DI) is a coding pattern in which a class receives the instance of the class 
+it needs (called dependency) from an external source rather than creating them itself. Angular uses
+DI to provide new component with the required services without locally instantiate service class.
+
++ In Angular, external source is Angular build-in injector. It maintains a container of single 
+service instance of each registered service class. If a component needs a service, it defines the
+service as a dependency then the injector will provide/inject the service instance to the component 
+class.
+
++ Angular build-in injector has 2 types:
+    - Root application injector: can inject registered service to any component or other service in
+    the application. 
+    - Component injector: can only inject registered service to a specific component and its child 
+    or nested component.
+
++ Step to build a service in Angular:
+    1. Create the service class:
+        - Create new class with name *.service.ts
+        - Export the class so other class can use it
+        - Define metatdata for service class with @Injectable decorator
+    
+    2. Register the service to Angular injector:
+        - Register the service in root application injector in Angular 6: set provideIn property in 
+        @Injectable to root as below
+            @Injectable({
+                providedIn: 'root'
+            })
+            export class SomeServiceClass {}
+
+        - Register the service in root application injector in Angular below 6: add service class to
+        providers property in @NgModule (root module app.module.ts)
+            @NgModule({
+                ...
+                providers: [SomeServiceClass]
+            })
+            export class AppModule {}
+
+        - Register the service in component injector: add service class to providers property in 
+        @Component (component class)
+            @Component({
+                ...
+                providers: [SomeServiceClass]
+            })
+             export class ComponentClass {}
+            
+    3. Inject the service instance to component class:
+        - Define a dependency in component class constructor so injector will provide the service 
+        instance
+            ...
+            export class ComponentClass {
+                private _serviceInstance;
+                constructor(serviceIntance: ServiceClass){
+                    this._serviceInstance = serviceIntance;
+                }
+            }
+
+        Or we can use shortcut syntax from TypeScript for DI
+            ...
+            export class ComponentClass {
+                constructor(private serviceIntance: ServiceClass){}
+            }    
+
