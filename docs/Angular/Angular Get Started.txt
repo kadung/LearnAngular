@@ -1,0 +1,387 @@
+- Ref:
+    1. 
+
+----------------------------------------------------------------------------------------------------
+    Overview
+----------------------------------------------------------------------------------------------------
++ In our Angular apps, we write HTML markup that becomes our interactive application, but browser 
+only understands a limited set of markup tags, for example <b>, <select>, <form>, ... and all have 
+functionality defined by our browser creator.
+
++ What if we want to teach the browser new tags? What if we wanted to have a <weather> tag that
+shows the weather? Or what if we want to create a <login> tag that shows a login panel? This is the 
+fundamental idea behind components: we will teach browser new tags that have custom functionality 
+attached to them. 
+
+
+----------------------------------------------------------------------------------------------------
+    Angular Component
+----------------------------------------------------------------------------------------------------
++ Angular Component includes 2 parts:
+    1. Template: 
+        - It creates with HTML and CSS (app.component.css and app.component.html).
+        - It defines a view layout for this component.
+        - It includes data binding and directives.
+    2. Class: 
+        - It creates with TypeScript (app.component.test).
+        - It is the code supporting the view which contains:
+            . Properties or data element in the view 
+            . Methods which are the functions for the logic needed by the view
+        - It contains metadata which defines additional data for the component:
+            . HTML tag name for component
+            . Which class and template are associated in this component
+
++ A class becomes an Angular component when it has the component metadata. Angular needs that 
+metadata to understand how to instantiate the component.
+
++ Component's metadata is defined with the Angular component function. In TypeScript, component
+function is attached to the class as a decorator .
+    
++ A decorator is a function that add metadata to a class, its member or its method agruments. A 
+decorator is always prefix with @ sign.
+
++ For example, app.component.ts has below code:
+    // Before we use an external function or class, we define where to find it. Since we use @Component
+    // decorator, we have import the module which contains this function
+    import { Component } from '@angular/core';
+
+    // Component decorator identify the class as Angular component. Since decorator is a function, we 
+    // always add parentheses. We also pass an object to component function as indicated with the curly 
+    // brace, this object has many properties but we only use 2 properties in this example
+    @Component({     
+        // Define the component's directive name (custom HTML tag name of this component). 
+        selector: 'pm-root',
+        // Whenever this component's directive name is used in any HTML, Angular renders this component
+        // template which located as below
+        templateUrl: './app.component.html',
+        styleUrls: ['./app.component.css']
+    })
+
+    // Define Angular component using Class and export this class so other Angular module can also 
+    // use it by import this class.
+    // Name of the class is also the name of this Angular component 
+    export class AppComponent {
+        title = 'Angular: Getting Started';
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Angular Module
+----------------------------------------------------------------------------------------------------
++ Angular module helps to organize Angular application into cohesive blocks of functionality and
+provide boudaries in Angular application.
+
++ Angular module provides a template resolution environment which means that when Angular compiler 
+see a directive in a template, it look to the Angular module for the definition. So we delare our 
+Angular component in am Angular module so that the compiler can find it.
+
++ We also use Angular module to Bootstrap our startup component.
+
++ For example, app.module.ts has below code:
+    import { BrowserModule } from '@angular/platform-browser';
+    import { NgModule } from '@angular/core';
+    import { AppComponent } from './app.component';
+
+    // NgModule decorator identify the class as Angular module. For the NgModule decorator, the
+    // properties are arrays
+    @NgModule({
+        // Delare your custom components which you want to use in this application, then all
+        // components see and use
+        declarations: [ AppComponent ],
+
+        // Add Angular modules or 3rd party modules which we want to use to your application then
+        // components see and use
+        // BrowserModule must be imported.
+        imports: [ BrowserModule ],
+
+        // bootstrap array defines the startup component of the application. The startup component
+        // should contains the selector which we use in root index.html
+        bootstrap: [AppComponent]
+    })
+
+    // Define Angular module using Class and export this class so other Angular module can also 
+    // use it by import this class.
+    export class AppModule { }
+    
+
+----------------------------------------------------------------------------------------------------
+    Templates
+----------------------------------------------------------------------------------------------------
++ HTML
++ CSS library: bootstrap, saas, awesome font,...
+
+
+----------------------------------------------------------------------------------------------------
+    Data Binding
+----------------------------------------------------------------------------------------------------
++ Binding cordinates communication between the component's class and its template. Data binding has
+two type:
+    - One-Way Data-Binding
+    - Two-Way Data-Binding
+
++ Interpolation:
+    - It is identified with an template expression in the middle of double curly brace
+    - It is is One-Way Data-Binding from component's class property to template. 
+    - It supports multiple:
+        - Binding simple property:
+            <h1>{{pageTitle}}</h1>
+        - Concatenation:
+            <h1>{{"Title is " + pageTitle}}</h1>
+        - Simple caculation:
+            <h1>{{10 + 20}}</h1>
+        - Call a class method:
+            <h1>{{"Title is " + getpageTitle()}}</h1>
+        - Element property assignment:
+            <h1 innerText = {{pageTitle}}></h1>
+
++ Property binding:
+    - It sets a property/attribute of an element to the value of a template expression. When setting 
+    an element property to a non-string data value, you must use property binding.
+    - It is identified with element property/attribute in square brackets.
+    - It is is One-Way Data-Binding from component's class property to template. 
+    - Example:
+        <img [src] = 'product.imageUrl'>       // Equals to <img src = {{product.imageUrl}}>
+
++ Event binding:
+    - It is the response for any DOM events which are trigger by user action such as clicking a link, 
+    pushing a button, or entering text.
+    - List of DOM event: https://developer.mozilla.org/en-US/docs/Web/Events 
+    - It is is One-Way Data-Binding from template to component's class property. 
+    - To bind to a DOM event, surround the DOM event name in parentheses and assign a quoted template 
+    statement to it.
+        <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event 
+
++ Two way data biding:
+    - It is achieved by enclosing ngModel directive in square brackets then parentheses. Square 
+    brackets indicates property binding from the class property and Parentheses indicates event 
+    binding which send notification of the user action back to the class property. Then we assign 
+    this to a template property which we want 2 way data binding on.
+        [(ngModel)] = "listProperty";
+    - ngModel locates in FormsModule in @angular/forms, so remember to include this in your module:
+        import {FormsModule} from '@angular/forms';
+        ...
+        imports: [
+            BrowserModule,
+            FormsModule
+        ]
+
+---------------------------------------------------------------------------------------------------
+    Directive
+---------------------------------------------------------------------------------------------------
++ Angular directive allows us to extend HTML. Angular directive includes:
+    1. Custom directive:
+        - It is custome HTML element (Angular component).
+    
+    2. Build-in directive:
+        a. Structural Directives:
+            - It is Angular custom HTML attribute which provides if and for logic which locate
+            inside BrowserModule package.
+            - It is used to change the DOM layout by adding, removing or manipulating DOM elements.
+            - It is delared with an asterisk (*) precedes the directive attribute.
+                . *ngIf: if logic. Note: Element is removed from the DOM if condition is false value
+                . *ngFor: for logic repeats a portion of DOM tree once for each item in an iterable
+                list. 
+        
+        b. Attribute Directives:
+            - It is a HTML attribute which responds for HTML style.
+            - It changes the appearance or behavior of an element, component, or another directive.
+
++ Structural and Attribute directives must be declared as FormsModule in Angular Modules imports.
+
+
+---------------------------------------------------------------------------------------------------
+    Transform data with Pipe
+---------------------------------------------------------------------------------------------------
++ A pipe takes in data as input and transforms it to a desired output. Example, the date pile:
+    <p>My birthday is {{birthday_variable | date }}     
+
++ A pile can has no or multiple parameters:
+    <p>Total cost is {{cost | curency:'USD':'symbol':'1.2-2'}}
+
++ Pile can be chained together. Example, to display the birthday in uppercase, the birthday is 
+chained to the DatePipe and on to the UpperCasePipe:
+    <p>My birthday is {{birthday_variable | date:'fullDate' | uppercase}}     
+
++ Angular build-in pipes: https://angular.io/api?type=pipe
+
+
++ You can write your own custom pipes: https://angular.io/guide/pipes#custom-pipes
+    - A custom pipe is a class with pipe decorator which is imported from the core Angular library.
+    - A pipe class implements the PipeTransform interface which has transform method. We write code
+    in transform method to transform a value and return that transformed value.
+    - In transform method:
+        . The first parameter is the value which need to transform
+        . Any additional parameters defines agruments that we can use to perform the transformation
+        and they are also the parameters we use in template
+    - To use a pipe in a component, we should add custom pipe class to the module which manage the
+    component.
+    - Example a custome pipe which transform any input character to space:
+        import {Pipe, PipeTransform} from '@angular/core'
+        @Pipe({
+            name: 'convertToSpace'
+        })
+        export class ConvertToSpacePile() implements PipeTransform{
+            transform(value: string, character: string) :string{
+                retrun value.replace(character, ' ');
+            }
+        }
+    - Example implement in template:
+        <td>{{product.productCode | convertToSpace:'-'}}
+        // value: string is product.productCode
+        // character: string: is '-' (additional parameters)
+
+---------------------------------------------------------------------------------------------------
+    Component Lifecycle Hooks
+---------------------------------------------------------------------------------------------------
++ Directive and component instances have a lifecycle as Angular creates, updates and destroys them.
+Lifecycle hooks provide visibility into these key life moments and the ability to act when they 
+occur.
+
++ Each interface has a single hook method whose name is the interface name prefixed with ng.
+
++ List of available hooks in Angular: https://angular.io/guide/lifecycle-hooks#lifecycle-sequence
+. Some importance hooks:
+    - OnInit lifecycle hook: perform any component initialization action (ex: retrieve the data for 
+    the template from the backend service, ... ).
+    - OnChanges lifecycle hook: perform any action after change (re-set) to input properties.
+    - OnDestroy lifecycle hook: perform any cleanup action before Angular destroys the component.
+    
++ Since interface is not supported in JavaScript so you can use any lifecycle hooks without adding
+the lifecycle hook interfaces. But it's good practice to add interfaces to TypeScript directive 
+classes in order to benefit from strong typing and editor tooling.
+
+
+---------------------------------------------------------------------------------------------------
+   Nest component
+---------------------------------------------------------------------------------------------------
++ Angular can nest component inside a component. The outside component is known as the parent or 
+container component and the inner one is known as the nested or child component.
+
++ A component should delare as nest component if its template only manages a fragment of a larger 
+view.    
+
++ When the nested component wants to receive input data from container component:
+    1. Nested component exposes a property to the container component using Input decorator. Input 
+    decorator is used to decorates any properties with any type in the nested component class.
+        // nested.component.ts
+        @Input() value: number;
+    
+    2. The container component template then can transfer data to nested component class using 
+    property binding. 
+        // container.component.html
+        <nest-selector [value]='product.value'></nest-selector>
+
++ When the nested component wants to send information to container component:
+    1. Create an event type property which is used to send event to the container:
+        - Nested component exposes an event to the container using Output decorator. Output decorator 
+        is used to decorates any properties with event type only in the nested component class. And 
+        the sending data is the payload of decorated event property.
+        
+        - In Angular, an event is defined with an EventEmitter object. So to create an event property,
+        we create a new instance of an EventEmitter with a specific event payload type.
+            // Create notify event property with string payload:
+            @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+        
+    2. Trigger an event to the container component when user does any action in nested component:
+        - Nested component receives a DOM event for any action from user. We use event binding in 
+        nested component template to call a method in nested component class according to user's 
+        action.
+        - In the method in nested component class, we use emit method from event type property to 
+        raise an event to the container. If we want to pass data in event payload, we pass the
+        data to the emit method.
+            // nested.component.html
+            <div (click) = 'onClick()'> Click! </di>
+            // nested.component.ts
+            onClick(): void{
+                this.notify.emit('click!!!');
+            }
+
+    3. Container component receives the event from the nested component and handles the data in 
+    the event payload:
+        - In the container component's template, we use event binding to bind the nested component
+        event to call a method in container component class. We access the event payload using
+        $event
+        - The only time we can specify a nested component's property as an event binding when that
+        property is decorated with @Output
+            // container.component.html
+            <div> 
+                <component-selector (notify)='nestedComponentClick($event)'></component-selector>
+            </div>
+            
+            // container.component.ts
+            nestedComponentClick(message: string): void{
+                // logic action
+            }
+
+
+---------------------------------------------------------------------------------------------------
+    Services and Dependency Injection
+---------------------------------------------------------------------------------------------------
++ A service is class with focus purpose to do something specific and do it well. It is used for:
+    - Implement functionality that is independent from any particular component.
+    - Provide shared data or logic across component.
+    - Encapsulate external interaction such as data access.
+Example: logging service, data service, application configuration, ...
+
++ Dependency Injection (DI) is a coding pattern in which a class receives the instance of the class 
+it needs (called dependency) from an external source rather than creating them itself. Angular uses
+DI to provide new component with the required services without locally instantiate service class.
+
++ In Angular, external source is Angular build-in injector. It maintains a container of single 
+service instance of each registered service class. If a component needs a service, it defines the
+service as a dependency then the injector will provide/inject the service instance to the component 
+class.
+
++ Angular build-in injector has 2 types:
+    - Root application injector: can inject registered service to any component or other service in
+    the application. 
+    - Component injector: can only inject registered service to a specific component and its child 
+    or nested component.
+
++ Step to build a service in Angular:
+    1. Create the service class:
+        - Create new class with name *.service.ts
+        - Export the class so other class can use it
+        - Define metatdata for service class with @Injectable decorator
+    
+    2. Register the service to Angular injector:
+        - Register the service in root application injector in Angular 6: set provideIn property in 
+        @Injectable to root as below
+            @Injectable({
+                providedIn: 'root'
+            })
+            export class SomeServiceClass {}
+
+        - Register the service in root application injector in Angular below 6: add service class to
+        providers property in @NgModule (root module app.module.ts)
+            @NgModule({
+                ...
+                providers: [SomeServiceClass]
+            })
+            export class AppModule {}
+
+        - Register the service in component injector: add service class to providers property in 
+        @Component (component class)
+            @Component({
+                ...
+                providers: [SomeServiceClass]
+            })
+             export class ComponentClass {}
+            
+    3. Inject the service instance to component class:
+        - Define a dependency in component class constructor so injector will provide the service 
+        instance
+            ...
+            export class ComponentClass {
+                private _serviceInstance;
+                constructor(serviceIntance: ServiceClass){
+                    this._serviceInstance = serviceIntance;
+                }
+            }
+
+        Or we can use shortcut syntax from TypeScript for DI
+            ...
+            export class ComponentClass {
+                constructor(private serviceIntance: ServiceClass){}
+            }    
+

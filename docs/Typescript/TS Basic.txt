@@ -1,0 +1,30 @@
+Ref:
+    1. 
+
+ ---------------------------------------------------------------------------------------------------
+ ---------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+ ---------------------------------------------------------------------------------------------------
+    Loop
+ ---------------------------------------------------------------------------------------------------   
++ for ... of : Iterate over iterable object such as array, example:
+    let nicknames = [handsome, smart, tak]
+    for (let nickname of nicknames) {
+        console.log(nickname);              // Result: handsome, smart, tak
+    }
+
++ for ... in  : Iterate over the properties of an object, example:
+    let nicknames = [handsome, smart, tak]
+    for (let nickname in nicknames) {
+        console.log(nickname);              // Result: 0, 1, 2
+    }

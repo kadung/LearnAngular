@@ -1,0 +1,43 @@
+Ref:
+    1. Design Patterns - Erich Gamma
+    2. Design Patterns Explain Simply - Alexander Shvets
+
+-------------------------------------------------------------------------------------------------------
+    What is design pattern ?
+-------------------------------------------------------------------------------------------------------
++ Design patterns are the best practice solutions to a commonly occurring problems in software design. 
+Each design pattern focuses on a particular object-oriented design problem or issue.
+
++ A design pattern isn't a finished design that can be transformed directly into code. It is a template 
+for how to solve a problem that can be used in many different situations. 
+
++ Design patterns helps to prevent subtle issues that can cause major problems and improves code 
+readability for coders and architects familiar with the patterns. 
+
++ In general, a pattern has four essential elements:
+    1. Pattern name: uses to describe a design problem. 
+
+    2. Problem: describes abstract description of a design problem and when to apply the pattern. 
+    Sometimes the problem will include a list of conditions that must be met before it makes sense to 
+    apply the pattern.
+
+    3. Solution: describes the general arrangement of elements solution (their relationships, 
+    responsibilities, and collaborations) to solves the problem. The solution doesn't describe a 
+    particular concrete design or implementation, because a pattern is like a template that can be 
+    applied in many different situations.
+
+    4. Consequences: are the results and trade-offs of applying the pattern.
+    
+
+-------------------------------------------------------------------------------------------------------
+    Type of design patterns
+-------------------------------------------------------------------------------------------------------
++ Creational Patterns: provide a way to create objects while hiding the creation logic, rather than 
+instantiating objects directly using new operator. This gives program more flexibility in deciding which 
+objects need to be created for a given use case.
+
++ Structural design patterns: are all about Class and Object composition. Structural class-creation 
+patterns use inheritance to compose interfaces. Structural object-patterns define ways to compose objects 
+to obtain new functionality.
+
++ Behavioral design patterns are all about Class's objects communication

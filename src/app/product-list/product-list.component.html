@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    Product List
+    {{pageTitle}}
   </div>
 
   <div class="card-body">
@@ -9,22 +9,22 @@
         Filter by:
       </div>
       <div class="col-md-4">
-        <input type="text" />
+        <input type="text" [(ngModel)]="listFilter"/>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-2">
-        <h4>Filter by:</h4>
+        <h4>Filter by: {{listFilter}}</h4>
       </div>
     </div>
 
-    <div class="table-reponsive">
+    <div class="table-reponsive" *ngIf="products && products.length > 0">
       <table class="table">
         <thead>
           <tr>
             <th>
-              <button class="btn btn-primary">Show Image</button>
+              <button (click)="tongleImage()" class="btn btn-primary">{{showImage ? "Hide" : "Show"}} Image</button>
             </th>
             <th>Product</th>
             <th>Code</th>
@@ -34,7 +34,23 @@
           </tr>
         </thead>
         <tbody>
-
+          <tr *ngFor="let product of filteredProducts">
+            <td> 
+              <img [src]= 'product.imageUrl' 
+                   [title] = "product.productName" 
+                   height="42" width="42" 
+                   [alt] = "product.productName" 
+                   *ngIf="showImage"> 
+            </td>
+            <td>{{product.productName }}</td>
+            <td>{{product.productCode | lowercase | convertToSpace:'-'}}</td>
+            <td>{{product.releaseDate}}</td>
+            <td>{{product.price | currency:'USD' }}</td>
+            <td>
+              <pm-star [rating] = 'product.starRating' (notify)='starNotify($event)'>
+              </pm-star>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
