@@ -385,3 +385,34 @@ class.
                 constructor(private serviceIntance: ServiceClass){}
             }    
 
+
+----------------------------------------------------------------------------------------------------
+    Retrieving Data Using HTTP
+    https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+----------------------------------------------------------------------------------------------------
++ In Angular, we can structure our application to use Observables (Observer pattern) as the backbone 
+of our data architecture. Using Observables to structure our data is called Reactive Programming.
+
++ Reactive programming is programming with asynchronous data streams. A stream is a sequence of on-
+going events ordered in time, it can emit three different things: a value (of some type), an error, 
+or a "completed" signal. We capture these emitted events only asynchronously, by defining a function 
+that will execute when a value is emitted, another function when an error is emitted, and another 
+function when 'completed' is emitted.
+
++ The "listening" to the stream is called Observers. The "emitting" of the stream is called subject 
+(or Observable).
+
++ Sending HTTP request:
+    1. Import HttpClientModule from @angular/common/http to app.module.ts so we can inject Angular
+    HTTP service to any class that need.
+    2. Inject http as dependency to required class in the constructor so Angular provides an instance 
+    of the HTTP client service:
+        import HttpClient from '@angular/common/http'
+        ...
+        export class ProductServive{
+            constructor(private http: HttpClientModule) {}
+            ...
+            this.http.get(this.productURL);
+            ...
+        }
+    3. 
