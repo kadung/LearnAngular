@@ -14,8 +14,14 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     console.log("Initalize action !!!");
-    this.products = this.productService.getProduct();
-    this.filteredProducts = this.products;
+    this.productService.getProduct().subscribe(
+      products => {
+        this.products = products;
+        this.filteredProducts = this.products;
+      },
+      error => this.errorMessage = error
+    );
+    
   }
 
   pageTitle: String = "Product list";
@@ -26,6 +32,7 @@ export class ProductListComponent implements OnInit {
 
   filteredProducts: IProduct[];
   products: IProduct[] = []
+  errorMessage: string;
 
   _listFilter: string;
   get listFilter(): string{
