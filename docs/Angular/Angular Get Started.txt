@@ -459,3 +459,21 @@ function when 'completed' is emitted.
 ----------------------------------------------------------------------------------------------------
     Routing
 ----------------------------------------------------------------------------------------------------
++ Angular appllication is single page application. That means all of our views are displayed in one 
+page, normally defined in index.html. So routing manages when and which view to display in the single
+page at that time.
+
++ Angular appllication has one router that is managed by Angular router service, it is RouterModule
+from @angular/router
+
++ How routing works:
+    - Routing is component based so we identify the set of components that we want to provide as 
+    routing target and define a route for each one.
+    - Define option(hyperlink, picture , ...) or action (button click, ...) that allow the user to 
+    select the view to display.
+    - Tie that route to each option/action so when user select the option or perform the action, the 
+    associated route is activated and the view of that component is displayed.
+
++ Configuring Routes:
+    - Register route service by adding RouterModule to import array of app.module.ts
+    - 
