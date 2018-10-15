@@ -475,5 +475,12 @@ from @angular/router
     associated route is activated and the view of that component is displayed.
 
 + Configuring Routes:
-    - Register route service by adding RouterModule to import array of app.module.ts
+    - Register route service by adding RouterModule to import array and add routes ti RouterModule
+    in app.module.ts as:
+        imports: [
+            // [] is array of routes
+            // set to true if use hash style r
+            RouterModule.forRoot([],)
+        ]
+
     - 
