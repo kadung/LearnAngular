@@ -475,12 +475,28 @@ from @angular/router
     associated route is activated and the view of that component is displayed.
 
 + Configuring Routes:
-    - Register route service by adding RouterModule to import array and add routes ti RouterModule
-    in app.module.ts as:
+    - Register route service by adding RouterModule to import array in app.module.ts as:
         imports: [
-            // [] is array of routes
-            // set to true if use hash style r
-            RouterModule.forRoot([],)
+            // [] is the array of root routes of our application
+            // Set useHash: true if use hash style routes instead of HTML5 style routes
+            RouterModule.forRoot([], {useHash: false})
         ]
-
-    - 
+    - Add route definition in routes array of RouterModule, each route requires a path and an 
+    associated component. 
+        - A path defines the URL path segment, when the route is activated, this URL path segment 
+        is appended to the URL of the application (No need to use leading splash in path segment)
+        - Associated component's template is displayed when the route is acctivated
+        - The route will be matched from the top to the botom the route array, so we should put
+        the general routes at the bootom of the routes array.
+        - Example:
+            [
+                // Match URL myWeb.com/welcome to display welcome component template
+                { path: 'welcome'. component: WelcomeComponent },
+                // :id is parameter of the route
+                { path: 'products/:id', component: ProductDetailComponent },
+                // Define default route, redirect to myWeb.com/welcome
+                { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+                // Define wildcard route, if no route matchs then display Page Not Found 
+                // Component template
+                { path: '**', component: PageNotFoundComponent}
+            ]
