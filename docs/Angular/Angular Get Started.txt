@@ -500,3 +500,7 @@ from @angular/router
                 // Component template
                 { path: '**', component: PageNotFoundComponent}
             ]
+    - Step to configure a route:
+        - Define a base element in a head tag of index.html file in root app folder. This element 
+        tells the router how to compose the navigation URLs
+            <base href="/">
