@@ -1,0 +1,47 @@
+Ref:
+    1. 
+
+----------------------------------------------------------------------------------------------------
+    Angular module
+----------------------------------------------------------------------------------------------------
++ Angular module is a class with an NgModule decorator use to:
+    - Organize and arrange the application into cohesive blocks of functionality
+    - Extend the application with capabilities from external library
+    - Provide the environment for resolving the directive pipes in components's templates 
+
++ An Angular application has at least one Angular module called root application module or AppModule, 
+and at least one Angular component called the root application component or AppComponent.
+
+
+----------------------------------------------------------------------------------------------------
+    Bootstrap Array
+----------------------------------------------------------------------------------------------------
++ The bootstrap array of the NgModule decorator defines the component that is the starting point of
+the application. This is the component that provides the directive used in index.html when the 
+application is launched.
+
++ Every application must bootstrap at least one component, the root application component by adding
+the component in bootstrap array of root application module.
+
++ The bootstrap array should only be used in the root application module aka AppModule.
+
+
+----------------------------------------------------------------------------------------------------
+    Delaration Array
+---------------------------------------------------------------------------------------------------- 
++ The delaration array of the NgModule decorator defines the components, directives, and pipes that
+is created by us and used in this Angular application.
+
++ Every components, directives and pipes which is created by us must belong to one and only one
+Angular module. 
+
++ Never add any other classes, services or modules to delaration array.
+
++ All components, directives and pipes are private by default, they are only accessible to other 
+components, directives and pipes declared in the same module. If you want to use it across multiple
+module, use export array.
+
+
+----------------------------------------------------------------------------------------------------
+    Export Array
+---------------------------------------------------------------------------------------------------- 

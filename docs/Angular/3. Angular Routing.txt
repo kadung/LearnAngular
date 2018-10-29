@@ -160,3 +160,7 @@ for the parameter. If multiple parameter are need, we repeat that syntax:
         RouterModule.forRoot([
             { path: 'products/:id', canActivate: [ComponentGuardClass], component: [ComponentClass] }
         ])
+
+----------------------------------------------------------------------------------------------------
+    Lazy loading
+----------------------------------------------------------------------------------------------------
