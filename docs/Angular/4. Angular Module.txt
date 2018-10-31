@@ -14,9 +14,9 @@ and at least one Angular component called the root application component or AppC
 
 
 ----------------------------------------------------------------------------------------------------
-    Bootstrap Array
+    Bootstraps Array
 ----------------------------------------------------------------------------------------------------
-+ The bootstrap array of the NgModule decorator defines the component that is the starting point of
++ The Bootstraps array of the NgModule decorator defines the component that is the starting point of
 the application. This is the component that provides the directive used in index.html when the 
 application is launched.
 
@@ -27,9 +27,9 @@ the component in bootstrap array of root application module.
 
 
 ----------------------------------------------------------------------------------------------------
-    Delaration Array
+    Delarations Array
 ---------------------------------------------------------------------------------------------------- 
-+ The delaration array of the NgModule decorator defines the components, directives, and pipes that
++ The Delarations array of the NgModule decorator defines the components, directives, and pipes that
 is created by us and used in this Angular application.
 
 + Every components, directives and pipes which is created by us must belong to one and only one
@@ -43,5 +43,27 @@ module, use export array.
 
 
 ----------------------------------------------------------------------------------------------------
-    Export Array
----------------------------------------------------------------------------------------------------- 
+    Exports Array
+----------------------------------------------------------------------------------------------------
++ The Exports array of the ngModule decorator allows us to share an Angular module's components, 
+directives and pipes with other modules. Other modules can use any thing inside export array when 
+they import that module.
+
++ A module can export @angular module, 3rd party module, and itself.
+
++ When a module exports itself, it will export all components, directives, and pipes inside it. This 
+is useful when consolidating features for multiple modules to build a shared module.
+
++ We can add anything to export array without importing it first. An Angular module only needs to 
+import components, directives, and pipes that are required by the components declared in the module
+. For example, a ShareModule exports the FormModule even though it did not import it, so any
+module that import ShareModule will have access to the ngModel and other form directives
+
++ Never export a service 
+
+
+----------------------------------------------------------------------------------------------------
+    Imports Array
+----------------------------------------------------------------------------------------------------
++ An Angular module can be extended by importing capabilities from other Angular module. The Imports 
+array of the ngModule decorator allows to import supporting modules that export

@@ -3,7 +3,7 @@
   <ul>
     <li><a href="#">{{title}}</a></li>
     <li><a [routerLink]="['/welcome']">Welcome</a></li>
-    <li><a [routerLink]="['/products']">Products</a></li>
+    <li><a [routerLink]="['/products']" [queryParams]="{showImage: true}">Products</a></li>
   </ul>
 </div>
 <div class="container">

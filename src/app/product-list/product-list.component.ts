@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {IProduct} from '../service/product'
 import { ProductServive } from '../service/product.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'pm-products',
@@ -9,11 +10,14 @@ import { ProductServive } from '../service/product.service';
 })
 export class ProductListComponent implements OnInit {
   
-  constructor(private productService: ProductServive) {
+  constructor(private productService: ProductServive,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit() {
     console.log("Initalize action !!!");
+    this.showImage = !!this.route.snapshot.queryParamMap.get('showImage');
+    console.log(this.showImage);
     this.productService.getProduct().subscribe(
       products => {
         this.products = products;
@@ -26,7 +30,7 @@ export class ProductListComponent implements OnInit {
 
   pageTitle: String = "Product list";
 
-  showImage:boolean = false;
+  showImage:boolean;
   imageWidth:number = 50;
   imageMargin:number = 2;
 

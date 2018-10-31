@@ -1,5 +1,5 @@
 Ref:
-    1. 
+    1. https://angular.io/api/router/RouterLink
 
 ----------------------------------------------------------------------------------------------------
     Routing in Angular
@@ -88,12 +88,19 @@ for the parameter. If multiple parameter are need, we repeat that syntax:
         {{product.name}}
     </a>
 
++ Below example routing URL is /products/1#education?showImage=true (assume productId is 1)
+    <a [routerLink]="['/products', product.productId]" [queryParams]="{showImage: true}" 
+    fragment="education">
+        Link to user component
+    </a>
+
 + To reading parameter from a route (URL), we use the ActivatedRoute service:
     // Component which need to read the URL
     import { ActivatedRoute } from '@angular/router'
     ...
         constructor(private route: ActivatedRoute){
-            console.log(this.route.snapshot.paramMap.get('id');
+            console.log(this.route.snapshot.paramMap.get('id');                 // 1
+            console.log(this.route.snapshot.queryParamMap.get('showImage'));    // true
         }
 
 ----------------------------------------------------------------------------------------------------
