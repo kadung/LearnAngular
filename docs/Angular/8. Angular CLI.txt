@@ -4,8 +4,8 @@
 ---------------------------------------------------------------------------------------------------
     Overview
 ---------------------------------------------------------------------------------------------------
-- The Angular CLI is a tool to initialize, develop, scaffold and maintain Angular applications
-- To install the Angular CLI:
++ The Angular CLI is a tool to initialize, develop, scaffold and maintain Angular applications
++ To install the Angular CLI:
     npm install -g @angular/cli
 
 ---------------------------------------------------------------------------------------------------

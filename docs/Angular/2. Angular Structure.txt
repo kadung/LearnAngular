@@ -49,7 +49,7 @@ maybe different analytics tokens. You might even use some mock services.
 
 + browserslist: A configuration file to share target browsers between different front-end tools.
 
-+ favicon.ico: Title or bookmark icon.
++ favicon.ico: Title or bookmark icon of the website.
 
 + index.html: The main HTML page that is served when someone visits your site. Most of the time you'll 
 never need to edit it. The CLI automatically adds all js and css files when building your app so you 

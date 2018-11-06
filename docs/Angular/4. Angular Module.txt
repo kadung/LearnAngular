@@ -66,4 +66,68 @@ module that import ShareModule will have access to the ngModel and other form di
     Imports Array
 ----------------------------------------------------------------------------------------------------
 + An Angular module can be extended by importing capabilities from other Angular module. The Imports 
-array of the ngModule decorator allows to import supporting modules that export
+array of the ngModule decorator allows to import supporting modules that export components, directives, 
+and pipes. We then can use those exported components, directives and pipes within the template of
+components that are declared in this module.
+
++ Many Angular libraries and 3rd party libraries are modules, we can import these modules to use its 
+capabilities.
+
++ We can separate out our route configuration into its own module or set of modules and import that.
+
++ Import is not inherited. If A impport B and B import C, then C cannot use A, if B export A then
+C can use A.
+
+
+----------------------------------------------------------------------------------------------------
+    Providers Array
+----------------------------------------------------------------------------------------------------
++ Angular module can register service providers for the application, but it is not recommended this
+way anymore, Angular 6 recommend to use provideIn in the Injectable decorator instead.
+
++ Any service providers added to providers array is registered at the root of the application, so the
+services are available to inject to any class in the application.
+
++ Don't add services to providers array of share modules. Instead, consider to build a core module
+for services and importing it once in the AppModule, this will ensure the services are only registered
+one time.
+
+
+----------------------------------------------------------------------------------------------------
+    Feature module
+----------------------------------------------------------------------------------------------------
++ A feature module is an organizational best practice, as opposed to a concept of the core Angular 
+API. A feature module delivers a cohesive set of functionality focused on a specific application need 
+such as a user workflow, routing, or forms. 
+
++ While you can do everything within the root module, feature modules help you partition the app into 
+focused areas. 
+
++ A feature module collaborates with the root module and with other modules through the services it 
+provides and the components, directives, and pipes that it shares.
+
++ How to make a feature module:
+    - Create an module in a feature component:
+        // create new module file in new folder as the path
+        ng g m [path]/[new_module_name]
+        // create new module file in path folder
+        ng g m [path]/[new_module_name] --flat  
+        // create new module file in new folder as the path and import this module to module file to 
+        // existed module file in via that path to that file
+        ng g m [path]/[new_module_name] -m [path_to_imported_module]   
+                                        
+    - Add all components in delaration array which we want to use in this module only
+    - Add required 3rd or angular libraries in import array
+    - Add RouterModule.forChild([]) to declare routing for feature module components
+
+
+----------------------------------------------------------------------------------------------------
+    Shared module
+----------------------------------------------------------------------------------------------------
++ A shared module is to organize a set of commonly uses pieces into one module and export those 
+pieces so they are available to any module that import it. 
+
++ How to make a shared module:
+    - Add components, directives and pipes that we want to share through out the application to the
+    delarations array
+    - Export everything that we want to share in export array
