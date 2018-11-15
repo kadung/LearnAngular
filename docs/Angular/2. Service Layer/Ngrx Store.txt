@@ -2,16 +2,66 @@ Ref:
     1. 
 
 -------------------------------------------------------------------------------------------------------
-    Introduction
--------------------------------------------------------------------------------------------------------
-+
-
-
-
--------------------------------------------------------------------------------------------------------
     The Redux Pattern
 -------------------------------------------------------------------------------------------------------
-+ 
++ Redux pattern is a way to implement a predictable state container for Javascript app.
+
++ Redux pattern makes it easy to manage the state of your application by providing a one way data flow
+through out the application
+
++ Redux princibles:
+    - There is one single source of truth for application state called the Store.
+    - State is read only and the only way to change State is to dispatch an Action.
+    - Changes to the store are made using pure functions called Reducers.
+
++ State is entity data which is retrieved from backend server or the data from user inputs.
+
++ Store:
+    - It is a Javascript object that holds all of application state, it is similar to a client side 
+    database.
+    - You do not have to put every piece of state in the store, expecially:
+        . Unshared state that is solely owned by a single component that does not need to be shared
+        oor made available across routes
+        . Angular forms don't belong in the store as they are usually self contained and do not need
+        to be shared across multiple component, Angular forms also are not serializable or immutable 
+        and can change themself meaning you will not be able to track those changes with actions
+        . State that has cycles in it or has complex data structure that cannot be serialized, for
+        example, the router state
+
++ Action is simple Javascript objects with a type as a string and an optional payload that can be any 
+type. 
+    - All relevant user events are dispatched as actions, effecting reducers who update the store.
+    - If you need to change the state of the store, then repalce the whole state object and not just
+    mutate part of it.
+    - Example action:
+        {
+            type: 'LOGIN',
+            payload: {username: 'Duncan', password: 'secrect'}
+        }
+
++ Reducer is a pure function, accepting two arguments the previous state and an action dispatched to 
+update state. Reducer use switch statements to listen and act on specific action types, talking the 
+action payload and state and returning a new state.
+    - Not all dispatched actions can directly update the store via a reducer as some actions have side
+    effects. To manage side effect , we use the NgRx Effects library.
+    - A pure function is a function which returns consistent results and does not mutate or access any
+    properties outside of their function scope. For example:
+        . Pure fucntion:
+            function sum(a, b){
+                return a + b;
+            }
+        . Impure fucntion:
+            let c = 1;
+            function sum(a, b){
+                return a + b + c;
+            } 
+    - Example reducer:
+        function reducer(state, action){
+            switch (action.type){
+                case 'login':
+                return users:[...state.users, action.payload]
+            }
+        }
 
 
 -------------------------------------------------------------------------------------------------------
