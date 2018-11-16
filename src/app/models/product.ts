@@ -8,3 +8,12 @@ export interface IProduct{
     starRating: number
     imageUrl: String
 }
+
+/* Defines the product entity */
+export interface Product {
+    id: number | null;
+    productName: string;
+    productCode: string;
+    description: string;
+    starRating: number;
+}

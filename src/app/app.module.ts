@@ -6,22 +6,27 @@ import { RouterModule} from '@angular/router'
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './home/welcome.component';
 import { ProductModule } from './products/product.module';
+import { appRoutes } from './app.routes';
+import { ProductNgRxModule } from './products-ngrx/product.module';
+import { PageNotFoundComponent } from './home/page-not-found.component';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { ProductData } from './products-ngrx/product-data';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot([
-      { path: 'welcome', component: WelcomeComponent },
-      { path: '', redirectTo: 'welcome', pathMatch: 'full' },
-      { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
-    ], 
-    {useHash: false}),
-    ProductModule
+    RouterModule.forRoot(appRoutes, {useHash: false}),
+    ProductModule,
+    ProductNgRxModule,
+    HttpClientInMemoryWebApiModule.forRoot(ProductData),
+    StoreModule.forRoot({})
   ],
   bootstrap: [AppComponent]
 })
