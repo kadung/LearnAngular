@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {IProduct} from '../models/product'
+import { Product } from '../models/product';
 import { ProductServive } from '../products/product.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -17,7 +17,7 @@ export class ProductListComponent implements OnInit {
   ngOnInit() {
     console.log("Initalize action !!!");
     this.showImage = !!this.route.snapshot.queryParamMap.get('showImage');
-    console.log(this.showImage);
+    console.log("Show image: " + this.showImage);
     this.productService.getProduct().subscribe(
       products => {
         this.products = products;
@@ -34,8 +34,8 @@ export class ProductListComponent implements OnInit {
   imageWidth:number = 50;
   imageMargin:number = 2;
 
-  filteredProducts: IProduct[];
-  products: IProduct[] = []
+  filteredProducts: Product[];
+  products: Product[] = []
   errorMessage: string;
 
   _listFilter: string;
@@ -47,9 +47,9 @@ export class ProductListComponent implements OnInit {
     this.filteredProducts = this._listFilter ? this.performFilter(this._listFilter) : this.products;
   }
 
-  performFilter(filteredBy: string): IProduct[] {
+  performFilter(filteredBy: string): Product[] {
     filteredBy = filteredBy.toLowerCase();
-    return this.products.filter((product: IProduct) => product.productName.toLowerCase()
+    return this.products.filter((product: Product) => product.productName.toLowerCase()
             .indexOf(filteredBy)!== -1);
   }  
 

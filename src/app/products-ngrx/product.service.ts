@@ -40,8 +40,11 @@ export class ProductService {
       id: 0,
       productName: '',
       productCode: 'New',
+      releaseDate:'',
       description: '',
-      starRating: 0
+      price: 0,
+      starRating: 0,
+      imageUrl: ''
     };
   }
 

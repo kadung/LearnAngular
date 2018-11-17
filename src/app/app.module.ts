@@ -10,7 +10,7 @@ import { appRoutes } from './app.routes';
 import { ProductNgRxModule } from './products-ngrx/product.module';
 import { PageNotFoundComponent } from './home/page-not-found.component';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { ProductData } from './products-ngrx/product-data';
+import { ProductData } from './api/product-data';
 import { StoreModule } from '@ngrx/store';
 
 @NgModule({
