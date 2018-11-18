@@ -16,32 +16,36 @@ through out the application
 
 + State is entity data which is retrieved from backend server or the data from user inputs.
 
-+ Store:
-    - It is a Javascript object that holds all of application state, it is similar to a client side 
-    database.
-    - You do not have to put every piece of state in the store, expecially:
-        . Unshared state that is solely owned by a single component that does not need to be shared
-        oor made available across routes
-        . Angular forms don't belong in the store as they are usually self contained and do not need
-        to be shared across multiple component, Angular forms also are not serializable or immutable 
-        and can change themself meaning you will not be able to track those changes with actions
-        . State that has cycles in it or has complex data structure that cannot be serialized, for
++ Store provides the single source of truth for the application. It is the one place that holds all of 
+application state, this ensures that every component that accesses the state has a consistency results.
+You do not have to put every piece of state in the store, expecially:
+    - Unshared state that is solely owned by a single component that does not need to be shared
+    or made available across routes
+    - Angular forms don't belong in the store as they are usually self contained and do not need
+    to be shared across multiple component, Angular forms also are not serializable or immutable 
+    and can change themself meaning you will not be able to track those changes with actions
+    - State that has cycles in it or has complex data structure that cannot be serialized, for
         example, the router state
 
-+ Action is simple Javascript objects with a type as a string and an optional payload that can be any 
-type. 
-    - All relevant user events are dispatched as actions, effecting reducers who update the store.
-    - If you need to change the state of the store, then repalce the whole state object and not just
++ Action presents the response to an event from a user which contain a type as a string and an 
+optional payload that can be any type. 
+    - All relevant user events are dispatched as actions, effecting reducers who update the store. 
+    - If you need to change the state of the store, then replace the whole state object and not just
     mutate part of it.
     - Example action:
         {
             type: 'LOGIN',
-            payload: {username: 'Duncan', password: 'secrect'}
+            payload: {
+                username: 'Duncan', 
+                password: 'secrect'
+            }
         }
 
-+ Reducer is a pure function, accepting two arguments the previous state and an action dispatched to 
-update state. Reducer use switch statements to listen and act on specific action types, talking the 
-action payload and state and returning a new state.
++ Reducer responds to dispatched actions and replace the slice of state with new one based on action 
+payload
+    - Reducer is a pure function, accepting two arguments the previous state and an action dispatched 
+    to update state. Reducer use switch statements to listen and act on specific action types, talking 
+    the action payload and state and returning a new state.
     - Not all dispatched actions can directly update the store via a reducer as some actions have side
     effects. To manage side effect , we use the NgRx Effects library.
     - A pure function is a function which returns consistent results and does not mutate or access any
@@ -55,26 +59,131 @@ action payload and state and returning a new state.
             function sum(a, b){
                 return a + b + c;
             } 
-    - Example reducer:
-        function reducer(state, action){
-            switch (action.type){
-                case 'login':
-                return users:[...state.users, action.payload]
+
+
+-------------------------------------------------------------------------------------------------------
+    NgRx Store
+-------------------------------------------------------------------------------------------------------
++ NgRx Store is the library which provides reactive state management for Angular apps inspired by Redux.
+
++ Store is a simple Javascript object contained all application state, each bit of the state is defined 
+with a property, think of it as a client side database. Store is runtime only, so the state is not 
+retained if user refreshes the page or exits the app.
+
++ Angular app often organized into feature module, so State in Store should be organized by feature
+called feature module state composition. 
+
++ Each feature state is added to the application state once the feature is loaded, and called slices.
+For example:
+    {                                                                               |
+        app: {                              |                                       |
+            showImage: true,                |=> app slide (app module)              |
+            pageTitle: 'ABC'                |                                       |
+        },                                                                          |
+        products: {                         |                                       |
+            productList: {                  |                                       |
+                showProductCode: true       |                                       |=> Store
+            },                              |=> products slice (products module)    |
+            productData: {                  |                                       |
+                products: [...],            |                                       |
+                productType: [...]          |                                       |
+            }                                                                       |
+        },                                                                          |
+        ...                                                                         |
+    }
+
++ Steps:
+    1. Initialize Store with feature module state composition:
+        - Initialize root application state in root app module by calling forRoot which takes according 
+        reducer:
+            imports: [
+                StoreModule.forRoot({'app', appReducer})
+                ...
+            ]
+        - Initialize each feature state in feature app module by calling forFeature which takes in the name
+        of :
+            imports: [
+                StoreModule.forFeature('products', productReducer)
+                ...
+            ]
+        - We can break a reducer to smaller pieces for one feature slice:
+            imports: [
+                StoreModule.forFeature('products', 
+                    // Set of reducers for this slice as key and value pair
+                    // The key is the name for each sub-slice of state
+                    // The value is the reference to its reducers
+                    {
+                        productList: listReducer,
+                        productData: dataReducer
+                    }
+                )
+                ...
+            ]
+
+    2. Create a reducer to process action:
+        - Create a reducer file in coresponding feature module.
+        - Example reducer file include below function:
+            function reducer(state, action){
+               switch (action.type){
+                    case 'login':
+                        // ... is Javascript shorthand for Object.assign which mean create a new copy of 
+                        // of provided object
+                        return users:[...state.user, action.payload]
+                    default:
+                        return state;
+                }
             }
-        }
+        
+    3. Dispatching an Action to Change State:
+        - Before dispatch an action from a component, we must inject the Store into that component just 
+        like any services using the constructor of that component:
+            constructor(private store: Store<any>) {}
+        - Then we can dispatch an action by calling Store's dispatch method. 
+            checkChanged(value: boolean): void {
+                this.store.dispatch({
+                    'type': 'TOGGLE_PRODUCT_CODE',
+                    'payload': value
+                })
+            }
 
-
--------------------------------------------------------------------------------------------------------
-    NgRx
--------------------------------------------------------------------------------------------------------
-+ 
+    4. Subscribing to the Store to Get State Changes:
+        - Subscribing to the Store often done in ngOnInit lifecycle hook. This provides any current 
+        store value when the component is initialized and starts watching for change notification
+        - To access a value in the store, we select the apporociated slice in state using the Store's
+        select method and specifying the name of desired slice. 
+            this.store.select('products');
+        Or since the NgRx Store is an Observable, we can use pipe method and the select operator. The 
+        benefit of pipe syntax is that we readily add other pipeable operators as needed.
+            this.store.pipe(select('products'));
+        - The NgRx select method returns a slice of state as an Observable. If we want the component to
+        be notified of changes to the state, we subscribe to this observable in the component:
+            this.store.pipe(select('products')).subscribe(
+                // This is the next function which is executed each time it receives the next change 
+                // notification from the store. So each time an action causes the reducer to replace
+                // the state and showProductCode is changed, this component is notified and this code
+                // is executed
+                product => this.displayCode = products.showProductCode
+            );
 
 
 -------------------------------------------------------------------------------------------------------
     Tools and Debugging
 -------------------------------------------------------------------------------------------------------
-+ 
++ Redux Store DevTools are the tools for visual analysis and debugging.
 
++ Install Redux Store DevTools in 3 steps:
+    1. Install Chrome browser Redex DevTools extension.
+    2. Install @ngrx/store-devtools package to the application.
+        npm install @ngrx/store-devtools
+    3. Initialize @ngrx/store-devtools in the root module.
+        imports: [
+            StoreDevtoolsModule.instrument({
+                name: 'Demo App',
+                maxAge: 25,
+                logOnly: environment.production
+            })
+            ...
+        ]
 
 
 -------------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductServive } from './product.service';
-import { IProduct } from '../models/product';
+import { Product } from '../models/product';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class ProductDetailComponent implements OnInit {
   pageTitle: string = 'Product Detail ';
-  product:IProduct;
+  product:Product;
 
   constructor(private route: ActivatedRoute,
               private router: Router) { }
@@ -18,7 +18,7 @@ export class ProductDetailComponent implements OnInit {
     let id = this.route.snapshot.paramMap.get('id');
     this.pageTitle += id;
     this.product = {
-      "productId": 1,
+      "id": 1,
       "productName": "Leaf Rake",
       "productCode": "GDN-0011",
       "releaseDate": "March 19, 2016",

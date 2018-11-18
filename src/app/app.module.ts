@@ -12,6 +12,8 @@ import { PageNotFoundComponent } from './home/page-not-found.component';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { ProductData } from './api/product-data';
 import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment.prod';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,12 @@ import { StoreModule } from '@ngrx/store';
     ProductModule,
     ProductNgRxModule,
     HttpClientInMemoryWebApiModule.forRoot(ProductData),
-    StoreModule.forRoot({})
+    StoreModule.forRoot({}),
+    StoreDevtoolsModule.instrument({
+      name: 'Demo App',
+      maxAge: 25,
+      logOnly: environment.production
+    })
   ],
   bootstrap: [AppComponent]
 })

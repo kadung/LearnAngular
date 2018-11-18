@@ -7,6 +7,7 @@ import { ProductService } from '../product.service';
 
 /* NgRx */
 import { Store, select } from '@ngrx/store';
+import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
   selector: 'pm-product-list',
