@@ -123,12 +123,22 @@ For example:
     2. Create a reducer to process action:
         - Create a reducer file in coresponding feature module.
         - Example reducer file include below function:
-            function reducer(state, action){
-               switch (action.type){
-                    case 'login':
+            // Default value for the state
+            const initialState: any = {
+                showProductCode: true,
+                currentProduct: null,
+                products: []
+            }
+            // Reducer function
+            export function reducer(state = initialState, action) {
+                switch (action.type) {
+                    case 'TOGGLE_PRODUCT_CODE':
+                    return {
                         // ... is Javascript shorthand for Object.assign which mean create a new copy of 
                         // of provided object
-                        return users:[...state.user, action.payload]
+                        ...state,
+                        showProductCode: action.payload
+                    };
                     default:
                         return state;
                 }
@@ -162,9 +172,19 @@ For example:
                 // notification from the store. So each time an action causes the reducer to replace
                 // the state and showProductCode is changed, this component is notified and this code
                 // is executed
-                product => this.displayCode = products.showProductCode
+                products => this.displayCode = products.showProductCode
             );
 
++ Selector is a resuable query of the Store.
+    - The component uses the Selector to select state from the Store, adding a level of abstraction 
+    between the Store structure and the component. 
+    - Benefit of Selector:
+        . Decouple the Store and the component so any components, which access the state, doesn't need 
+        to update when the Store is changed (re-organize or split up)
+        . Selector can encapsulate complex data transformation, make it easier for the component to
+        obtain the complex data
+        . Selector is resuable
+        . Selectors are memorized 
 
 -------------------------------------------------------------------------------------------------------
     Tools and Debugging
@@ -189,7 +209,16 @@ For example:
 -------------------------------------------------------------------------------------------------------
     Strongly Typing the State
 -------------------------------------------------------------------------------------------------------
-+ 
++ State is organized into feature slices to keep the state associated with its feature module and makes
+it easier to find and manage the state.
+
++ For each slice of state, we define an interface that describes the structure of that slice, then we
+compose an global interface from all slice interfaces. This global interface defines entire state tree
+of the application.
+
++ Feature slice interface should define in feature module reducer.
+
++ Global interface should define in a folder under app folder.
 
 
 -------------------------------------------------------------------------------------------------------
