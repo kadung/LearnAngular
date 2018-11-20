@@ -174,17 +174,59 @@ For example:
                 // is executed
                 products => this.displayCode = products.showProductCode
             );
+        Note that: we should use selector as below section instead of hardcode string
 
+-------------------------------------------------------------------------------------------------------
+    Selector
+-------------------------------------------------------------------------------------------------------
 + Selector is a resuable query of the Store.
-    - The component uses the Selector to select state from the Store, adding a level of abstraction 
-    between the Store structure and the component. 
-    - Benefit of Selector:
-        . Decouple the Store and the component so any components, which access the state, doesn't need 
-        to update when the Store is changed (re-organize or split up)
-        . Selector can encapsulate complex data transformation, make it easier for the component to
-        obtain the complex data
-        . Selector is resuable
-        . Selectors are memorized 
+
++ The component uses the Selector to select state from the Store, adding a level of abstraction between
+the Store structure and the component which brings some benefits as:
+    - Decouple the Store and the component so any components, which access the state, doesn't need to 
+    update when the Store is changed (re-organize or split up)
+    - Selector can encapsulate complex data transformation, make it easier for the component to obtain 
+    the complex data
+    - Selector is resuable and memorized 
+    
++ Building a selector:
+    1. Define the interface data type for feature slice:
+        interface ProductState {
+            showProductCode: boolean,
+            currentProduct: Product,
+            products: Product[]
+        }
+    2. Create the feature selector with defined data type with createFeatureSelector method:
+        const getProductFeatureState = createFeatureSelector<ProductState>('products');
+    3. Export any properties as needed with createSelector method:
+        export const getShowProductCode = createSelector(
+            // First argument is the selector required to retrieve the desired bit of state
+            getProductFeatureState,
+            // Second argument is projector function which gets the result of selector function (state)
+            // and manipulates the result as needed to return the desired property value
+                state => state.showProductCode
+            );
+    Note that: the order of these constants matters, each constant must be after any constant it 
+    reference
+    4. Using Selector:
+        import * as ProductState from '../reducer/product.reducer'
+        ...
+        this.store.pipe(select(ProductState.getShowProductCode)).subscribe(
+            showProductCode => this.displayCode = showProductCode  
+        );
+
++ We can compose multiple selectors to build a single selector, 
+    const getProductFeatureState = createFeatureSelector<ProductState>('products');
+    export const getCurrentProductCode = createSelector(
+        getProductFeatureState,  
+        state => state.currentProductCode
+    );
+    export const getCurrentProduct = createSelector(
+        getProductFeatureState,
+        getCurrentProductCode,
+        (state, currentProductCode) => state.products.find(p => p.id === currentProductCode)
+    );
+
 
 -------------------------------------------------------------------------------------------------------
     Tools and Debugging
@@ -224,7 +266,10 @@ of the application.
 -------------------------------------------------------------------------------------------------------
     Strongly Typing Actions with Action Creators
 -------------------------------------------------------------------------------------------------------
-+ 
++ Strongly typing actions with action creators involes three steps:
+    1. Define the action types as named constants
+    2. Build the action creators
+    3. Define a union type for those action creators
 
 
 
