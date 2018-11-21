@@ -267,9 +267,45 @@ of the application.
     Strongly Typing Actions with Action Creators
 -------------------------------------------------------------------------------------------------------
 + Strongly typing actions with action creators involes three steps:
-    1. Define the action types as named constants
-    2. Build the action creators
-    3. Define a union type for those action creators
+    1. Define the action types as enum constants
+        - Since action type is strings, we can define a set of valid action type using Enum.
+        - As convention, the enum file name will base on the feature name.
+        - Each action type is enum constant where its name begins with an action verb, such as tongle, 
+        set, vv, and it is assigned to apporociated string (this string shows up in the DevTools).
+        - As convention, assigned string may include below items:
+            . The name of affected slice of state by the action
+            . The name of the page or API that dispatch the action
+            . The action type name 
+        - The enum may stay in the same folder with feature module reducer.
+        - For example:
+            export enum ProductActionType {
+                TongleProductCode =  '[Product ProductNg_List Tongle Product Code',
+                SelectAProduct = '[Product ProductNg_List Select A Product'
+            }
+
+    2. Build the action creator for each action:
+        - An action creator expresses an action as a simple class with two properties, a type and a
+        payload.
+        - As convention, the name of the class is the same with the action type constant in enum file.
+        - To define a class as an action:
+            . Implement the Action interface in the NgRx library
+            . Define type property as read only so it will never change and assign it to enum constant
+            . Define payload property in the constructor 
+        - For example:
+            // Build the action creator for each action
+            export class TongleProductCode implements Action {
+                readonly type = ProductActionType.TongleProductCode;
+                constructor (public payload: boolean) {}
+            }
+
+    3. Define a union type for those action creators:
+        - A union type describes a value that can be one of several types. We use the vertical bar (|) 
+        to separate each type, so number | string | boolean is the type of a value that can be a number, 
+        a string, or a boolean.
+        - Union type for all action creators will consolidate all type(class) from each action creator 
+        in one file to a single type
+        - As convention, the name of the type is same as enum file name.
+         
 
 
 
