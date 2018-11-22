@@ -305,6 +305,11 @@ of the application.
         - Union type for all action creators will consolidate all type(class) from each action creator 
         in one file to a single type
         - As convention, the name of the type is same as enum file name.
+        - For example:
+            export type ProductActions = TongleProductCode
+                | SetCurrentProduct;
+    
++ 
          
 
 
