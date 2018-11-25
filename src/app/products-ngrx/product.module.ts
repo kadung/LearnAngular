@@ -9,7 +9,7 @@ import { ProductEditComponent } from './product-edit/product-edit.component';
 
 /* NgRx */
 import { StoreModule } from '@ngrx/store';
-import { reducer } from './reducer/product.reducer';
+import { reducer } from './state/product.reducer';
 import { productRoutes } from './products-ngrx.routes';
 
 @NgModule({

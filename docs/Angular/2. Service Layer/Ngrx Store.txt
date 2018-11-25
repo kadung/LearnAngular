@@ -266,7 +266,7 @@ of the application.
 -------------------------------------------------------------------------------------------------------
     Strongly Typing Actions with Action Creators
 -------------------------------------------------------------------------------------------------------
-+ Strongly typing actions with action creators involes three steps:
++ Building action creators with three steps:
     1. Define the action types as enum constants
         - Since action type is strings, we can define a set of valid action type using Enum.
         - As convention, the enum file name will base on the feature name.
@@ -298,7 +298,7 @@ of the application.
                 constructor (public payload: boolean) {}
             }
 
-    3. Define a union type for those action creators:
+    3. Define an union type for all action creators:
         - A union type describes a value that can be one of several types. We use the vertical bar (|) 
         to separate each type, so number | string | boolean is the type of a value that can be a number, 
         a string, or a boolean.
@@ -309,15 +309,41 @@ of the application.
             export type ProductActions = TongleProductCode
                 | SetCurrentProduct;
     
-+ 
-         
++ Using strongly type action:
+    - We use union type in the reducer to strongly type the action parameter for limit processed actions.
+    - We use enum constant for each case instead of hardcode string:
+        // reducer.ts
+        export function reducer(state = initialState, action: ProductActions) {
+            switch (action.type) {
+                case  ProductActionType.TongleProductCode :
+                return {
+                    ...state,
+                    showProductCode: action.payload
+                };
+                ...
+            }
+        }    
+    - To dispatch an action with action creator, we create new instance of action creator class with a 
+    payload as its new parameter:
+        // component.ts
+        import * as productActions from '../state/product.action'
+        ...
+        checkChanged(value: boolean): void {
+            this.store.dispatch(new productActions.TongleProductCode(value));
+        }
 
-
++ For complex action (CRUD), we should create 3 action types for one action:
+    export enum ProductActionType {
+        Load = '[Product] Load',
+        LoadFail = '[Product] Load Fail',
+        LoadSuccess = '[Product] Load Success'
+        ...
+    }
 
 -------------------------------------------------------------------------------------------------------
     Working with Effects
 -------------------------------------------------------------------------------------------------------
-+ 
++ CRUD 
 
 
 
