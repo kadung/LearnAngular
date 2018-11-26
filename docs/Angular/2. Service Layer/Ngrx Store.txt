@@ -340,10 +340,51 @@ of the application.
         ...
     }
 
+
 -------------------------------------------------------------------------------------------------------
     Working with Effects
 -------------------------------------------------------------------------------------------------------
-+ CRUD 
++ In NgRx context, a side effect is an operation that depends on or interact with an external source,
+such as external state devices, or an API. Rather than having the logic to manage side effect in the 
+component, we can use NgRx Effect library to manage side effects.
+
++ Why we use NgRx Effect library:
+    - It keep the components pure by removing the code that deals with the side effects.
+    - It help isolate side effect to a central place.
+    - It makes easier to test side effects in isolation from the component that use them.
+
++ An Effect (in NgRx Effect library) takes an dispatched action, do something and dispatch a new action.
+
++ Install NgRx Effect library:
+    npm install @ngrx/effects
+
++ Define an Effect:
+    // Create an Angular Service with Injectable decorator on top of a Typescript class
+    @Injectable
+    export class ProductEffect {
+        // Inject the Actions observable from NgRx library and the data prodiver service instances
+        constructor(private actions$: Actions,
+                    private productService: productService) {}
+        
+        // Create an effect by making a variable with effect decorator
+        @Effect()
+        loadProduct$ = this.actions$.pipe(
+            // Indicate specific action type which we want to listen
+            ofType(ProductActionType.Load),
+            // When ever the Load action is dispatched to the effect, then do below
+            mergeMap(action => 
+                // Then call data provider service to get the data from BE
+                this.productService.getProducts().pipe(
+                    // Dispatch new action
+                    map(products => (new LoadSuccess(products)))
+                )
+            )
+        );
+    }
+
++ Note: the $ suffix is an optional convention to show that this variable is an observable to be clear
+about observable and observable value.
+
 
 
 
