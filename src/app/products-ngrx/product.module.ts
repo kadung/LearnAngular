@@ -11,12 +11,15 @@ import { ProductEditComponent } from './product-edit/product-edit.component';
 import { StoreModule } from '@ngrx/store';
 import { reducer } from './state/product.reducer';
 import { productRoutes } from './products-ngrx.routes';
+import { EffectsModule } from '@ngrx/effects';
+import { ProductEffects } from './state/product.effect';
 
 @NgModule({
   imports: [
     SharedModule,
     RouterModule.forChild(productRoutes),
     StoreModule.forFeature('products', reducer),
+    EffectsModule.forFeature([ProductEffects])
   ],
   declarations: [
     ProductShellComponent,

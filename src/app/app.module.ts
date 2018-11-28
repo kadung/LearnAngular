@@ -14,6 +14,7 @@ import { ProductData } from './api/product-data';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment.prod';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { environment } from 'src/environments/environment.prod';
     ProductNgRxModule,
     HttpClientInMemoryWebApiModule.forRoot(ProductData),
     StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       name: 'Demo App',
       maxAge: 25,

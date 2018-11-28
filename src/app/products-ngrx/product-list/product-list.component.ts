@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 import { Product } from '../../data-types/product';
 import { ProductService } from '../product.service';
@@ -24,24 +24,23 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // Used to highlight the selected product in the list
   selectedProduct: Product | null;
   sub: Subscription;
+  products$: Observable<Product[]>;
 
   constructor(private store: Store<any>,
               private productService: ProductService) { }
 
   ngOnInit(): void {
-    // Subscribe for new change when the component is initialize
-    this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
-      currentProduct => this.selectedProduct = currentProduct
-    );
-
-    this.productService.getProducts().subscribe(
-      (products: Product[]) => this.products = products,
-      (err: any) => this.errorMessage = err.error
-    );
+    // Get data from backend and save to store when the component is initialize
+    this.store.dispatch(new productActions.Load);
 
     // TODO: Unsubscribe
+    // Get the required data from store using selector
+    this.products$ = this.store.pipe(select(fromProduct.getProducts));
     this.store.pipe(select(fromProduct.getShowProductCode)).subscribe(
       showProductCode => this.displayCode = showProductCode  
+    );
+    this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
+      currentProduct => this.selectedProduct = currentProduct
     );
   }
 

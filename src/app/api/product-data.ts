@@ -1,6 +1,6 @@
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 
-import { Product } from '../models/product';
+import { Product } from '../data-types/product';
 
 export class ProductData implements InMemoryDbService {
 

@@ -92,7 +92,7 @@ For example:
         ...                                                                         |
     }
 
-+ Steps:
++ Register a Store and slices:
     1. Initialize Store with feature module state composition:
         - Initialize root application state in root app module by calling forRoot which takes according 
         reducer:
@@ -176,57 +176,6 @@ For example:
             );
         Note that: we should use selector as below section instead of hardcode string
 
--------------------------------------------------------------------------------------------------------
-    Selector
--------------------------------------------------------------------------------------------------------
-+ Selector is a resuable query of the Store.
-
-+ The component uses the Selector to select state from the Store, adding a level of abstraction between
-the Store structure and the component which brings some benefits as:
-    - Decouple the Store and the component so any components, which access the state, doesn't need to 
-    update when the Store is changed (re-organize or split up)
-    - Selector can encapsulate complex data transformation, make it easier for the component to obtain 
-    the complex data
-    - Selector is resuable and memorized 
-    
-+ Building a selector:
-    1. Define the interface data type for feature slice:
-        interface ProductState {
-            showProductCode: boolean,
-            currentProduct: Product,
-            products: Product[]
-        }
-    2. Create the feature selector with defined data type with createFeatureSelector method:
-        const getProductFeatureState = createFeatureSelector<ProductState>('products');
-    3. Export any properties as needed with createSelector method:
-        export const getShowProductCode = createSelector(
-            // First argument is the selector required to retrieve the desired bit of state
-            getProductFeatureState,
-            // Second argument is projector function which gets the result of selector function (state)
-            // and manipulates the result as needed to return the desired property value
-                state => state.showProductCode
-            );
-    Note that: the order of these constants matters, each constant must be after any constant it 
-    reference
-    4. Using Selector:
-        import * as ProductState from '../reducer/product.reducer'
-        ...
-        this.store.pipe(select(ProductState.getShowProductCode)).subscribe(
-            showProductCode => this.displayCode = showProductCode  
-        );
-
-+ We can compose multiple selectors to build a single selector, 
-    const getProductFeatureState = createFeatureSelector<ProductState>('products');
-    export const getCurrentProductCode = createSelector(
-        getProductFeatureState,  
-        state => state.currentProductCode
-    );
-    export const getCurrentProduct = createSelector(
-        getProductFeatureState,
-        getCurrentProductCode,
-        (state, currentProductCode) => state.products.find(p => p.id === currentProductCode)
-    );
-
 
 -------------------------------------------------------------------------------------------------------
     Tools and Debugging
@@ -249,7 +198,7 @@ the Store structure and the component which brings some benefits as:
 
 
 -------------------------------------------------------------------------------------------------------
-    Strongly Typing the State
+    Strongly Typing the State (Selector)
 -------------------------------------------------------------------------------------------------------
 + State is organized into feature slices to keep the state associated with its feature module and makes
 it easier to find and manage the state.
@@ -261,6 +210,57 @@ of the application.
 + Feature slice interface should define in feature module reducer.
 
 + Global interface should define in a folder under app folder.
+
++ Selector is a resuable query of the Store.
+
++ The component uses the Selector to select state from the Store, adding a level of abstraction between
+the Store structure and the component which brings some benefits as:
+    - Decouple the Store and the component so any components, which access the state, doesn't need to 
+    update when the Store is changed (re-organize or split up)
+    - Selector can encapsulate complex data transformation, make it easier for the component to obtain 
+    the complex data
+    - Selector is resuable and memorized 
+    
++ Building a selector:
+    1. Define the interface data type for feature slice:
+        interface ProductState {
+            showProductCode: boolean,
+            currentProduct: Product,
+            products: Product[]
+        }
+
+    2. Create the feature selector with defined data type with createFeatureSelector method:
+        const getProductFeatureState = createFeatureSelector<ProductState>('products');
+
+    3. Export any properties as needed with createSelector method:
+        export const getShowProductCode = createSelector(
+            // First argument is the selector required to retrieve the desired bit of state
+            getProductFeatureState,
+            // Second argument is projector function which gets the result of selector function (state)
+            // and manipulates the result as needed to return the desired property value
+                state => state.showProductCode
+            );
+    Note that: the order of these constants matters, each constant must be after any constant it 
+    reference
+
+    4. Using Selector:
+        import * as fromProduct from '../reducer/product.reducer'
+        ...
+        this.store.pipe(select(fromProduct.getShowProductCode)).subscribe(
+            showProductCode => this.displayCode = showProductCode  
+        );
+
++ We can compose multiple selectors to build a single selector, 
+    const getProductFeatureState = createFeatureSelector<ProductState>('products');
+    export const getCurrentProductCode = createSelector(
+        getProductFeatureState,  
+        state => state.currentProductCode
+    );
+    export const getCurrentProduct = createSelector(
+        getProductFeatureState,
+        getCurrentProductCode,
+        (state, currentProductCode) => state.products.find(p => p.id === currentProductCode)
+    );
 
 
 -------------------------------------------------------------------------------------------------------
@@ -332,7 +332,8 @@ of the application.
             this.store.dispatch(new productActions.TongleProductCode(value));
         }
 
-+ For complex action (CRUD), we should create 3 action types for one action:
++ For complex action (CRUD), we should create 3 action types for one action and use Effect to handle
+side effect:
     export enum ProductActionType {
         Load = '[Product] Load',
         LoadFail = '[Product] Load Fail',
@@ -375,7 +376,7 @@ component, we can use NgRx Effect library to manage side effects.
             mergeMap(action => 
                 // Then call data provider service to get the data from BE
                 this.productService.getProducts().pipe(
-                    // Dispatch new action
+                    // Then dispatch a new action
                     map(products => (new LoadSuccess(products)))
                 )
             )
@@ -385,8 +386,84 @@ component, we can use NgRx Effect library to manage side effects.
 + Note: the $ suffix is an optional convention to show that this variable is an observable to be clear
 about observable and observable value.
 
++ RxJs operators for mapping Observable data in Effect: mergeMap vs switchMap
+    1. switchMap operator:
+        - It is least usage in the code because it cancels the current subscription if a new value is 
+        emitted, for example, if someone dispatches a second save product action before the first save 
+        product action's HTTP request return to the effect, the first in-flight request will be canceled.
+        - It is used for GET request which is cancelable requests like searches. 
 
+    2. concatMap operator:
+        - It runs HTTP requests in order and will wait for the last request to finsish before starting 
+        the next request, which is less performance but the safest
+        - It is used for GET, POST and PUT request when order is important
 
+    3. mergeMap operator: 
+        - It runs HTTP requests in parallel which is more performance than concatMap.
+        - It is used for POST, PUT and DELETE request when order is not important
+
+    4. exhaustMap operator:
+        - It will ignore all subsequent actions dispatched until the current request completes
+        - It is used for login when you do not want to make or queue up anymore request until the initial
+        one is complete
+
++ Register an effect:
+    1. Register effects in root app module by calling forRoot which takes an array of effects:
+        imports: [
+            EffectModule.forRoot([effect1, effect2, ...])
+                ...
+            ]
+    2, Register effects for each feature module (lazy loading effect) by calling forFeature which takes 
+    an array of effects:
+            imports: [
+                StoreModule.forFeature('products', productReducer)
+                ...
+            ]
+ 
++ Using an effect:
+    1. Inject the store via constructor of target component:
+        constructor(private store: Store<any>) {}
+
+    2. Call the dispatch method, passing along a created action which listen by the effect:
+        this.store.dispatch(new productActions.Load());
+
+    3. Select state with selector:
+        this.store.pipe(select(fromProduct.getProducts)).subscribe(
+            (products: Product[]) => this.products = products
+        );
+
++ Unsubscribe from the store:
+    1. Component subscription (manually subscribe and un-subscribe):
+        - When you need the observable's value in a component class to work or change the value before
+        using it in a template.
+        - Steps to do:
+            // Initialize a variable which indicate active state of the component
+            export class ProductListComponent implements OnInit, OnDestroy {
+                componentActive = true;
+
+                // Unsubscribe with takeWhile
+                this.store.pipe(select(fromProduct.getProducts), 
+                takeWhile((), => this.componentActive))
+                .subscribe(
+                    (products: Product[]) => this.products = products
+                )
+
+                // Set the variable to false when destroy the component
+                ngOnDestroy() {
+                    this.componentActive = false;
+                }
+            }    
+
+    2. Async pipe (automatic subscribe and un-subscribe by Angular):
+        - When you do not need to do anything with the data and use the direct observable's value in 
+        the template.
+        - Steps to do:
+            // component.ts
+            this.products$ = this.store.pipe(select(fromProduct.getProducts));
+
+            // component.html
+            *ngIf = "products$ | async as products"
+            *ngFor = "let product in products | async"
 
 -------------------------------------------------------------------------------------------------------
     Performing Update Operations
