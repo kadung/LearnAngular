@@ -332,8 +332,8 @@ the Store structure and the component which brings some benefits as:
             this.store.dispatch(new productActions.TongleProductCode(value));
         }
 
-+ For complex action (CRUD), we should create 3 action types for one action and use Effect to handle
-side effect:
++ When the operation action is synchronous, it requires a set of actions, for example, sending HTTP to
+backend server for requesting data then we need 3 actions for this operation:
     export enum ProductActionType {
         Load = '[Product] Load',
         LoadFail = '[Product] Load Fail',
@@ -462,13 +462,46 @@ about observable and observable value.
             this.products$ = this.store.pipe(select(fromProduct.getProducts));
 
             // component.html
-            *ngIf = "products$ | async as products"
+            <div class="card-body" *ngIf="products$ | async as products">
+            ....
             *ngFor = "let product in products | async"
 
++ Exception handling in Effect:
+    - catchError operator is used to listen to error, if data service provider return an error, we can
+    dispatch a failed action:
+        @Effect()
+        loadProduct$ = this.actions$.pipe(
+            ofType(ProductActionType.Load),
+            mergeMap(action => 
+                this.productService.getProducts().pipe(
+                    map(products => (new LoadSuccess(products))),
+                    catchError(err => of(new LoadFail(err)))
+                )
+            )
+        );
+
+    
 -------------------------------------------------------------------------------------------------------
     Performing Update Operations
 -------------------------------------------------------------------------------------------------------
-+ 
++ Step to step to implement one operation using NgRx, such as update product:
+    1. Identify the flow:
+        - Select a product
+        - Edits product properties
+        - Save changes to BE server or cancel the changes
+        - Display the updated product in the list
+
+    2. Identify needed state and action:
+        - 
+
+    3. Strongly typing the state and building the selector:
+
+    4. Strongly typing the action with action creator:
+
+    5. Dispatch an Action:
+
+    6. Build an effect with 3 action types (Update, updateSucess, updateFail):
+    
 
 
 -------------------------------------------------------------------------------------------------------

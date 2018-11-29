@@ -6,14 +6,16 @@ import { ProductActions, ProductActionType } from "./product.action";
 interface ProductState {
   showProductCode: boolean,
   currentProduct: Product,
-  products: Product[]
+  products: Product[],
+  err: string
 }
 
 // Initialize default value product slice
 const initialState: ProductState = {
   showProductCode: true,
   currentProduct: null,
-  products: []
+  products: [],
+  err: ''
 }
 
 // Create selector to get data of a slice
@@ -34,6 +36,11 @@ export const getProducts = createSelector(
   getProductFeatureState,
   state => state.products
 );
+
+export const getError = createSelector(
+  getProductFeatureState,
+  state => state.err
+)
 
 export function reducer(state = initialState, action: ProductActions) {
   switch (action.type) {
@@ -72,7 +79,15 @@ export function reducer(state = initialState, action: ProductActions) {
     case ProductActionType.LoadSuccess:
     return {
       ...state,
-      products: action.payload
+      products: action.payload,
+      err: ''
+    }
+
+    case ProductActionType.LoadFail:
+    return {
+      ...state,
+      products: [],
+      err: action.payload
     }
 
     default:
