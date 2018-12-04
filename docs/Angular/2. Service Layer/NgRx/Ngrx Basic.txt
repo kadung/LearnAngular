@@ -480,31 +480,4 @@ about observable and observable value.
             )
         );
 
-    
--------------------------------------------------------------------------------------------------------
-    Performing Update Operations
--------------------------------------------------------------------------------------------------------
-+ Step to step to implement one operation using NgRx, such as update product:
-    1. Identify the flow:
-        - Select a product
-        - Edits product properties
-        - Save changes to BE server or cancel the changes
-        - Display the updated product in the list
 
-    2. Identify needed state and action:
-        - 
-
-    3. Strongly typing the state and building the selector:
-
-    4. Strongly typing the action with action creator:
-
-    5. Dispatch an Action:
-
-    6. Build an effect with 3 action types (Update, updateSucess, updateFail):
-    
-
-
--------------------------------------------------------------------------------------------------------
-    Architectural Considerations
--------------------------------------------------------------------------------------------------------
-+ 

@@ -1,0 +1,78 @@
+Ref:
+    1.
+
+-------------------------------------------------------------------------------------------------------
+    Step to step to implement one operation using NgRx, such as Update Operations
+-------------------------------------------------------------------------------------------------------
+Step 1. Identify the flow:
+    + Select a product.
+    + Edits product properties.
+    + Save changes to BE server or cancel the changes.
+    + Display the updated product in the list.
+
+2. Identify required states and actions for the operation:
+    + Required states:
+        - products: Product[]       (product list array so user can select which product to update)
+        - currentProductID: string  (product ID which is selected by user)
+        - error: string             (contain error message)
+    + Required actions:
+        - UpdateProduct
+        - UpdateProdcutSuccess
+        - UpdateProdcutFail
+
+3. Implement strongly typing the state and building the selector:
+    + Define an interface for each bit of state:
+        interface ProductState {
+            showProductCode: boolean,
+            currentProductID: number |null,
+            products: Product[],
+            err: string
+        }
+
+    + Set inital value:
+        const initialState: ProductState = {
+            showProductCode: true,
+            currentProductID: null,
+            products: [],
+            err: ''
+        }
+
+    + Build selectors so the component can access the state without knowing the structure of the store:
+        // Create selector to get data of a slice
+        const getProductFeatureState = createFeatureSelector<ProductState>('products');
+
+        // Create select tor forcurrentProductID
+        export const getCurrentProductID = createSelector(
+            getProductFeatureState,
+            state => state.currentProductID
+        )
+
+        // Create a selector for getting current product via product ID
+        export const getCurrentProduct = createSelector(
+            getProductFeatureState,
+            getCurrentProductID,
+            (state, currentProductID) => {
+                if (currentProductID === 0){
+                    return {
+                        id: 0,
+                        productName: '',
+                        productCode: 'New',
+                        description: '',
+                        starRating: 0
+                    };
+                }
+                else{
+                    return currentProductID ? state.products.find(p => p.id === currentProductID) : null;
+                }
+            }
+        );
+
+4. Implement strongly typing the action with action creator:
+
+
+5. Dispatch an Action:
+
+
+6. Build an effect with 3 action types (Update, updateSucess, updateFail):
+
+    

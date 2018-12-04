@@ -5,7 +5,7 @@ import { ProductActions, ProductActionType } from "./product.action";
 // Define data type for product slice
 interface ProductState {
   showProductCode: boolean,
-  currentProduct: Product,
+  currentProductID: number |null,
   products: Product[],
   err: string
 }
@@ -13,7 +13,7 @@ interface ProductState {
 // Initialize default value product slice
 const initialState: ProductState = {
   showProductCode: true,
-  currentProduct: null,
+  currentProductID: null,
   products: [],
   err: ''
 }
@@ -27,9 +27,28 @@ export const getShowProductCode = createSelector(
   state => state.showProductCode
 );
 
+export const getCurrentProductID = createSelector(
+  getProductFeatureState,
+  state => state.currentProductID
+)
+
 export const getCurrentProduct = createSelector(
   getProductFeatureState,
-  state => state.currentProduct
+  getCurrentProductID,
+  (state, currentProductID) => {
+    if (currentProductID === 0){
+      return {
+        id: 0,
+        productName: '',
+        productCode: 'New',
+        description: '',
+        starRating: 0
+      };
+    }
+    else{
+      return currentProductID ? state.products.find(p => p.id === currentProductID) : null;
+    }
+  }
 );
 
 export const getProducts = createSelector(
@@ -53,27 +72,21 @@ export function reducer(state = initialState, action: ProductActions) {
 
     case ProductActionType.SetCurrentProduct:
     return {
-      // ... means creates a new copy of that object
+      // ... means creates a new copy of that object, similar to object.assign
       ...state,
-      currentProduct: {...action.payload}
+      currentProductID: action.payload.id
     };
 
     case ProductActionType.ClearCurrentProduct:
     return {
       ...state,
-      currentProduct: null
+      currentProductID: null
     };
 
     case ProductActionType.InitializeCurrentProduct:
     return {
-      ...state,
-      currentProduct: {
-        id: 0,
-        productName: '',
-        productCode: 'new',
-        description: '',
-        startRating: 0
-      }
+      ...state,    
+      currentProductID: 0
     };
 
     case ProductActionType.LoadSuccess:
