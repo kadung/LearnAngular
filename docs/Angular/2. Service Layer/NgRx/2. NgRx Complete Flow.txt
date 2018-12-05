@@ -67,11 +67,42 @@ Step 1. Identify the flow:
             }
         );
 
-4. Implement strongly typing the action with action creator:
+4. Implement strongly typing the action:
+    + Define action types as named enum constants:
+        export enum ProductActionType {
+            ...
+            UpdateProduct = '[Product] Update Product',
+            UpdateProductSuccess = '[Product] Update Product Success',
+            UpdateProductFail = '[Product] Update Product Fail',
+        }
 
+    + Build the actions with action creator: 
+        export class UpdateProduct implements Action{
+            readonly type: ProductActionType.UpdateProduct;
+            constructor(public payload: Product) {}
+        }
+        export class UpdateProductSuccess implements Action{
+            readonly type: ProductActionType.UpdateProductSuccess;
+            constructor(public payload: Product) {}
+        }
+        export class UpdateProductFail implements Action{
+            readonly type: ProductActionType.UpdateProductFail;
+            constructor(public payload: string) {}
+        }
 
-5. Dispatch an Action:
+    + Define a union type that union all the actions:
+        export type ProductActions = ...
+            | UpdateProduct
+            | UpdateProductSuccess
+            | UpdateProductFail;    
 
+5. Dispatch an Action from a component:
+    + Inject the store into the constructor of that component
+        constructor(private store: Store<any>) {}
+
+    + Dispatch the action using the store's dispatch method, passing along a action creator:
+        import * as ProductActions from '../state/product.action'
+        this.store.dispatch(new ProductActions.UpdateProduct(product));
 
 6. Build an effect with 3 action types (Update, updateSucess, updateFail):
 
