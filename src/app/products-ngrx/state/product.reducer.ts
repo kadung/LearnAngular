@@ -5,7 +5,7 @@ import { ProductActions, ProductActionType } from "./product.action";
 // Define data type for product slice
 interface ProductState {
   showProductCode: boolean,
-  currentProductID: number |null,
+  currentProductID: number | null,
   products: Product[],
   err: string
 }
@@ -105,6 +105,23 @@ export function reducer(state = initialState, action: ProductActions) {
       products: [],
       err: action.payload
     }
+
+    case ProductActionType.UpdateProductSuccess:
+      const updatedProducts = state.products.map(
+        item => action.payload.id === item.id ? action.payload : item
+      );
+      return {
+        ...state,
+        products: updatedProducts,
+        currentProductID: action.payload.id,
+        err: ''
+      }
+
+    case ProductActionType.UpdateProductFail:
+      return {
+        ...state,
+        err: action.payload
+      }
 
     default:
       return state;

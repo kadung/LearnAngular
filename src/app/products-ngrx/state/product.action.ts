@@ -53,13 +53,13 @@ export class LoadSuccess implements Action {
 }
 
 export class UpdateProduct implements Action{
-    readonly type: ProductActionType.UpdateProduct;
+    readonly type = ProductActionType.UpdateProduct;
 
     constructor(public payload: Product) {}
 }
 
 export class UpdateProductSuccess implements Action{
-    readonly type: ProductActionType.UpdateProductSuccess;
+    readonly type = ProductActionType.UpdateProductSuccess;
 
     constructor(public payload: Product) {}
 }
