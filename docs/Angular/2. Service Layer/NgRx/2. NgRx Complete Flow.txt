@@ -20,7 +20,7 @@ Ref:
         - UpdateProdcutSuccess
         - UpdateProdcutFail
 
-3. Implement strongly typing the state and building the selector:
+3. Strongly type the state and build the selector:
     + Define an interface for each bit of state:
         interface ProductState {
             showProductCode: boolean,
@@ -67,7 +67,7 @@ Ref:
             }
         );
 
-4. Implement strongly typing the action:
+4. Strongly type action with action creator:
     + Define action types as named enum constants:
         export enum ProductActionType {
             ...
@@ -96,7 +96,7 @@ Ref:
             | UpdateProductSuccess
             | UpdateProductFail;    
 
-5. Dispatch an Action from a component:
+5. Dispatch an Action to kick off  the operation from a component:
     + Inject the store into the constructor of that component
         constructor(private store: Store<any>) {}
 
@@ -104,7 +104,7 @@ Ref:
         import * as ProductActions from '../state/product.action'
         this.store.dispatch(new ProductActions.UpdateProduct(product));
 
-6. Build the effect to send the request to BE:
+6. Build the effect to send the request to BE and dispatch success or fail action:
     // Build service for the feature effect class
     @Injectable()
     export class ProductEffects {
@@ -138,7 +138,7 @@ Ref:
         )
     }
     
-7. Handle success or fails action in the reducer:
+7. Process success or fails actions in the reducer:
     ...
     // Add case in reducer function for success action:
     case ProductActionType.UpdateProductSuccess:

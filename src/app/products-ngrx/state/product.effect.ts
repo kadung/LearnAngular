@@ -37,4 +37,17 @@ export class ProductEffects {
         )
     );
 
+    @Effect() deleteProduct$: Observable<Action> = this.actions$.pipe(
+        ofType(productActions.ProductActionType.DeleteProduct),
+        map(
+            (action: productActions.DeleteProduct) => action.payload
+        ),
+        mergeMap(
+            (productId: number) => this.productService.deleteProduct(productId).pipe(
+                map((updatedProduct: Product[]) => (new productActions.DeleteProductSuccess(updatedProduct))),
+                catchError(err => of(new productActions.DeleteProductFail(err)))
+            )
+        )
+    )
+
 }

@@ -123,6 +123,19 @@ export function reducer(state = initialState, action: ProductActions) {
         err: action.payload
       }
 
+    case ProductActionType.DeleteProductSuccess:
+      return {
+        ...state,
+        products: updatedProducts,
+        currentProductID: null
+      }
+
+    case ProductActionType.DeleteProductFail:
+      return {
+        ...state,
+        err: action.payload
+      }
+
     default:
       return state;
   }

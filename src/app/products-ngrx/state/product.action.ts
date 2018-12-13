@@ -12,7 +12,10 @@ export enum ProductActionType {
     LoadSuccess = '[Product] Load Success',
     UpdateProduct = '[Product] Update Product',
     UpdateProductSuccess = '[Product] Update Product Success',
-    UpdateProductFail = '[Product] Update Product Fail'
+    UpdateProductFail = '[Product] Update Product Fail',
+    DeleteProduct = '[Product] Delete Product',
+    DeleteProductSuccess = '[Product] Delete Product Success',
+    DeleteProductFail = '[Product] Delete Product Fail',
 }
 
 // Build the action creator for each action
@@ -65,7 +68,25 @@ export class UpdateProductSuccess implements Action{
 }
 
 export class UpdateProductFail implements Action{
-    readonly type: ProductActionType.UpdateProductFail;
+    readonly type = ProductActionType.UpdateProductFail;
+
+    constructor(public payload: string) {}
+}
+
+export class DeleteProduct implements Action{
+    readonly type = ProductActionType.DeleteProduct;
+
+    constructor(public payload: number) {}
+}
+
+export class DeleteProductSuccess implements Action{
+    readonly type = ProductActionType.DeleteProductSuccess;
+
+    constructor(public payload: Product[]) {}
+}
+
+export class DeleteProductFail implements Action{
+    readonly type = ProductActionType.DeleteProductFail;
 
     constructor(public payload: string) {}
 }
@@ -80,4 +101,7 @@ export type ProductActions = TongleProductCode
     | LoadSuccess
     | UpdateProduct
     | UpdateProductSuccess
-    | UpdateProductFail;    
+    | UpdateProductFail
+    | DeleteProduct
+    | DeleteProductFail
+    | DeleteProductSuccess;    
