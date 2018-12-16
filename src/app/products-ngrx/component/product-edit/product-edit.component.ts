@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Product } from '../../data-types/product';
-import { ProductService } from '../product.service';
-import { GenericValidator } from '../../shared/validator/generic-validator';
-import { NumberValidators } from '../../shared/validator/number.validator';
+import { Product } from '../../../types/product';
+import { ProductService } from '../../product.service';
+import { GenericValidator } from '../../../shared/validator/generic-validator';
+import { NumberValidators } from '../../../shared/validator/number.validator';
 
 /* NgRx */
 import { Store, select } from '@ngrx/store';
-import * as fromProduct from '../state/product.reducer'
-import * as productActions from '../state/product.action'
+import * as fromProduct from '../../state/product.reducer'
+import * as productActions from '../../state/product.action'
 
 @Component({
   selector: 'pm-product-edit',
@@ -22,6 +22,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
 
   product: Product | null;
+
+  @Input() currentProduct: Product;
 
   // Use with the generic validation message class
   displayMessage: { [key: string]: string } = {};
@@ -65,9 +67,11 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     });
 
     // Watch for changes to the currently selected product
+    //this.displayProduct(this.currentProduct);
     this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
       currentProduct => this.displayProduct(currentProduct)
     );
+    
 
     // Watch for value changes
     this.productForm.valueChanges.subscribe(

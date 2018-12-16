@@ -1,5 +1,5 @@
 import { Action } from "@ngrx/store";
-import { Product } from "src/app/data-types/product";
+import { Product } from "src/app/types/product";
 
 // Define the action types as enum constants
 export enum ProductActionType {

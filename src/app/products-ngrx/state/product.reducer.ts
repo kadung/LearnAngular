@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from "../../../../node_modules/@ngrx/store";
-import { Product } from "../../data-types/product";
+import { Product } from "../../types/product";
 import { ProductActions, ProductActionType } from "./product.action";
 
 // Define data type for product slice
