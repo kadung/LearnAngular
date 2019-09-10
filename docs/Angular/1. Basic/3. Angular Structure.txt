@@ -1,0 +1,84 @@
+- Ref:
+    1. https://angular.io/guide/quickstart
+
+-------------------------------------------------------------------------------------------------------
+    Overview
+-------------------------------------------------------------------------------------------------------
++ The Angular project contains following items:
+    1. src folder: contains all Angular components, templates, styles, images, and anything else your
+    angular app needs go here. Any files outside of this folder are meant to support building the app.
+
+    2. e2e folder: contains all end to end protractor test script to test angular application.
+
+    3. node_modules folder: contains all nodejs third party modules listed in package.json.
+
+    4. editorconfig: Simple configuration for the editor to make sure everyone that uses the project
+    has the same basic configuration.
+
+    5. angular.json: is the configuration file for Angular CLI. In this, you can set several defaults
+    and also configure what files are included when your project is built.
+
+    6. package.json: npm(similar to maven) configuration listing the third party nodejs packages the
+    project uses.
+
+    7. tsconfig.json: TypeScript compiler configuration for IDE to pick up and give helpful tooling.
+
+    8. tslint.json: Linting configuration for TSLint together with Codelyzer, used when running
+        ng lint
+    Linting helps keep your code style consistent.
+
+
+-------------------------------------------------------------------------------------------------------
+    src folder
+-------------------------------------------------------------------------------------------------------
++ app folder: contais all components and each component is a folder which contains bewlow files:
+    - app.component.css         Component CSS stylesheet
+    - app.component.html        Component HTML template
+    - app.component.spec.ts     Component unit test
+    - app.component.ts          Component metadata and functional class
+
++ app/app.modules.ts: declare each thing you create in Angular, and group them together
+
++ assets folder: where you can put images and anything else to be copied wholesale when you build your
+application.
+
++ environments folder: contains one file for each of your destination environments, each exporting
+simple configuration variables to use in your application. The files are replaced on-the-fly when you
+build your app. You might use a different API endpoint for development than you do for production or
+maybe different analytics tokens. You might even use some mock services.
+
++ browserslist: A configuration file to share target browsers between different front-end tools.
+
++ favicon.ico: Title or bookmark icon of the website.
+
++ index.html: The main HTML page that is served when someone visits your site. Most of the time you'll
+never need to edit it. The CLI automatically adds all js and css files when building your app so you
+never need to add any <script> or <link> tags here manually.
+
++ karma.conf.js: Unit test configuration for the Karma test runner, used when running ng test.
+
++ main.ts: The main entry point of the app where you imports the root module for bootstraping.
+
++ polyfills.ts: help normalize different levels of support of the web standards for different browsers.
+
++ styles.css: centralize global styles which affect all of the app but you also create local styles in
+your components for easier maintenance.
+
++ test.ts: main entry point for your unit tests.
+
++ tsconfig.app.json: TypeScript compiler configuration for the Angular ap.
+
++ tsconfig.spec.json: TypeScript compiler configuration for the unit test.
+
++ tslint.json: Additional Linting configuration for TSLint together with Codelyzer, used when running:
+ng lint (Linting helps keep your code style consistent.)
+
+
+-------------------------------------------------------------------------------------------------------
+    e2e folder
+-------------------------------------------------------------------------------------------------------
++ src folder: contains all test script.
+
++ protractor.conf.js: End-to-end test configuration for Protractor, used when running ng e2e.
+
++ tsconfig.e2e.json: TypeScript compiler configuration for IDE to pick up and give helpful tooling.

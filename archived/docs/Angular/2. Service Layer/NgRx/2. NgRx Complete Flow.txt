@@ -1,0 +1,213 @@
+Ref:
+    1.
+
+-------------------------------------------------------------------------------------------------------
+    Step to step to implement one operation using NgRx, such as Update Operations
+-------------------------------------------------------------------------------------------------------
+1. Identify the flow:
+    + Select a product.
+    + Edits product properties.
+    + Save changes to BE server or cancel the changes.
+    + Display the updated product in the list.
+
+2. Identify required states and actions for the operation:
+    + Required states:
+        - products: Product[]       (product list array so user can select which product to update)
+        - currentProductID: string  (product ID which is selected by user)
+        - error: string             (contain error message)
+    + Required actions:
+        - UpdateProduct
+        - UpdateProdcutSuccess
+        - UpdateProdcutFail
+
+3. Strongly type the state and build the selector:
+    + Define an interface for each bit of state:
+        interface ProductState {
+            showProductCode: boolean,
+            currentProductID: number |null,
+            products: Product[],
+            err: string
+        }
+
+    + Set inital value:
+        const initialState: ProductState = {
+            showProductCode: true,
+            currentProductID: null,
+            products: [],
+            err: ''
+        }
+
+    + Build selectors so the component can access the state without knowing the structure of the store:
+        // Create selector to get data of a slice
+        const getProductFeatureState = createFeatureSelector<ProductState>('products');
+
+        // Create select tor forcurrentProductID
+        export const getCurrentProductID = createSelector(
+            getProductFeatureState,
+            state => state.currentProductID
+        )
+
+        // Create a selector for getting current product via product ID
+        export const getCurrentProduct = createSelector(
+            getProductFeatureState,
+            getCurrentProductID,
+            (state, currentProductID) => {
+                if (currentProductID === 0){
+                    return {
+                        id: 0,
+                        productName: '',
+                        productCode: 'New',
+                        description: '',
+                        starRating: 0
+                    };
+                }
+                else{
+                    return currentProductID ? state.products.find(p => p.id === currentProductID) : null;
+                }
+            }
+        );
+
+4. Strongly type action with action creator:
+    + Define action types as named enum constants:
+        export enum ProductActionType {
+            ...
+            UpdateProduct = '[Product] Update Product',
+            UpdateProductSuccess = '[Product] Update Product Success',
+            UpdateProductFail = '[Product] Update Product Fail',
+        }
+
+    + Build the actions with action creator: 
+        export class UpdateProduct implements Action{
+            readonly type = ProductActionType.UpdateProduct;
+            constructor(public payload: Product) {}
+        }
+        export class UpdateProductSuccess implements Action{
+            readonly type = ProductActionType.UpdateProductSuccess;
+            constructor(public payload: Product) {}
+        }
+        export class UpdateProductFail implements Action{
+            readonly type = ProductActionType.UpdateProductFail;
+            constructor(public payload: string) {}
+        }
+
+    + Define a union type that union all the actions:
+        export type ProductActions = ...
+            | UpdateProduct
+            | UpdateProductSuccess
+            | UpdateProductFail;    
+
+5. Dispatch an Action to kick off  the operation from a component:
+    + Inject the store into the constructor of that component
+        constructor(private store: Store<any>) {}
+
+    + Dispatch the action using the store's dispatch method, passing along a action creator:
+        import * as ProductActions from '../state/product.action'
+        this.store.dispatch(new ProductActions.UpdateProduct(product));
+
+6. Build the effect to send the request to BE and dispatch success or fail action:
+    // Build service for the feature effect class
+    @Injectable()
+    export class ProductEffects {
+        // Inject actions and data provider service into the constructor 
+        constructor(
+            private actions$: Actions,
+            private productService: ProductService
+        ) {}
+
+        // Define a property that provides an observable of action with the effect decorator
+        @Effect() 
+        updateProduct$: Observable<Action> = this.actions$.pipe(
+            // Select which action type is listened 
+            ofType(productAction.ProductActionType.UpdateProduct),
+            // When it receives the action, it maps the action to pull off the payload which in 
+            // this case is the product to update
+            map((action: productAction.UpdateProduct) => action.payload),
+            mergeMap(
+                // Call productService's updateProduct method and pass in the updated product from
+                // the payload above
+                (product: Product) => this.productService.updateProduct(product).pipe(
+                    // If we receive the success response from productService, we receive the updated
+                    // product and use action creator to dispatch the update success action to save 
+                    // new updated data back to the store  
+                    map( (updatedProduct: Product) => (new productAction.UpdateProductSuccess(updatedProduct))),
+                    // If we receive the success response from productService, we catch it and use the
+                    // action creator to dispatch the update failed action to handle the error message
+                    catchError(err => of(new productAction.UpdateProductFail(err)))
+                )
+            )
+        )
+    }
+    
+7. Process success or fails actions in the reducer:
+    ...
+    // Add case in reducer function for success action:
+    case ProductActionType.UpdateProductSuccess:
+        // Build a new array based on original array using map function. It loops through all original 
+        // array items and add new value to new array based on original item with added logic 
+        const updatedProducts = state.products.map(
+        item => action.payload.id === item.id ? action.payload : item
+        );
+        // return new state by merging old state and new changes
+        return {
+            // A copy of old state
+            ...state,
+            // New changed slice
+            products: updatedProducts,
+            currentProductID: action.payload.id,
+            err: ''
+        }
+
+    // Add case in reducer function for failed action:
+    case ProductActionType.UpdateProductFail:
+        return {
+            ...state,
+            err: action.payload
+        }
+    ...
+
+8. Use the selector to get data in store when the component is initalized:
+    ...
+    ngOnInit(): void {
+        this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
+        currentProduct => this.displayProduct(currentProduct)
+        );
+    ...
+    }
+
+-------------------------------------------------------------------------------------------------------
+    Which array methods will mutate the state?
+-------------------------------------------------------------------------------------------------------     
++ When working with NgRx, we need to take care to NEVER mutate existed state, and instead to alwasys 
+create new state in the reducer function.
+
++ A immutable object or array cannot be modified after it is created.
+
++ Array methods:
+    - Push method pushes one or more element to an array, it directly adds the element to the existed
+    array => Mutable 
+        array.push("abc");
+
+    - Concat method creates new array from two or more existed array, it does not modify the existed
+    array => Immutable 
+        array.concat("abc");
+
+    - Spread oparator is used to copy all the elements without modifing the original array => Immutable
+        ...aray
+    
+    - Shift method removes the first element from the aray => Mutable 
+        aray.shift()
+
+    - Splice method changes the contents of array by removing or adding elements => Mutable 
+        array.slice(0,2);
+
+    - Filter method creates a new array with all elements that pass the test provided by the arrow
+    function => Immutable
+        aray.filter(p => p.id === action.payload.id)
+
+    - map method creates a new array by calling the arrow function on every elements in the original
+    array => Immutable. We use it anytime we need to process each element in array
+        aray.map(p => p.id === action.payload.id ? action.payload : p)
+
+    - forEach method executes the arrow function once for each element in the array, it modifys 
+    directly in the array => Mutable
+        aray.forEach(p => p.id === action.payload.id ? action.payload : p)

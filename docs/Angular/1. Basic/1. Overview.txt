@@ -1,0 +1,24 @@
+- Ref:
+    1.
+
+----------------------------------------------------------------------------------------------------
+    Overview
+----------------------------------------------------------------------------------------------------
++ Angular is a Javascript framework which creates reactuve Sing Page Application (SPA).
+
++ In Angular apps, we write HTML markup that becomes our interactive application, but browser only
+understands a limited set of markup tags, for example <b>, <select>, <form>, ... and all have
+functionality defined by our browser creator.
+
++ What if we want to teach the browser new tags? What if we wanted to have a <weather> tag that
+shows the weather? Or what if we want to create a <login> tag that shows a login panel? This is the
+fundamental idea behind components: we will teach browser new tags that have custom functionality
+attached to them.
+
+
+----------------------------------------------------------------------------------------------------
+    JIT vs AOT
+----------------------------------------------------------------------------------------------------
+JIT compilation (recommend for development) is the default when you run ng build and ng serve CLI
+commands, You can also use the AOT compiler (recommend for production) without changing any code by
+appending the --aot flag to the ng build and ng serve.

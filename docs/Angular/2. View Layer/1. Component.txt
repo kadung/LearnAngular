@@ -1,0 +1,156 @@
+Ref:
+    1.
+
+----------------------------------------------------------------------------------------------------
+    Angular Component
+----------------------------------------------------------------------------------------------------
++ A component in Angular controls a patch of screen called a view.
+
++ A component includes 2 parts:
+    1. Template:
+        - It creates with HTML and CSS (app.component.css and app.component.html).
+        - It defines a view layout for this component.
+        - It includes data binding and directives.
+    2. Class:
+        - It creates with TypeScript (app.component.test).
+        - It is the code supporting the view which contains:
+            . Properties or data element in the view
+            . Methods which are the functions for the logic needed by the view
+        - It contains metadata which defines additional data for the component:
+            . selector: HTML tag name for component
+            . templateUrl: which template are associated in this component
+            . providers: which services that the component requires
+
++ A class becomes an Angular component when it has the component metadata. Angular needs that
+metadata to understand how to instantiate the component, component's metadata is defined with
+@Component decorator.
+
++ A decorator is a function that add metadata to a class, its member or its method agruments. A
+decorator is always prefix with @ sign.
+
+
+----------------------------------------------------------------------------------------------------
+    Create a Component
+----------------------------------------------------------------------------------------------------
++ Create component template (test.component.html):
+    <h1>title</h1>
+
++ Create component class (test.component.ts):
+    // Import Component decorator in angular
+    import { Component } from '@angular/core';
+
+    @Component({
+        // Define the unique custom HTML tag that can be used in other components template
+        // It should not have same name with common HTML tag
+        selector: 'test-component',
+        // Whenever this component's selector is used in any component template, Angular renders the
+        // html file which is located as below
+        templateUrl: './test.component.html',
+        styleUrls: ['./test.component.css']
+    })
+
+    // Define Angular component using Class and export this class so other Angular module can also
+    // use it by import this class.
+    export class TestComponent {
+        title = 'Angular: Getting Started';
+    }
+
++ Register the component to declarations array of angular module:
+    @NgModule({
+        declarations: [ AppComponent, TestComponent ],
+        ....
+    })
+
++ Use the component in other template similar to other html tag:
+    <test-component></test-component>
+
+
+----------------------------------------------------------------------------------------------------
+    Using Angular CLI
+----------------------------------------------------------------------------------------------------
++ Use below Angular CLI command to create and register a new component:
+    ng g c [component_name]
+
+
+---------------------------------------------------------------------------------------------------
+   Nest component
+---------------------------------------------------------------------------------------------------
++ Angular can nest component inside a component. The outside component is known as the parent or
+container component and the inner one is known as the nested or child component.
+
++ A component should delare as nest component if its template only manages a fragment of a larger
+view.
+
++ When the nested component wants to receive input data from container component:
+    1. Nested component exposes a property to the container component using Input decorator. Input
+    decorator is used to decorates any properties with any type in the nested component class.
+        // nested.component.ts
+        @Input() value: number;
+
+    2. The container component template then can transfer data to nested component class using
+    property binding.
+        // container.component.html
+        <nest-selector [value]='product.value'></nest-selector>
+
++ When the nested component wants to send information to container component:
+    1. Create an event type property which is used to send event to the container:
+        - Nested component exposes an event to the container using Output decorator. Output decorator
+        is used to decorates any properties with event type only in the nested component class. And
+        the sending data is the payload of decorated event property.
+
+        - In Angular, an event is defined with an EventEmitter object. So to create an event property,
+        we create a new instance of an EventEmitter with a specific event payload type.
+            // Create notify event property with string payload:
+            @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+
+    2. Trigger an event to the container component when user does any action in nested component:
+        - Nested component receives a DOM event for any action from user. We use event binding in
+        nested component template to call a method in nested component class according to user's
+        action.
+        - In the method in nested component class, we use emit method from event type property to
+        raise an event to the container. If we want to pass data in event payload, we pass the
+        data to the emit method.
+            // nested.component.html
+            <div (click) = 'onClick()'> Click! </di>
+            // nested.component.ts
+            onClick(): void{
+                this.notify.emit('click!!!');
+            }
+
+    3. Container component receives the event from the nested component and handles the data in
+    the event payload:
+        - In the container component's template, we use event binding to bind the nested component
+        event to call a method in container component class. We access the event payload using
+        $event
+        - The only time we can specify a nested component's property as an event binding when that
+        property is decorated with @Output
+            // container.component.html
+            <div>
+                <component-selector (notify)='nestedComponentClick($event)'></component-selector>
+            </div>
+
+            // container.component.ts
+            nestedComponentClick(message: string): void{
+                // logic action
+            }
+
+
+---------------------------------------------------------------------------------------------------
+    Component Lifecycle Hooks
+---------------------------------------------------------------------------------------------------
++ Directive and component instances have a lifecycle as Angular creates, updates and destroys them.
+Lifecycle hooks provide visibility into these key life moments and the ability to act when they
+occur.
+
++ Each interface has a single hook method whose name is the interface name prefixed with ng.
+
++ List of available hooks in Angular: https://angular.io/guide/lifecycle-hooks#lifecycle-sequence
+. Some importance hooks:
+    - OnInit lifecycle hook: perform any component initialization action (ex: retrieve the data for
+    the template from the backend service, ... ).
+    - OnChanges lifecycle hook: perform any action after change (re-set) to input properties.
+    - OnDestroy lifecycle hook: perform any cleanup action before Angular destroys the component.
+
++ Since interface is not supported in JavaScript so you can use any lifecycle hooks without adding
+the lifecycle hook interfaces. But it's good practice to add interfaces to TypeScript directive
+classes in order to benefit from strong typing and editor tooling.

@@ -1,0 +1,9 @@
+Ref:
+    1.
+
+---------------------------------------------------------------------------------------------------
+     @HostListener
+---------------------------------------------------------------------------------------------------
++ The @HostListener decorator lets you subscribe to events of the DOM element that hosts an 
+attribute directive
+

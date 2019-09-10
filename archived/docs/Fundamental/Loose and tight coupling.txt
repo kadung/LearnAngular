@@ -1,0 +1,50 @@
+Ref:
+    1. https://stackoverflow.com/questions/2832017/what-is-the-difference-between-loose-coupling-and-tight-coupling-in-the-object-o
+
+-------------------------------------------------------------------------------------------------------
+    Overview
+-------------------------------------------------------------------------------------------------------
++ Coupling refers to a component has little or no knowledge of the definitions of other components so
+when a component changes, other component is less or no change.
+
++ For example:
+    - If the car can work with any engine then the car is "loose Coupling" to the engine. When you want 
+    to replace the egine, you should be able to simply remove old engine without too much effort and 
+    swap it for a new one.
+
+    - If the car only works with Rolls Royce AB12 engine then the car is "tight Coupling" to that 
+    engine. When you want to replace the egine and there is no Rolls Royce AB12 engine then then you 
+    have to re-design the car to work with any engine.
+
+
+-------------------------------------------------------------------------------------------------------
+    Loose coupling in OOP
+-------------------------------------------------------------------------------------------------------
++ Tight coupling occurs when a dependent class contains a pointer directly to a concrete class which 
+provides the required behavior. The dependency cannot be substituted without requiring a change to the 
+dependent class.
+
++ Loose coupling occurs when the dependent class contains a pointer only to an interface, which can then 
+be implemented by one or many concrete classes. The dependent class's dependency is to a "contract" 
+specified by the interface; a defined list of methods and/or properties that implementing classes must 
+provide. Any class that implements the interface can thus satisfy the dependency of a dependent class 
+without having to change the class. 
+This allows for extensibility in software design; a new class implementing an interface can be written 
+to replace a current dependency in some or all situations, without requiring a change to the dependent 
+class; the new and old classes can be interchanged freely.
+
++ For example, declare a list of String:
+    // Tight coupling, make my reference an implementation (concrete class)
+    ArrayList<String> myList = new ArrayList<String>();
+
+    // Loose coupling, make my reference an interface type 
+    List<String> myList = new ArrayList<String>();
+
+When my reference is interface type, it prevents me from calling any method on myList that's specific 
+to the ArrayList implementation. I'm limited to only those methods defined in the List interface. If 
+I decide later that I really need a LinkedList, I only need to change my code in one place, where I 
+created the new List, and not in 100 places where I made calls to ArrayList methods.
+
+You can instantiate an ArrayList using the first declaration and restrain yourself from not using any 
+methods that aren't part of the List interface, but using the second declaration makes the compiler keep 
+you honest.

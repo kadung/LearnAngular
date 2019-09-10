@@ -1,0 +1,21 @@
+1. HTML:
+    + HTML (Hypertext Markup Language) is a markup language used to tell your browser how to structure 
+    the web pages.
+    + HTML consists of a series of elements, which you use to enclose, wrap, or mark up different parts 
+    of the content to make it appear or act a certain way.
+    + HTML element is enclosed in pair of tags (opening tag and closing tag). For example with paragraph 
+    element:
+        <p> The content </p>
+
+2. DOM (Document Object Model):
+    + When a webpage is loaded, the browser parses HTML code and creates a Document Object Model of the 
+    webpage.
+    + DOM is a standard object model which construct as a tree of Objects wherein each node is an object 
+    representing a part of the document.
+    + DOM is a application programming interface between HTML and JavaScript. So it allows the creation 
+    of dynamic web pages where:
+        - JavaScript can add, change, and remove all of the HTML elements and attributes in the page.
+        - JavaScript can change all of the CSS styles in the page.
+        - JavaScript can react to all of the existing events in the page.
+        - JavaScript can create new events within the page.
+        

@@ -1,0 +1,93 @@
+Ref:
+    1. 
+
+-------------------------------------------------------------------------------------------------------
+    Architectural Considerations
+-------------------------------------------------------------------------------------------------------
++ A benefit of NgRx is that it takes a lot of logic out of your components and moves it into NgRx's
+effect, reducers, and Angular service. This make it easier to move towards a presentation or container
+component pattern, which is a way to divide components into two categories: presentation components
+and container components.
+
++ Presentation component:
+    - It concern how things look so it renders mainly HTML and CSS to the view
+    - It has no dependencies on the rest of the app, such as injected services or the store
+    - It does not specify how data is loaded or changed, but it receives data exclusively via @Input
+    and emit events via @Output to trigger container components to do the work (send http request, ...)
+    - It may contain presentation or container components as their children since it is not a strict
+    - Some example of presentation components are navigation bar, menus, sidebars, user info panels,
+    and many list type components
+
++ Container component:
+    - It concern how things work so it renders little or no HTML and CSS
+    - It has dependencies on the rest of the app
+    - It is stateful and specify how data is loaded or changed
+    - It is often top level routes. It is common to have all of your routes load container component
+    that have a tree of mostly presentational components underneath.
+    - It may contain presentation or container components as their children since it is not a strict
+
+
+-------------------------------------------------------------------------------------------------------
+    Implement container component
+-------------------------------------------------------------------------------------------------------
++ Create a container component and move it to container folder.
+
++ Selects, subscribes and initialize required observables/data from the store in container component:
+    ...
+    ngOnInit(): void {
+        // Get data from backend and save to store when the component is initialize
+        this.store.dispatch(new productActions.Load);
+
+        // Get the required data from store using selector
+        this.products$ = this.store.pipe(select(fromProduct.getProducts));
+        this.errorMessage$ = this.store.pipe(select(fromProduct.getError));
+        this.showProductCode$ = this.store.pipe(select(fromProduct.getShowProductCode));
+        this.currentProduct$ = this.store.pipe(select(fromProduct.getCurrentProduct));
+    }
+    ...
+
++ Create method to dispatch any action against the store to change the state in container component:
+    ...
+    checkChanged(value: boolean): void {
+        this.store.dispatch(new productActions.TongleProductCode(value));
+    }
+    ...
+
++ Passes all the values to the presentational component on the template of container component and
+methods which listen to any changes in presentational component and dispatch the actions against store
+    ...
+     <pm-product-list
+      // Values sent to presentational component
+      [products]="products$ | async"
+      [errorMessage]="errorMessage$ | async"
+      [showProductCode]="showProductCode$ | async"
+      [currentProduct]="currentProduct$ | async"
+
+      // Methods which listen to any changes in presentational component
+      (checked)="checkChanged($event)"
+      (initalizeNewProduct)="newProduct()"
+      (selected)="productSelected($event)"
+    ></pm-product-list>
+    ...
+
+-------------------------------------------------------------------------------------------------------
+    Implement presentation component
+-------------------------------------------------------------------------------------------------------
++ Receives all values from container component via @Inputs decorator
+    ...
+    export class ProductListComponent {
+        @Input() products: Product[];
+        @Input() errorMessage: string;
+        @Input() showProductCode: boolean;
+        @Input() currentProduct: Product;
+    ...
+
++ Sent required change events (with datas) to container component with @Output decorator
+    ...
+    export class ProductListComponent {
+        @Output() checked = new EventEmitter<boolean>();
+        @Output() initalizeNewProduct = new EventEmitter();
+        @Output() productSelected = new EventEmitter<Product>();
+    ...   
+
++ 

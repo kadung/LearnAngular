@@ -1,0 +1,79 @@
+Ref:
+    -
+
+----------------------------------------------------------------------------------------------------
+    Data Binding
+----------------------------------------------------------------------------------------------------
++ Data binding in Angular is the communication between the component's class (bussiness logic) and
+the template (html):
+    - Ouput data from class to template:
+        . String Interpolation
+        . Property binding
+    - React to user event with template:
+        . Event binding
+    - Two way data biding: react to user event and output data same time
+
+
+----------------------------------------------------------------------------------------------------
+   Interpolation
+----------------------------------------------------------------------------------------------------
++ Interpolation is identified with an template expression in the middle of double curly brace. It is
+not allow multiple line or block expression in side double curly brace.
+
++ It is is one way data binding from component's class property to template.
+
++ It supports multiple ways:
+    - Binding simple property:
+        <h1>{{pageTitle}}</h1>
+    - Concatenation:
+        <h1>{{"Title is " + pageTitle}}</h1>
+    - Simple caculation:
+        <h1>{{10 + 20}}</h1>
+    - Call a class method:
+        <h1>{{"Title is " + getpageTitle()}}</h1>
+    - Element property assignment:
+        <h1 innerText = {{pageTitle}}></h1>
+
+
+----------------------------------------------------------------------------------------------------
+   Property binding
+----------------------------------------------------------------------------------------------------
++ It sets a property/attribute of an element to the value of a template expression. When setting
+an element property to a non-string data value, you must use property binding.
+
++ It is is one way data binding from component's class property to template.
+
++ It is identified with element property/attribute in square brackets.
+    <img [src] = 'product.imageUrl'>       // Equals to <img src = {{product.imageUrl}}>
+
+
+----------------------------------------------------------------------------------------------------
+   Event binding
+----------------------------------------------------------------------------------------------------
++ Event is the response for any DOM events which are trigger by user action such as clicking a link,
+pushing a button, or entering text. List of DOM event: https://developer.mozilla.org/en-US/docs/Web/Events
+
++ It is is one way Data binding from template to component's class property.
+
++ To bind to a DOM event, surround the DOM event name in parentheses and assign a quoted template
+statement to it.
+    <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
+    <input type="text" (input)="onInput($event)">           // $event contains event data
+
+
+----------------------------------------------------------------------------------------------------
+   Two way data biding
+----------------------------------------------------------------------------------------------------
++ It is achieved by enclosing ngModel directive in square brackets then parentheses. Square
+brackets indicates property binding from the class property and Parentheses indicates event
+binding which send notification of the user action back to the class property. Then we assign
+this to a template property which we want 2 way data binding on.
+    [(ngModel)] = "listProperty";
+
++ ngModel locates in FormsModule in @angular/forms, so remember to include this in your module:
+    import {FormsModule} from '@angular/forms';
+    ...
+    imports: [
+        BrowserModule,
+        FormsModule
+    ]

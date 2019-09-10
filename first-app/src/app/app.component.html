@@ -1,0 +1,16 @@
+<h3>I'm in the AppComponent</h3>
+<hr>
+<app-servers></app-servers>
+
+
+<button (click)="onTongle()">Display details</button>
+<p *ngIf="isDisplay">Hi I am text</p>
+<div *ngIf="clickTimeStamp.length">
+    <label>Click timestamp:</label>
+    <ul *ngFor="let item of clickTimeStamp; let i=index">
+        <li [style.background]="i>3 && 'blue'"
+            [ngClass]="i>3 && 'whitecolor'">
+            {{item}}
+        </li>
+    </ul>
+</div>

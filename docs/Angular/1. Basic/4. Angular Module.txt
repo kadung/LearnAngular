@@ -1,0 +1,166 @@
+Ref:
+    1.
+
+----------------------------------------------------------------------------------------------------
+    Overview
+----------------------------------------------------------------------------------------------------
++ Angular module helps to organize Angular application into cohesive blocks of functionality and
+provide boudaries in Angular application.
+
++ Angular module provides a template resolution environment which means that when Angular compiler
+see a directive in a template, it look to the Angular module for the definition. So we delare our
+Angular component in am Angular module so that the compiler can find it.
+
++ Angular module is also used to Bootstrap the startup component.
+
++ For example, app.module.ts has below code:
+    import { BrowserModule } from '@angular/platform-browser';
+    import { NgModule } from '@angular/core';
+    import { AppComponent } from './app.component';
+
+    // Angular module is a class with an NgModule decorator
+    @NgModule({
+        // List of components, directives, and pipes that are a part of the specific module you are
+        // creating. Everything in a declaration is visible to application using this module
+        declarations: [ AppComponent ],
+
+        // Add Angular modules or 3rd party modules which we want to use to your application
+        imports: [ BrowserModule ],
+
+        // List of any declarations that are visible to other modules that may import this module
+        exports: [TranslateModule],
+
+        // List providers for configuring the injector, when this module is imported by other modules
+        providers: [ImageUploadService],
+
+        // List of component which need to render when the application is started, only these
+        // selector is understanded by index.html file (Only required for root module)
+        bootstrap: [AppComponent],
+    })
+
+    // Define Angular module using Class and export this class so other Angular module can also
+    // use it by import this class.
+    export class AppModule { }
+
++ An Angular application has at least one Angular module called root application module or AppModule,
+and at least one Angular component called the root application component or AppComponent.
+
+
+----------------------------------------------------------------------------------------------------
+    Bootstraps Array
+----------------------------------------------------------------------------------------------------
++ The Bootstraps array of the NgModule decorator defines the component that is the starting point of
+the application. This is the component that provides the directive used in index.html when the
+application is launched.
+
++ Every application must bootstrap at least one component, the root application component by adding
+the component in bootstrap array of root application module.
+
++ The bootstrap array should only be used in the root application module aka AppModule.
+
+
+----------------------------------------------------------------------------------------------------
+    Delarations Array
+----------------------------------------------------------------------------------------------------
++ The Delarations array of the NgModule decorator defines the components, directives, and pipes that
+is created by us and used in this Angular application.
+
++ Every components, directives and pipes which is created by us must belong to one and only one
+Angular module.
+
++ Never add any other classes, services or modules to delaration array.
+
++ All components, directives and pipes are private by default, they are only accessible to other
+components, directives and pipes declared in the same module. If you want to use it across multiple
+module, use export array.
+
+
+----------------------------------------------------------------------------------------------------
+    Exports Array
+----------------------------------------------------------------------------------------------------
++ The Exports array of the ngModule decorator allows us to share an Angular module's components,
+directives and pipes with other modules. Other modules can use any thing inside export array when
+they import that module.
+
++ A module can export @angular module, 3rd party module, and itself.
+
++ When a module exports itself, it will export all components, directives, and pipes inside it. This
+is useful when consolidating features for multiple modules to build a shared module.
+
++ We can add anything to export array without importing it first. An Angular module only needs to
+import components, directives, and pipes that are required by the components declared in the module
+. For example, a ShareModule exports the FormModule even though it did not import it, so any
+module that import ShareModule will have access to the ngModel and other form directives
+
++ Never export a service
+
+
+----------------------------------------------------------------------------------------------------
+    Imports Array
+----------------------------------------------------------------------------------------------------
++ An Angular module can be extended by importing capabilities from other Angular module. The Imports
+array of the ngModule decorator allows to import supporting modules that export components, directives,
+and pipes. We then can use those exported components, directives and pipes within the template of
+components that are declared in this module.
+
++ Many Angular libraries and 3rd party libraries are modules, we can import these modules to use its
+capabilities.
+
++ We can separate out our route configuration into its own module or set of modules and import that.
+
++ Import is not inherited. If A impport B and B import C, then C cannot use A, if B export A then
+C can use A.
+
+
+----------------------------------------------------------------------------------------------------
+    Providers Array
+----------------------------------------------------------------------------------------------------
++ Angular module can register service providers for the application, but it is not recommended this
+way anymore, Angular 6 recommend to use provideIn in the Injectable decorator instead.
+
++ Any service providers added to providers array is registered at the root of the application, so the
+services are available to inject to any class in the application.
+
++ Don't add services to providers array of share modules. Instead, consider to build a core module
+for services and importing it once in the AppModule, this will ensure the services are only registered
+one time.
+
+
+----------------------------------------------------------------------------------------------------
+    Feature module
+----------------------------------------------------------------------------------------------------
++ A feature module is an organizational best practice, as opposed to a concept of the core Angular
+API. A feature module delivers a cohesive set of functionality focused on a specific application need
+such as a user workflow, routing, or forms.
+
++ While you can do everything within the root module, feature modules help you partition the app into
+focused areas.
+
++ A feature module collaborates with the root module and with other modules through the services it
+provides and the components, directives, and pipes that it shares.
+
++ How to make a feature module:
+    - Create an module in a feature component:
+        // create new module file in new folder as the path
+        ng g m [path]/[new_module_name]
+        // create new module file in path folder
+        ng g m [path]/[new_module_name] --flat
+        // create new module file in new folder as the path and import this module to module file to
+        // existed module file in via that path to that file
+        ng g m [path]/[new_module_name] -m [path_to_imported_module]
+
+    - Add all components in delaration array which we want to use in this module only
+    - Add required 3rd or angular libraries in import array
+    - Add RouterModule.forChild([]) to declare routing for feature module components
+
+
+----------------------------------------------------------------------------------------------------
+    Shared module
+----------------------------------------------------------------------------------------------------
++ A shared module is to organize a set of commonly uses pieces into one module and export those
+pieces so they are available to any module that import it.
+
++ How to make a shared module:
+    - Add components, directives and pipes that we want to share through out the application to the
+    delarations array
+    - Export everything that we want to share in export array

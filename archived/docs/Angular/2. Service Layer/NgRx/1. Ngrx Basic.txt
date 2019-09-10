@@ -1,0 +1,483 @@
+Ref:
+    1. 
+
+-------------------------------------------------------------------------------------------------------
+    The Redux Pattern
+-------------------------------------------------------------------------------------------------------
++ Redux pattern is a way to implement a predictable state container for Javascript app.
+
++ Redux pattern makes it easy to manage the state of your application by providing a one way data flow
+through out the application
+
++ Redux princibles:
+    - There is one single source of truth for application state called the Store.
+    - State is read only and the only way to change State is to dispatch an Action.
+    - Changes to the store are made using pure functions called Reducers.
+
++ State is entity data which is retrieved from backend server or the data from user inputs.
+
++ Store provides the single source of truth for the application. It is the one place that holds all of 
+application state, this ensures that every component that accesses the state has a consistency results.
+You do not have to put every piece of state in the store, expecially:
+    - Unshared state that is solely owned by a single component that does not need to be shared
+    or made available across routes
+    - Angular forms don't belong in the store as they are usually self contained and do not need
+    to be shared across multiple component, Angular forms also are not serializable or immutable 
+    and can change themself meaning you will not be able to track those changes with actions
+    - State that has cycles in it or has complex data structure that cannot be serialized, for
+        example, the router state
+
++ Action presents the response to an event from a user which contain a type as a string and an 
+optional payload that can be any type. 
+    - All relevant user events are dispatched as actions, effecting reducers who update the store. 
+    - If you need to change the state of the store, then replace the whole state object and not just
+    mutate part of it.
+    - Example action:
+        {
+            type: 'LOGIN',
+            payload: {
+                username: 'Duncan', 
+                password: 'secrect'
+            }
+        }
+
++ Reducer responds to dispatched actions and replace the slice of state with new one based on action 
+payload
+    - Reducer is a pure function, accepting two arguments the previous state and an action dispatched 
+    to update state. Reducer use switch statements to listen and act on specific action types, talking 
+    the action payload and state and returning a new state.
+    - Not all dispatched actions can directly update the store via a reducer as some actions have side
+    effects. To manage side effect , we use the NgRx Effects library.
+    - A pure function is a function which returns consistent results and does not mutate or access any
+    properties outside of their function scope. For example:
+        . Pure fucntion:
+            function sum(a, b){
+                return a + b;
+            }
+        . Impure fucntion:
+            let c = 1;
+            function sum(a, b){
+                return a + b + c;
+            } 
+
+
+-------------------------------------------------------------------------------------------------------
+    NgRx Store
+-------------------------------------------------------------------------------------------------------
++ NgRx Store is the library which provides reactive state management for Angular apps inspired by Redux.
+
++ Store is a simple Javascript object contained all application state, each bit of the state is defined 
+with a property, think of it as a client side database. Store is runtime only, so the state is not 
+retained if user refreshes the page or exits the app.
+
++ Angular app often organized into feature module, so State in Store should be organized by feature
+called feature module state composition. 
+
++ Each feature state is added to the application state once the feature is loaded, and called slices.
+For example:
+    {                                                                               |
+        app: {                              |                                       |
+            showImage: true,                |=> app slide (app module)              |
+            pageTitle: 'ABC'                |                                       |
+        },                                                                          |
+        products: {                         |                                       |
+            productList: {                  |                                       |
+                showProductCode: true       |                                       |=> Store
+            },                              |=> products slice (products module)    |
+            productData: {                  |                                       |
+                products: [...],            |                                       |
+                productType: [...]          |                                       |
+            }                                                                       |
+        },                                                                          |
+        ...                                                                         |
+    }
+
++ Register a Store and slices:
+    1. Initialize Store with feature module state composition:
+        - Initialize root application state in root app module by calling forRoot which takes according 
+        reducer:
+            imports: [
+                StoreModule.forRoot({'app', appReducer})
+                ...
+            ]
+        - Initialize each feature state in feature app module by calling forFeature which takes in the name
+        of :
+            imports: [
+                StoreModule.forFeature('products', productReducer)
+                ...
+            ]
+        - We can break a reducer to smaller pieces for one feature slice:
+            imports: [
+                StoreModule.forFeature('products', 
+                    // Set of reducers for this slice as key and value pair
+                    // The key is the name for each sub-slice of state
+                    // The value is the reference to its reducers
+                    {
+                        productList: listReducer,
+                        productData: dataReducer
+                    }
+                )
+                ...
+            ]
+
+    2. Create a reducer to process action:
+        - Create a reducer file in coresponding feature module.
+        - Example reducer file include below function:
+            // Default value for the state
+            const initialState: any = {
+                showProductCode: true,
+                currentProduct: null,
+                products: []
+            }
+            // Reducer function
+            export function reducer(state = initialState, action) {
+                switch (action.type) {
+                    case 'TOGGLE_PRODUCT_CODE':
+                    return {
+                        // ... is Javascript shorthand for Object.assign which mean create a new copy of 
+                        // of provided object
+                        ...state,
+                        showProductCode: action.payload
+                    };
+                    default:
+                        return state;
+                }
+            }
+        
+    3. Dispatching an Action to Change State:
+        - Before dispatch an action from a component, we must inject the Store into that component just 
+        like any services using the constructor of that component:
+            constructor(private store: Store<any>) {}
+        - Then we can dispatch an action by calling Store's dispatch method. 
+            checkChanged(value: boolean): void {
+                this.store.dispatch({
+                    'type': 'TOGGLE_PRODUCT_CODE',
+                    'payload': value
+                })
+            }
+
+    4. Subscribing to the Store to Get State Changes:
+        - Subscribing to the Store often done in ngOnInit lifecycle hook. This provides any current 
+        store value when the component is initialized and starts watching for change notification
+        - To access a value in the store, we select the apporociated slice in state using the Store's
+        select method and specifying the name of desired slice. 
+            this.store.select('products');
+        Or since the NgRx Store is an Observable, we can use pipe method and the select operator. The 
+        benefit of pipe syntax is that we readily add other pipeable operators as needed.
+            this.store.pipe(select('products'));
+        - The NgRx select method returns a slice of state as an Observable. If we want the component to
+        be notified of changes to the state, we subscribe to this observable in the component:
+            this.store.pipe(select('products')).subscribe(
+                // This is the next function which is executed each time it receives the next change 
+                // notification from the store. So each time an action causes the reducer to replace
+                // the state and showProductCode is changed, this component is notified and this code
+                // is executed
+                products => this.displayCode = products.showProductCode
+            );
+        Note that: we should use selector as below section instead of hardcode string
+
+
+-------------------------------------------------------------------------------------------------------
+    Tools and Debugging
+-------------------------------------------------------------------------------------------------------
++ Redux Store DevTools are the tools for visual analysis and debugging.
+
++ Install Redux Store DevTools in 3 steps:
+    1. Install Chrome browser Redex DevTools extension.
+    2. Install @ngrx/store-devtools package to the application.
+        npm install @ngrx/store-devtools
+    3. Initialize @ngrx/store-devtools in the root module.
+        imports: [
+            StoreDevtoolsModule.instrument({
+                name: 'Demo App',
+                maxAge: 25,
+                logOnly: environment.production
+            })
+            ...
+        ]
+
+
+-------------------------------------------------------------------------------------------------------
+    Strongly Typing the State (Selector)
+-------------------------------------------------------------------------------------------------------
++ State is organized into feature slices to keep the state associated with its feature module and makes
+it easier to find and manage the state.
+
++ For each slice of state, we define an interface that describes the structure of that slice, then we
+compose an global interface from all slice interfaces. This global interface defines entire state tree
+of the application.
+
++ Feature slice interface should define in feature module reducer.
+
++ Global interface should define in a folder under app folder.
+
++ Selector is a resuable query of the Store.
+
++ The component uses the Selector to select state from the Store, adding a level of abstraction between
+the Store structure and the component which brings some benefits as:
+    - Decouple the Store and the component so any components, which access the state, doesn't need to 
+    update when the Store is changed (re-organize or split up)
+    - Selector can encapsulate complex data transformation, make it easier for the component to obtain 
+    the complex data
+    - Selector is resuable and memorized 
+    
++ Building a selector:
+    1. Define the interface data type for feature slice:
+        interface ProductState {
+            showProductCode: boolean,
+            currentProduct: Product,
+            products: Product[]
+        }
+
+    2. Create the feature selector with defined data type with createFeatureSelector method:
+        const getProductFeatureState = createFeatureSelector<ProductState>('products');
+
+    3. Export any properties as needed with createSelector method:
+        export const getShowProductCode = createSelector(
+            // First argument is the selector required to retrieve the desired bit of state
+            getProductFeatureState,
+            // Second argument is projector function which gets the result of selector function (state)
+            // and manipulates the result as needed to return the desired property value
+                state => state.showProductCode
+            );
+    Note that: the order of these constants matters, each constant must be after any constant it 
+    reference
+
+    4. Using Selector:
+        import * as fromProduct from '../reducer/product.reducer'
+        ...
+        this.store.pipe(select(fromProduct.getShowProductCode)).subscribe(
+            showProductCode => this.displayCode = showProductCode  
+        );
+
++ We can compose multiple selectors to build a single selector, 
+    const getProductFeatureState = createFeatureSelector<ProductState>('products');
+    export const getCurrentProductCode = createSelector(
+        getProductFeatureState,  
+        state => state.currentProductCode
+    );
+    export const getCurrentProduct = createSelector(
+        getProductFeatureState,
+        getCurrentProductCode,
+        (state, currentProductCode) => state.products.find(p => p.id === currentProductCode)
+    );
+
+
+-------------------------------------------------------------------------------------------------------
+    Strongly Typing Actions with Action Creators
+-------------------------------------------------------------------------------------------------------
++ Building action creators with three steps:
+    1. Define the action types as enum constants
+        - Since action type is strings, we can define a set of valid action type using Enum.
+        - As convention, the enum file name will base on the feature name.
+        - Each action type is enum constant where its name begins with an action verb, such as tongle, 
+        set, vv, and it is assigned to apporociated string (this string shows up in the DevTools).
+        - As convention, assigned string may include below items:
+            . The name of affected slice of state by the action
+            . The name of the page or API that dispatch the action
+            . The action type name 
+        - The enum may stay in the same folder with feature module reducer.
+        - For example:
+            export enum ProductActionType {
+                TongleProductCode =  '[Product ProductNg_List Tongle Product Code',
+                SelectAProduct = '[Product ProductNg_List Select A Product'
+            }
+
+    2. Build the action creator for each action:
+        - An action creator expresses an action as a simple class with two properties, a type and a
+        payload.
+        - As convention, the name of the class is the same with the action type constant in enum file.
+        - To define a class as an action:
+            . Implement the Action interface in the NgRx library
+            . Define type property as read only so it will never change and assign it to enum constant
+            . Define payload property in the constructor 
+        - For example:
+            // Build the action creator for each action
+            export class TongleProductCode implements Action {
+                readonly type = ProductActionType.TongleProductCode;
+                constructor (public payload: boolean) {}
+            }
+
+    3. Define an union type for all action creators:
+        - A union type describes a value that can be one of several types. We use the vertical bar (|) 
+        to separate each type, so number | string | boolean is the type of a value that can be a number, 
+        a string, or a boolean.
+        - Union type for all action creators will consolidate all type(class) from each action creator 
+        in one file to a single type
+        - As convention, the name of the type is same as enum file name.
+        - For example:
+            export type ProductActions = TongleProductCode
+                | SetCurrentProduct;
+    
++ Using strongly type action:
+    - We use union type in the reducer to strongly type the action parameter for limit processed actions.
+    - We use enum constant for each case instead of hardcode string:
+        // reducer.ts
+        export function reducer(state = initialState, action: ProductActions) {
+            switch (action.type) {
+                case  ProductActionType.TongleProductCode :
+                return {
+                    ...state,
+                    showProductCode: action.payload
+                };
+                ...
+            }
+        }    
+    - To dispatch an action with action creator, we create new instance of action creator class with a 
+    payload as its new parameter:
+        // component.ts
+        import * as productActions from '../state/product.action'
+        ...
+        checkChanged(value: boolean): void {
+            this.store.dispatch(new productActions.TongleProductCode(value));
+        }
+
++ When the operation action is synchronous, it requires a set of actions, for example, sending HTTP to
+backend server for requesting data then we need 3 actions for this operation:
+    export enum ProductActionType {
+        Load = '[Product] Load',
+        LoadFail = '[Product] Load Fail',
+        LoadSuccess = '[Product] Load Success'
+        ...
+    }
+
+
+-------------------------------------------------------------------------------------------------------
+    Working with Effects
+-------------------------------------------------------------------------------------------------------
++ In NgRx context, a side effect is an operation that depends on or interact with an external source,
+such as external state devices, or an API. Rather than having the logic to manage side effect in the 
+component, we can use NgRx Effect library to manage side effects.
+
++ Why we use NgRx Effect library:
+    - It keep the components pure by removing the code that deals with the side effects.
+    - It help isolate side effect to a central place.
+    - It makes easier to test side effects in isolation from the component that use them.
+
++ An Effect (in NgRx Effect library) takes an dispatched action, do something and dispatch a new action.
+
++ Install NgRx Effect library:
+    npm install @ngrx/effects
+
++ Define an Effect:
+    // Create an Angular Service with Injectable decorator on top of a Typescript class
+    @Injectable
+    export class ProductEffect {
+        // Inject the Actions observable from NgRx library and the data prodiver service instances
+        constructor(private actions$: Actions,
+                    private productService: productService) {}
+        
+        // Create an effect by making a variable with effect decorator
+        @Effect()
+        loadProduct$ = this.actions$.pipe(
+            // Indicate specific action type which we want to listen
+            ofType(ProductActionType.Load),
+            // When ever the Load action is dispatched to the effect, then do below
+            mergeMap(action => 
+                // Then call data provider service to get the data from BE
+                this.productService.getProducts().pipe(
+                    // Then dispatch a new action
+                    map(products => (new LoadSuccess(products)))
+                )
+            )
+        );
+    }
+
++ Note: the $ suffix is an optional convention to show that this variable is an observable to be clear
+about observable and observable value.
+
++ RxJs operators for mapping Observable data in Effect: mergeMap vs switchMap
+    1. switchMap operator:
+        - It is least usage in the code because it cancels the current subscription if a new value is 
+        emitted, for example, if someone dispatches a second save product action before the first save 
+        product action's HTTP request return to the effect, the first in-flight request will be canceled.
+        - It is used for GET request which is cancelable requests like searches. 
+
+    2. concatMap operator:
+        - It runs HTTP requests in order and will wait for the last request to finsish before starting 
+        the next request, which is less performance but the safest
+        - It is used for GET, POST and PUT request when order is important
+
+    3. mergeMap operator: 
+        - It runs HTTP requests in parallel which is more performance than concatMap.
+        - It is used for POST, PUT and DELETE request when order is not important
+
+    4. exhaustMap operator:
+        - It will ignore all subsequent actions dispatched until the current request completes
+        - It is used for login when you do not want to make or queue up anymore request until the initial
+        one is complete
+
++ Register an effect:
+    1. Register effects in root app module by calling forRoot which takes an array of effects:
+        imports: [
+            EffectModule.forRoot([effect1, effect2, ...])
+                ...
+            ]
+    2, Register effects for each feature module (lazy loading effect) by calling forFeature which takes 
+    an array of effects:
+            imports: [
+                StoreModule.forFeature('products', productReducer)
+                ...
+            ]
+ 
++ Using an effect:
+    1. Inject the store via constructor of target component:
+        constructor(private store: Store<any>) {}
+
+    2. Call the dispatch method, passing along a created action which listen by the effect:
+        this.store.dispatch(new productActions.Load());
+
+    3. Select state with selector:
+        this.store.pipe(select(fromProduct.getProducts)).subscribe(
+            (products: Product[]) => this.products = products
+        );
+
++ Unsubscribe from the store:
+    1. Component subscription (manually subscribe and un-subscribe):
+        - When you need the observable's value in a component class to work or change the value before
+        using it in a template.
+        - Steps to do:
+            // Initialize a variable which indicate active state of the component
+            export class ProductListComponent implements OnInit, OnDestroy {
+                componentActive = true;
+
+                // Unsubscribe with takeWhile
+                this.store.pipe(select(fromProduct.getProducts), 
+                takeWhile((), => this.componentActive))
+                .subscribe(
+                    (products: Product[]) => this.products = products
+                )
+
+                // Set the variable to false when destroy the component
+                ngOnDestroy() {
+                    this.componentActive = false;
+                }
+            }    
+
+    2. Async pipe (automatic subscribe and un-subscribe by Angular):
+        - When you do not need to do anything with the data and use the direct observable's value in 
+        the template.
+        - Steps to do:
+            // component.ts
+            this.products$ = this.store.pipe(select(fromProduct.getProducts));
+
+            // component.html
+            <div class="card-body" *ngIf="products$ | async as products">
+            ....
+            *ngFor = "let product in products | async"
+
++ Exception handling in Effect:
+    - catchError operator is used to listen to error, if data service provider return an error, we can
+    dispatch a failed action:
+        @Effect()
+        loadProduct$ = this.actions$.pipe(
+            ofType(ProductActionType.Load),
+            mergeMap(action => 
+                this.productService.getProducts().pipe(
+                    map(products => (new LoadSuccess(products))),
+                    catchError(err => of(new LoadFail(err)))
+                )
+            )
+        );
+
+

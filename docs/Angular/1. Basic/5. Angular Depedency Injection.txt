@@ -1,0 +1,40 @@
+Ref:
+    1. https://toidicodedao.com/2015/11/03/dependency-injection-va-inversion-of-control-phan-1-dinh-nghia/
+    2. https://martinfowler.com/articles/injection.html
+
+-------------------------------------------------------------------------------------------------------
+    Introduction
+-------------------------------------------------------------------------------------------------------
+- Dependency in programming means when class A uses some functionality of class B, then its said that
+class A has a dependency of class B.
+
+- In Java, before we can use methods of other classes, we first need to create the object of that class
+(i.e. class A needs to create an instance of class B). So, transferring the task of creating the object
+to someone else and directly using the dependency is called dependency injection.
+
+- So the dependency injection’s responsibility are:
+    + Create the objects
+    + Know which classes require those objects
+    + And provide them all those objects
+
+- There are basically three types of dependency injection:
+    + constructor injection: the dependencies are provided through a class constructor.
+    + setter injection: the client exposes a setter method that the injector uses to inject the
+    dependency.
+    + interface injection: the dependency provides an injector method that will inject the dependency
+    into any client passed to it. Clients must implement an interface that exposes a setter method that
+    accepts the dependency.
+
+-------------------------------------------------------------------------------------------------------
+    Dependency Injection in Angular
+-------------------------------------------------------------------------------------------------------
+- Angular uses constructor injection DI and it is responsible for:
+    + Creating components
+    + Maintaining a component's state
+    + Providing components to other components, as required
+
+- DI allows us to share variables and functions between self-contained modules without having to reuse
+code, and maintains the state of each component.
+
+- DI employs the injector, the service object(s) to be used, the client object that is depending on the
+services it uses, and the interfaces.

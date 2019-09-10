@@ -1,0 +1,43 @@
+Ref:
+    1.
+
+---------------------------------------------------------------------------------------------------
+    Transform data with Pipe
+---------------------------------------------------------------------------------------------------
++ A pipe takes in data as input and transforms it to a desired output. Example, the date pile:
+    <p>My birthday is {{birthday_variable | date }}
+
++ A pile can has no or multiple parameters:
+    <p>Total cost is {{cost | curency:'USD':'symbol':'1.2-2'}}
+
++ Pile can be chained together. Example, to display the birthday in uppercase, the birthday is
+chained to the DatePipe and on to the UpperCasePipe:
+    <p>My birthday is {{birthday_variable | date:'fullDate' | uppercase}}
+
++ Angular build-in pipes: https://angular.io/api?type=pipe
+
+
++ You can write your own custom pipes: https://angular.io/guide/pipes#custom-pipes
+    - A custom pipe is a class with pipe decorator which is imported from the core Angular library.
+    - A pipe class implements the PipeTransform interface which has transform method. We write code
+    in transform method to transform a value and return that transformed value.
+    - In transform method:
+        . The first parameter is the value which need to transform
+        . Any additional parameters defines agruments that we can use to perform the transformation
+        and they are also the parameters we use in template
+    - To use a pipe in a component, we should add custom pipe class to the module which manage the
+    component.
+    - Example a custome pipe which transform any input character to space:
+        import {Pipe, PipeTransform} from '@angular/core'
+        @Pipe({
+            name: 'convertToSpace'
+        })
+        export class ConvertToSpacePile() implements PipeTransform{
+            transform(value: string, character: string) :string{
+                retrun value.replace(character, ' ');
+            }
+        }
+    - Example implement in template:
+        <td>{{product.productCode | convertToSpace:'-'}}
+        // value: string is product.productCode
+        // character: string: is '-' (additional parameters)
