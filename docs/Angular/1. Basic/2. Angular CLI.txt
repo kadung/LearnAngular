@@ -1,34 +1,39 @@
 - Ref:
-    1. https://github.com/angular/angular-cli/wiki
+    1. https://angular.io/cli
 
 ---------------------------------------------------------------------------------------------------
     Overview
 ---------------------------------------------------------------------------------------------------
-+ The Angular CLI is a tool to initialize, develop, scaffold and maintain Angular applications
++ The Angular CLI is a tool to initialize, develop, scaffold and maintain Angular applications.
+
 + To install the Angular CLI:
     npm install -g @angular/cli
 
 ---------------------------------------------------------------------------------------------------
     Commands
 ---------------------------------------------------------------------------------------------------
-+ Create new Angular application:   ng new [project name]
++ Create new Angular application:
+    ng new <project_name> [options]
 
-+ Run Angular application:  ng serve -o
-    - Manually access the app via http://localhost:4200 if not using -o flag
-    - Change port with --port [port_number] flag
-    - The app will automatically reload if any change
++ Run Angular application:
+    ng s [options]
 
-+ Generate components, services, modules and more:  ng g --help
-    - Component:    ng g c [component_name]
-    - Module:       ng g m [module_name]
-        
++ Create modules:
+    ng g m <module_name> [options]
+
++ Create components:
+    ng g c <component_name> [options]
+
++ Create sub components:
+    ng g c <parent_name>/<child_name> [options]
+
 + Running unit tests:  ng test
-    - Tests will execute after a build is executed via Karma, and it will automatically watch your 
-    files for changes. 
+    - Tests will execute after a build is executed via Karma, and it will automatically watch your
+    files for changes.
     - You can run tests a single time via --watch=false or --single-run.
 
 + Running end-to-end tests:  ng e2e
-    - Before running the tests make sure you are serving the app via ng serve. 
+    - Before running the tests make sure you are serving the app via ng serve.
     - End-to-end tests are run via Protractor.
 
 + Build application for deployment:   ng build --prod
