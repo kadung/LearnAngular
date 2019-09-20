@@ -1,0 +1,7 @@
+Ref:
+    1. https://augury.rangle.io/
+
+-------------------------------------------------------------------------------------------------------
+    Debugger
+-------------------------------------------------------------------------------------------------------
++ Angular Augury: A Chrome and Firefox Dev Tools extension for debugging Angular applications.

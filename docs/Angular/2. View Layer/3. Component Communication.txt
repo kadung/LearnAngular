@@ -1,0 +1,63 @@
+Ref:
+    1. https://angular.io/guide/component-interaction
+
+-------------------------------------------------------------------------------------------------------
+    Parent and children communicate via decorator
+-------------------------------------------------------------------------------------------------------
++ @Input() and @Output() decorators allow child directives or components to share data with its parent.
+
++ @Input() allows data to be input into the child component from the parent component:
+    //// Child component
+    import { Component, Input } from '@angular/core';
+    @Component({
+        selector: 'app-child',
+        template: `<p>Parrent Name: {{name}}</p>`,
+    })
+    export class ItemDetailComponent {
+        @Input() name: string;
+    }
+
+    //// Parent component
+    import {Component} from '@angular/core';
+    @Component({
+        selector: 'app-parent',
+        template: `<app-child [name]='parrentName'></app-child>`,
+    })
+    export class ItemDetailComponent {
+        parrentName = 'Mike';
+    }
+
++ @Output() allows data to flow from the child out to the parent.
+    //// Child component
+    import {Component, Output, EventEmitter} from '@angular/core';
+    @Component({
+        selector: 'app-child',
+        template: `
+        <label>Add an item: <input #newItem></label>
+        <button (click)="addNewItem(newItem.value)">Add to parent's list</button>
+        `,
+    })
+    export class ItemDetailComponent {
+        @Output() newItemEvent = new EventEmitter<string>();
+        addNewItem(value: string) {
+            this.newItemEvent.emit(value);
+        }
+    }
+
+    //// Parent component
+    import {Component} from '@angular/core';
+    @Component({
+        selector: 'app-parent',
+        template: `<app-child (newItemEvent)='addItem($event)'></app-child>`,
+    })
+    export class ItemDetailComponent {
+        items = ['item1', 'item2', 'item3', 'item4'];
+        addItem(newItem: string) {
+            this.items.push(newItem);
+        }
+    }
+
+
+-------------------------------------------------------------------------------------------------------
+    Parent and children communicate via a service
+-------------------------------------------------------------------------------------------------------

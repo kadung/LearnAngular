@@ -11,6 +11,9 @@ the template (html):
         . Property binding
     - React to user event with template:
         . Event binding
+    - Input data from template to class:
+        . Template references and Event binding
+        . @ViewChild decorator
     - Two way data biding: react to user event and output data same time
 
 
@@ -59,6 +62,28 @@ pushing a button, or entering text. List of DOM event: https://developer.mozilla
 statement to it.
     <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
     <input type="text" (input)="onInput($event)">           // $event contains event data
+
+
+----------------------------------------------------------------------------------------------------
+   Template References
+----------------------------------------------------------------------------------------------------
++ A template reference variable is often a reference to a DOM element within a template. It can also
+refer to a directive (which contains a component), an element, TemplateRef, or a web component.
+
++ Use the hash symbol (#) to declare a reference variable.
+
++ The scope of a reference variable is the entire template. So, don't define the same variable name
+more than once in the same template as the runtime value will be unpredictable.
+
++ Getting access to the template (DOM) with template references and event binding:
+    <input #phone placeholder="phone number" />
+    <button (click)="callPhone(phone.value)">Call</button>
+
+
+----------------------------------------------------------------------------------------------------
+   @ViewChild decorator
+----------------------------------------------------------------------------------------------------
++
 
 
 ----------------------------------------------------------------------------------------------------
