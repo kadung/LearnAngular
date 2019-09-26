@@ -1,5 +1,6 @@
 Ref:
     1. https://angular.io/guide/component-interaction
+    2. https://blog.angular-university.io/angular-ng-content/
 
 -------------------------------------------------------------------------------------------------------
     Parent and children communicate via decorator
@@ -59,5 +60,44 @@ Ref:
 
 
 -------------------------------------------------------------------------------------------------------
+    Projecting Content into child components with ng-content
+-------------------------------------------------------------------------------------------------------
++ By default, everything between opening and closing tag of your own component is removed by Angular.
+Content projection is an Angular concept that helps developers build reusable components. It allows you
+to pass data from a parent component to a template of a child component.
+
++ Example:
+    //// Child HTML
+    <div class="heading">
+        <p>This is header</p>
+        <ng-content select="h1"><ng-content>
+    <div>
+    <div class="body">
+        <p>This is body</p>
+        <ng-content select="div"><ng-content>
+    <div>
+    <div class="footer">
+        <p>This is footer</p>
+        <ng-content><ng-content>
+    <div>
+
+    //// Parent component
+    @Component({
+        selector: 'app-parent',
+        template:
+            `<child-selector>
+                <h1>Header for the first {{label}}</h1>
+                <div>Div for second {{label}}</div>
+                <span>Span for second {{label}}</span>
+            <child-selector>`
+    })
+    export class ParentComponent {
+        label = 'ng-content';
+    }
+
+
+-------------------------------------------------------------------------------------------------------
     Parent and children communicate via a service
 -------------------------------------------------------------------------------------------------------
++
+

@@ -1,5 +1,5 @@
 Ref:
-    -
+    - https://blog.angular-university.io/angular-viewchild/
 
 ----------------------------------------------------------------------------------------------------
     Data Binding
@@ -76,15 +76,42 @@ refer to a directive (which contains a component), an element, TemplateRef, or a
 more than once in the same template as the runtime value will be unpredictable.
 
 + Getting access to the template (DOM) with template references and event binding:
+    // Component HTML
     <input #phone placeholder="phone number" />
-    <button (click)="callPhone(phone.value)">Call</button>
+    <button (click)="savePhone(phone.value)">Call</button>
 
+    // Component Class
+    savePhone(number){
+        this.phoneNumber = number;
+    }
 
 ----------------------------------------------------------------------------------------------------
    @ViewChild decorator
 ----------------------------------------------------------------------------------------------------
-+
++ @ViewChild is property decorator that configures a view query, it returns the first element or the
+directive matching the selector in the view DOM. The following selectors are supported:
+    - Any class with the @Component or @Directive decorator which is used in the current template:
+        @ViewChild(ComponentClass) componentClass: ComponentClass;
 
+    - A template reference variable (e.g. query <my-component #cmp></my-component>):
+        @ViewChild('cmp')
+
+    - Any provider defined in the child component tree of the current component:
+        @ViewChild(SomeService) someService: SomeService
+
+    - A TemplateRef (e.g. query <ng-template></ng-template>):
+        @ViewChild(TemplateRef) template;
+
++ Getting access to the template (DOM) directly from component's class:
+    // Component HTML
+    <input #phone placeholder="phone number" />
+    <button (click)="savePhone()">Call</button>
+
+    // Component Class
+    @ViewChild('phone') phoneInput: ElementRef;
+    savePhone(){
+        this.phoneNumber = this.phoneInput.nativeElement.value;
+    }
 
 ----------------------------------------------------------------------------------------------------
    Two way data biding
