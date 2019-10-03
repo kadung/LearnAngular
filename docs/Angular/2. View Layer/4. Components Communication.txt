@@ -63,23 +63,35 @@ Ref:
     Projecting Content into child components with ng-content
 -------------------------------------------------------------------------------------------------------
 + By default, everything between opening and closing tag of your own component is removed by Angular.
-Content projection is an Angular concept that helps developers build reusable components. It allows you
-to pass data from a parent component to a template of a child component.
+Content projection is an Angular concept that helps developers build reusable components.
+
++ Content projection allows to pass data between opening and closing tag of a parent's template to a
+child's template.
+
++ To access data in ng-content directive, we use @ContentChild decorator.
 
 + Example:
-    //// Child HTML
-    <div class="heading">
-        <p>This is header</p>
-        <ng-content select="h1"><ng-content>
-    <div>
-    <div class="body">
-        <p>This is body</p>
-        <ng-content select="div"><ng-content>
-    <div>
-    <div class="footer">
-        <p>This is footer</p>
-        <ng-content><ng-content>
-    <div>
+    //// Child component
+    @Component({
+        selector: 'child-selector',
+        template:
+            `<div class="heading">
+                <p>This is header</p>
+                <ng-content select="h1"><ng-content>
+            <div>
+            <div class="body">
+                <p>This is body</p>
+                <ng-content select="div"><ng-content>
+            <div>
+            <div class="footer">
+                <p>This is footer</p>
+                <ng-content><ng-content>
+            <div>`
+    })
+    export class ChildComponent {
+        @ContentChild('contentSpan') span: ElementRef;
+        console.log('Span content is ' + this.span.nativeElement.textContent)
+    }
 
     //// Parent component
     @Component({
@@ -88,16 +100,15 @@ to pass data from a parent component to a template of a child component.
             `<child-selector>
                 <h1>Header for the first {{label}}</h1>
                 <div>Div for second {{label}}</div>
-                <span>Span for second {{label}}</span>
+                <span #contentSpan>Span for second {{label}}</span>
             <child-selector>`
     })
     export class ParentComponent {
-        label = 'ng-content';
+        label = 'Awsome';
     }
 
 
 -------------------------------------------------------------------------------------------------------
     Parent and children communicate via a service
 -------------------------------------------------------------------------------------------------------
-+
 
