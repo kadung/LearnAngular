@@ -3,7 +3,7 @@ Ref:
     2. https://blog.angular-university.io/angular-ng-content/
 
 -------------------------------------------------------------------------------------------------------
-    Parent and children communicate via decorator
+    Parent and children communicate via Input and Output decorator
 -------------------------------------------------------------------------------------------------------
 + @Input() and @Output() decorators allow child directives or components to share data with its parent.
 
@@ -17,7 +17,6 @@ Ref:
     export class ItemDetailComponent {
         @Input() name: string;
     }
-
     //// Parent component
     import {Component} from '@angular/core';
     @Component({
@@ -44,7 +43,6 @@ Ref:
             this.newItemEvent.emit(value);
         }
     }
-
     //// Parent component
     import {Component} from '@angular/core';
     @Component({

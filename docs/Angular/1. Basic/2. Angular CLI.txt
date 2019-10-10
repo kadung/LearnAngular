@@ -27,6 +27,9 @@
 + Create sub components:
     ng g c <parent_name>/<child_name> [options]
 
++ Create a attribute directive:
+    ng generate directive [directive_name]
+
 + Running unit tests:  ng test
     - Tests will execute after a build is executed via Karma, and it will automatically watch your
     files for changes.

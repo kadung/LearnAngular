@@ -1,5 +1,6 @@
 Ref:
-    - https://blog.angular-university.io/angular-viewchild/
+    1. https://angular.io/guide/user-input
+    2. https://blog.angular-university.io/angular-viewchild/
 
 ----------------------------------------------------------------------------------------------------
     Data Binding
@@ -20,10 +21,13 @@ the template (html):
 ----------------------------------------------------------------------------------------------------
    Interpolation
 ----------------------------------------------------------------------------------------------------
++ Interpolation (Sting Interpolation) is a technique that allows the user to bind a dynamic value to
+a UI element. It refers to embedding expressions into marked up text.
+
 + Interpolation is identified with an template expression in the middle of double curly brace. It is
 not allow multiple line or block expression in side double curly brace.
 
-+ It is is one way data binding from component's class property to template.
++ Interpolation is one way data binding from component's class property to template.
 
 + It supports multiple ways:
     - Binding simple property:
@@ -54,14 +58,22 @@ an element property to a non-string data value, you must use property binding.
    Event binding
 ----------------------------------------------------------------------------------------------------
 + Event is the response for any DOM events which are trigger by user action such as clicking a link,
-pushing a button, or entering text. List of DOM event: https://developer.mozilla.org/en-US/docs/Web/Events
+pushing a button, or entering text. List of DOM event:
+    https://developer.mozilla.org/en-US/docs/Web/Events
 
 + It is is one way Data binding from template to component's class property.
 
 + To bind to a DOM event, surround the DOM event name in parentheses and assign a quoted template
 statement to it.
-    <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
-    <input type="text" (input)="onInput($event)">           // $event contains event data
+    @Component({
+        template:`
+            <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
+            <input type="text" (input)="onInput($event)">`          // $event contains event data
+    })
+    export class SomeComponent(){
+        onClickMe(){ console.log('Clicked') }
+        onInput(data){ console.log(data + ' is entered.') }
+    }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -76,14 +88,17 @@ refer to a directive (which contains a component), an element, TemplateRef, or a
 more than once in the same template as the runtime value will be unpredictable.
 
 + Getting access to the template (DOM) with template references and event binding:
-    // Component HTML
-    <input #phone placeholder="phone number" />
-    <button (click)="savePhone(phone.value)">Call</button>
-
-    // Component Class
-    savePhone(number){
-        this.phoneNumber = number;
+    @Component({
+        template:`
+            <input #phone placeholder="phone number" />
+            <button (click)="savePhone(phone.value)">Save</button>`
+    })
+    export class SomeComponent(){
+        savePhone(number){
+            this.phoneNumber = number;
+        }
     }
+
 
 ----------------------------------------------------------------------------------------------------
    @ViewChild decorator
@@ -103,15 +118,18 @@ directive matching the selector in the view DOM. The following selectors are sup
         @ViewChild(TemplateRef) template;
 
 + Getting access to the template (DOM) directly from component's class:
-    // Component HTML
-    <input #phone placeholder="phone number" />
-    <button (click)="savePhone()">Call</button>
-
-    // Component Class
-    @ViewChild('phone') phoneInput: ElementRef;
-    savePhone(){
-        this.phoneNumber = this.phoneInput.nativeElement.value;
+    @Component({
+        template:`
+            <input #phone placeholder="phone number" />
+            <button (click)="savePhone()">Call</button>`
+    })
+    export class SomeComponent(){
+        @ViewChild('phone') phoneInput: ElementRef;
+        savePhone(){
+            this.phoneNumber = this.phoneInput.nativeElement.value;
+        }
     }
+
 
 ----------------------------------------------------------------------------------------------------
    Two way data biding

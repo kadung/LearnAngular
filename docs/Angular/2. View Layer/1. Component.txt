@@ -57,7 +57,10 @@ decorator is always prefix with @ sign.
 
 + Register the component to declarations array of angular module:
     @NgModule({
-        declarations: [ AppComponent, TestComponent ],
+        declarations: [
+            AppComponent,
+            TestComponent
+        ],
         ....
     })
 
