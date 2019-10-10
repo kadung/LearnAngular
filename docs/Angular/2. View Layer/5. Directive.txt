@@ -52,7 +52,6 @@ condition. Angular puts only the selected element into the DOM.
 ---------------------------------------------------------------------------------------------------
 + Create the directive class file (example.directive.ts):
     import { Directive, OnInit, ElementRef, Renderer2 } from '@angular/core';
-
     @Directive({
         // Define the unique custom HTML attribute that can be used in any component's template
         // It should not have same name with common HTML attribute and place inside brackets
@@ -65,7 +64,7 @@ condition. Angular puts only the selected element into the DOM.
 
         ngOnInit(){
             // Recomend to use Renderer2 for any DOM manipulations
-            this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'blue');
+            this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'blue', false, false);
         }
     }
 
@@ -85,6 +84,60 @@ condition. Angular puts only the selected element into the DOM.
 
 
 ---------------------------------------------------------------------------------------------------
-    Interactive Attribute directive
+    Interaction in Attribute directive
 ---------------------------------------------------------------------------------------------------
-+
++ Any element/component in the template which use a directive will be the directive’s host.
+
++ @HostListener decorator let directive listen to events on the host. It receives 2 parameters:
+    - eventName: string     // The DOM event to listen for.
+    - args: string[]        // A set of arguments to pass to the handler method when the event occurs.
+
++ @HostBinding decorator binds DOM property of the host to a data property in the directive. It has
+only one parameter:
+    - hostPropertyName: string      // The DOM property that is bound to a data property.
+
++ @Input decorator (custom property binding) let a host sends the a datas to a directive.
+
++ Example for multiple custom data send to directive:
+    // interactive.directive.ts
+    import { Directive, OnInit, Input, HostBinding, HostListener } from '@angular/core';
+    @Directive({
+        selector:'[interactiveDirective]'
+    })
+    export class InteractiveDirective {
+        @Input() defaultColor: string = 'transparent';
+        @Input() highlightColor: string = 'blue';
+
+        @HostBinding('style.backgroundColor') backgroundColor: string;
+
+        @ngOnInit(){
+            this.backgroundColor = this.defaultColor;
+        }
+
+        @HostListener('mouseenter') mouseenter(eventData: Event){
+            this.backgroundColor = this.highlightColor;
+        }
+        @HostListener('mouseleave') mouseleave(eventData: Event){
+            this.backgroundColor = this.defaultColor;
+        }
+    }
+
+    // host
+    import { Component } from '@angular/core';
+    @Component({
+        selector: 'app-root',
+        template: `
+            <p interactiveDirective [defaultColor]="'yellow'" [highlightColor]="'red'">
+                Hello World!
+            </p>`,
+    })
+    export class AppComponent {}
+
++ If we only have one data to transfer to the directive, we can does as build-in directive:
+    // Set custom property binding to same name with directive's selector
+    @Input('interactiveDirective') highlightColor: string = 'blue';
+
+    // Then we can use as build-in directive in the host
+    <p [interactiveDirective]="'red'" [defaultColor]="'yellow'">
+        Hello World!
+    </p>`,
