@@ -1,5 +1,6 @@
 Ref:
     1. https://angular.io/guide/attribute-directives#write-the-directive-code
+    2. https://stackoverflow.com/questions/37965647/hostbinding-and-hostlistener-what-do-they-do-and-what-are-they-for
 
 ---------------------------------------------------------------------------------------------------
     Directive
@@ -10,26 +11,6 @@ tag. There are three kinds of directives in Angular:
     - Structural directives: change the DOM layout by adding, removing or manipulating DOM elements
     - Attribute directives: change the appearance or behavior of an element, component, or another
     directive.
-
-
----------------------------------------------------------------------------------------------------
-    Build-in Structural directives
----------------------------------------------------------------------------------------------------
-+ NgIf directive: add or remove an element from the DOM.
-    // When isActive returns a truthy value, NgIf adds the app-item-detail to the DOM
-    <app-item-detail *ngIf="isActive" [item]="item"></app-item-detail>
-
-+ NgFor directive: repeats a portion of DOM tree once for each item in an iterable list.
-    <div *ngFor="let item of items">{{item.name}}</div>
-
-+ NgSwitch directive: displays one element from among several possible elements, based on a switch
-condition. Angular puts only the selected element into the DOM.
-    <div [ngSwitch]="currentItem.feature">
-        <app-stout-item    *ngSwitchCase="'stout'"    [item]="currentItem"></app-stout-item>
-        <app-device-item   *ngSwitchCase="'slim'"     [item]="currentItem"></app-device-item>
-        <!-- . . . -->
-        <app-unknown-item  *ngSwitchDefault           [item]="currentItem"></app-unknown-item>
-    </div>
 
 
 ---------------------------------------------------------------------------------------------------
@@ -48,9 +29,9 @@ condition. Angular puts only the selected element into the DOM.
 
 
 ---------------------------------------------------------------------------------------------------
-    Create Attribute directive
+    Create custom attribute directive
 ---------------------------------------------------------------------------------------------------
-+ Create the directive class file (example.directive.ts):
++ Create the directive class file:
     import { Directive, OnInit, ElementRef, Renderer2 } from '@angular/core';
     @Directive({
         // Define the unique custom HTML attribute that can be used in any component's template
@@ -84,19 +65,20 @@ condition. Angular puts only the selected element into the DOM.
 
 
 ---------------------------------------------------------------------------------------------------
-    Interaction in Attribute directive
+    Interaction with directive
 ---------------------------------------------------------------------------------------------------
 + Any element/component in the template which use a directive will be the directive’s host.
 
 + @HostListener decorator let directive listen to events on the host. It receives 2 parameters:
-    - eventName: string     // The DOM event to listen for.
-    - args: string[]        // A set of arguments to pass to the handler method when the event occurs.
+    - eventName: string (only supports window, document, and body as global event targets,
+    otherwise it only supports the components host element)
+    - args: string[] (A set of arguments to pass to the handler method when the event occurs)
 
 + @HostBinding decorator binds DOM property of the host to a data property in the directive. It has
 only one parameter:
-    - hostPropertyName: string      // The DOM property that is bound to a data property.
+    - hostPropertyName: string (The DOM attribute that is bound to directive's property)
 
-+ @Input decorator (custom property binding) let a host sends the a datas to a directive.
++ @Input decorator (custom property binding) let a host sends the custom data to the directive.
 
 + Example for multiple custom data send to directive:
     // interactive.directive.ts
@@ -138,6 +120,61 @@ only one parameter:
     @Input('interactiveDirective') highlightColor: string = 'blue';
 
     // Then we can use as build-in directive in the host
-    <p [interactiveDirective]="'red'" [defaultColor]="'yellow'">
+    <p [interactiveDirective]="'red'">
         Hello World!
-    </p>`,
+    </p>
+
+
+---------------------------------------------------------------------------------------------------
+    Build-in Structural directives
+---------------------------------------------------------------------------------------------------
++ NgIf directive: add or remove an element from the DOM.
+    // When isActive returns a truthy value, NgIf adds the app-item-detail to the DOM
+    <app-item-detail *ngIf="isActive" [item]="item"></app-item-detail>
+
++ NgFor directive: repeats a portion of DOM tree once for each item in an iterable list.
+    <div *ngFor="let item of items">{{item.name}}</div>
+
++ NgSwitch directive: displays one element from among several possible elements, based on a switch
+condition. Angular puts only the selected element into the DOM.
+    <div [ngSwitch]="currentItem.feature">
+        <app-stout-item    *ngSwitchCase="'stout'"    [item]="currentItem"></app-stout-item>
+        <app-device-item   *ngSwitchCase="'slim'"     [item]="currentItem"></app-device-item>
+        <!-- . . . -->
+        <app-unknown-item  *ngSwitchDefault           [item]="currentItem"></app-unknown-item>
+    </div>
+
++ Note: There is only property binding, event binding, 2-way binding and string interpolation in
+Angular and there is no star operator. Behind the scenes on Structural Directives, Angular will
+transform them into above method.
+    // Normal ngIf directive
+    <app-item-detail *ngIf="isActive" [item]="item"></app-item-detail>
+
+    // Angular will transform to
+    <ng-template [ngIf]="isActive">
+        <app-item-detail [item]="item"></app-item-detail>
+    </ng-template>
+
+
+---------------------------------------------------------------------------------------------------
+    Create custom structural directives
+---------------------------------------------------------------------------------------------------
++ Create the custom structural directive which opposite with ngIf directive:
+    import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+    @Directive({
+        selector:'[appUnless]'
+    })
+    export class UnlessDirective {
+        @Input() set appUnless(condition: boolean){
+            if (!condition){
+                this.vcRef.createEmbeddedView(this.templateRef);
+            }
+            else {
+                this.vcRef.clear);
+            }
+        }
+        constructor(private templateRef: TemplateRef<any>, private vcRef: ViewContainerRef) {}
+    }
+
++ Usage of new directive is similar to ngIf directive:
+    <app-item-detail *appUnless="!isActive" [item]="item"></app-item-detail>
