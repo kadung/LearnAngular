@@ -1,5 +1,5 @@
 Ref:
-    1.
+    1. https://stackoverflow.com/questions/51549762/the-clear-meaning-of-the-decorator-injectable-in-angular-5
 
 ---------------------------------------------------------------------------------------------------
     Services and Dependency Injection
@@ -29,29 +29,27 @@ class.
 
 
 ---------------------------------------------------------------------------------------------------
-    Create and Inject a service to an component
+    Create and Inject a service to a component
 ---------------------------------------------------------------------------------------------------
-+ Create the service class :
-    - Using name as *.service.ts
-    - Define metatdata for service class with @Injectable decorator
-        @Injectable()
-        export class SomeServiceClass {}
++ Create the service class with name as *.service.ts
 
 + Register the service to Angular dependency injector:
-    - Register the service in root injector in Angular 6:
+    - Register the service in root injector by adding a service class to the providers[] array in
+    AppModule:
+        import { SomeServiceClass } from 'somewhere'
+        @NgModule({
+            ...
+            providers: [SomeServiceClass]
+        })
+
+    For Angular 6+, instead of above method, we can add the following config in @Injectable()
+    decorator directly in the service class:
         @Injectable({
             providedIn: 'root'
         })
         export class SomeServiceClass {}
 
-    - Register the service in root injector in Angular below 6:
-        @NgModule({
-            ...
-            providers: [SomeServiceClass]
-        })
-        export class AppModule {}
-
-    - Or register the service in component injector:
+    - Or register the service to component injector:
         @Component({
             ...
             providers: [SomeServiceClass]
@@ -68,4 +66,25 @@ class.
 Or we can use shortcut syntax from TypeScript for DI:
     export class ComponentClass {
         constructor(private serviceIntance: SomeServiceClass){}
+    }
+
+
+---------------------------------------------------------------------------------------------------
+    Inject a service to another service
+---------------------------------------------------------------------------------------------------
++ Injected service must reigster in root injector so that other serivces can receive it via DI.
+    // service1.service.ts
+    export class Service1 {}
+    // app.module.ts
+    @NgModule({
+        ...
+        providers: [SomeServiceClass]
+    })
+
++ The receiving service must add add @Injectable decorator which means "I (receiving service) can
+have other services injected into me"
+    import { Service1 } from 'service_1_location'
+    @Injectable()
+    export class Service2 {
+        constructor(private service1: Service1)
     }
