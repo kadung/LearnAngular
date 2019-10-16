@@ -105,90 +105,98 @@ example, Save button saves the data to the server before do routing to next page
 
 + Router service is used to activate a route via code.
     import { Router } from '@angular/router'
-        constructor (private router: Router) { }
-        onBack(): void{
-            this.router.navigate([/products]);
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent {
+        constructor (private router: Router) {}
+        onBack() {
+            this.router.navigate(['/products']);
         }
+    }
 
++ Router service does not know the current URL. So if you want to use relative path, you have to
+add relativeTo parameter:
+    import { Router, ActivatedRoute } from '@angular/router'
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent {
+        constructor (private router: Router, private route: ActivatedRoute) {}
+        onBack() {
+            this.router.navigate(['products', {relativeTo: this.route}]);
+        }
+    }
 
 ----------------------------------------------------------------------------------------------------
-    Route parameters
+    Route parameters and fragments
 ----------------------------------------------------------------------------------------------------
 + Configure the route with parameter in module.app.ts file using a slash, a colon and a placeholder
 for the parameter. If multiple parameter are need, we repeat that syntax:
     { path: 'products/:id', component: ProductDetailComponent }
-    { path: 'products/:category/:id', component: SomeComponent }
-    { path: 'products/:userid/:companyid/:productid', component: SomeComponent }
+    { path: 'products/:id/:companyid', component: CompanyComponent }
 
-+ Passing parameters to a route by adding second agrument in routerLink:
++ Parameters are passing to a route by adding second agrument in routerLink:
     <a [routerLink] = "['/products', product.productId]">
         {{product.name}}
     </a>
+    <a [routerLink] = "['/products', product.productId, product.companyId]">
+        {{product.companyName}}
+    </a>
 
-+ Below example routing URL is /products/1#education?showImage=true (assume productId is 1)
++ Query parameters and fragments are passing to a route by adding property binding to queryParams
+and fragment. For example, routing URL is /products/1#education?showImage=true (assume productId is
+1):
     <a [routerLink]="['/products', product.productId]" [queryParams]="{showImage: true}"
     fragment="education">
         Link to user component
     </a>
 
-+ To reading parameter from a route (URL), we use the ActivatedRoute service:
++ ActivatedRoute service is used to read parameters, query parameters and fragments from a route
+(URL). For example URL is /products/1#education?showImage=true:
     import { ActivatedRoute } from '@angular/router'
-        constructor(private route: ActivatedRoute){
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent implements OnInit {
+        constructor(private route: ActivatedRoute) {}
+        ngOnInit(){
             console.log(this.route.snapshot.paramMap.get('id');                 // 1
             console.log(this.route.snapshot.queryParamMap.get('showImage'));    // true
+            console.log(this.route.snapshot.fragment)                           // education
         }
+    }
 
-
-----------------------------------------------------------------------------------------------------
-    Protecting routes with Guards
-----------------------------------------------------------------------------------------------------
-+ Guards uses to limit access of a route, for example:
-    - A route is only accessible to specific user, such as administrator.
-    - Ask user to confirm a navigation operation, such as asking whether to save before navigating
-    away from an edit page.
-
-+ Angular router provides several guards, including:
-    - CanActivate: to guard navigation to a route
-    - CanDeactivate: to guard navigation away from the current route route
-    - Resolve: to re-fetch data before activating a route
-    - CanLoad: to prevent async routing
-
-+ Building a guard:
-    - Below are manual steps to build CanActivate guard which prevents navigation to a route unless
-    a specific condition is true. Other guards can be builded in a similar way by implement that
-    guard interface.
-        import { Injectable } from '@angular/core'
-        import { CanActivate } from '@angular/router'
-        // Implementing a guard as a service so we can inject to component class
-        @Injectable({
-            providedIn: 'root'
-        })
-        // Define a guard class and implement it to a specific guard interface
-        export class ProductDetailGuard implements CanActivate {
-            // ActivatedRouteSnapshot contains the current route information at any particular
-            // moment in time
-            // RouterStateSnapshot contains router state information
-            canActivate(
-                next: ActivatedRouteSnapshot,
-                state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-                    // The URL abc.com/products/10 contains 2 segment products and 10 (id)
-                    // We can take the id as below
-                    let id = +next.url[1].path;
-                    if (isNaN(id) || id < 1){
-                        ...
-                    }
-            }
++ Since params, queryParams and fragment return as Observable so if the component is reloaded within
+that component then we can subscribe to update new URL for async action. ActivatedRoute can manually
+unsubscribe or not since Angular automatically unsubscribe ActivatedRoute after the component is
+destroyed.
+    import { ActivatedRoute } from '@angular/router'
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent implements OnInit {
+        constructor(private route: ActivatedRoute) {}
+        ngOnInit(){
+            this.route.params.subscribe(
+                (params: Params) => console.log(params)
+            );
+            this.route.queryParams.subscribe(
+                (queryParams: QueryParams) => console.log(queryParams)
+            );
+            this.route.fragment.subscribe(
+                (fragment: Fragment) => console.log(fragment)
+            );
         }
-    - Or we can create a guard via Angular CLI with below syntax:
-        // ng g g Full_path_name_of_the_guard
-        ng g g products/product-detail
+    }
 
-+ Using a guard:
-    - Add guard class into the route path in app.module.ts
-        RouterModule.forRoot([
-            { path: 'products/:id', canActivate: [ComponentGuardClass], component: [ComponentClass] }
-        ])
 
 ----------------------------------------------------------------------------------------------------
-    Lazy loading
+    Setting up Child (Nested) Routes
 ----------------------------------------------------------------------------------------------------
++ Setting up the routes by adding RouterModule to import array in app.module.ts as:
+    const appRoutes = [
+        { path: 'products', component: ProductsComponent },             // example.com/products
+        { path: 'products/:id', component: ProductDetailComponent },    // example.com/products/1
+        { path: '**', component: PageNotFoundComponent}                 // wildcard
+    ];
