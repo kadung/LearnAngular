@@ -1,0 +1,102 @@
++ Since params, queryParams and fragment return as Observable so we can subscribe to update the
+params data in new URL if it is changed. Note: ActivatedRoute can manually unsubscribe or not since
+Angular automatically unsubscribe ActivatedRoute after the component is destroyed.
+
+Ref:
+    1. https://blog.logrocket.com/understanding-rxjs-observables/
+    2. https://rxjs-dev.firebaseapp.com/guide/overview
+
+----------------------------------------------------------------------------------------------------
+    RxJS library (Lodash for events)
+----------------------------------------------------------------------------------------------------
++ RxJS is a framework for reactive programming that makes use of Observables, making it really easy
+to write asynchronous code. Historically, callbacks or promises are used for handling asynchronous
+code, Observables is just a different approach and Angular embraces to use it by its Operators
+advantages.
+
++ RxJS combines the Observer pattern with the Iterator pattern and functional programming with
+collections to solve async event management, the essential concepts in RxJS are:
+    - Observables   (Observer pattern)
+    - Observer      (Observer pattern)
+    - Subscription  (Observer pattern)
+    - Operators     (Functional programming with collections)
+
+
+----------------------------------------------------------------------------------------------------
+    Observables
+----------------------------------------------------------------------------------------------------
++ A stream is a sequence of data values that are collected over time, For example:
+    - A simple increment of numbers printed in 6 seconds (0,1,2,3,4,5)
+    - The data value of inputs in a form or chat texts passed through web sockets or API responses.
+
++ An Observable is a data source that can return a stream to an Observer over time, the data values
+returned can go from zero to an infinite range of values. Only the Observer that is subscribes to a
+specific Observable receives new values from that Observable.
+
+Observer that subscribes
+
++ An Observer is a function that listens to new values delivered by the Observable and executed some
+instructions
+
++ Subscription is a object which represents the Observer execution, and primarily useful for
+cancelling the execution.
+
++ Observables in Angular:
+    import { interval } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class TestComponent implements OnInit, OnDestroy {
+        // Subscription object
+        private countSubscription: Subscription;
+        ngOnInit(){
+            this.countSubscription = interval(1000).subscribe(
+                // Observer function which subscribe the interval Observable
+                // interval Observable push new increment count to this Observer each time
+                (count) => console.log(params)
+            );
+        }
+        ngOnDestroy(){
+            // Cancelling the execution
+            this.countSubscription.unsubscribe();
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Create a Custom Observable
+----------------------------------------------------------------------------------------------------
++ The observer is in charge of executing instructions in the Observable, so each observer that
+subscribes can deliver three values to the Observable:
+    - next(): observer sends a value that can be a number, a string or an object. There can be more
+    than one next notifications set on a particular Observable
+    - error(): observer sends a JavaScript exception. If an error is found in the Observable,
+    nothing else can be delivered to the Observable
+    - complete(): observer sends no value. This usually signals that the subscriptions for that
+    particular Observable is complete. If the complete value is sent, nothing else can be delivered
+    to the Observable.
+
+This can be illustrated with the code block below:
+    import { Observable } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class AppComponent implements OnInit{
+        ngOnInit(): void {
+            // Create new custom observable
+            var customObservable = Observable.create((subscriber) => {
+                // Things that Observable will push to Observer when it is subscribed
+                subscriber.next('I am number 1')
+                subscriber.next('I am number 2')
+                subscriber.error('I am number 3')
+                subscriber.complete('I am number 4')
+                subscriber.next('I am number 5')
+            });
+
+            customObservable.subscribe(
+                // Observer function which subscribe the customObservable
+                (message) => { console.log(message);}
+            );
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Observable's Operators
+----------------------------------------------------------------------------------------------------
