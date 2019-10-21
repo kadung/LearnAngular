@@ -11,42 +11,57 @@ Ref:
 
 + Angular router provides several guards, including:
     - CanActivate: to guard navigation to a route
-    - CanDeactivate: to guard navigation away from the current route route
+    - CanDeactivate: to guard navigation away from the current route
     - Resolve: to re-fetch data before activating a route
     - CanLoad: to prevent async routing
 
-+ Building a guard:
-    - Below are manual steps to build CanActivate guard which prevents navigation to a route unless
-    a specific condition is true. Other guards can be builded in a similar way by implement that
-    guard interface.
-        import { Injectable } from '@angular/core'
-        import { CanActivate } from '@angular/router'
-        // Implementing a guard as a service so we can inject to component class
-        @Injectable({
-            providedIn: 'root'
-        })
-        // Define a guard class and implement it to a specific guard interface
-        export class ProductDetailGuard implements CanActivate {
-            // ActivatedRouteSnapshot contains the current route information at any particular
-            // moment in time
-            // RouterStateSnapshot contains router state information
-            canActivate(
-                next: ActivatedRouteSnapshot,
-                state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-                    // The URL abc.com/products/10 contains 2 segment products and 10 (id)
-                    // We can take the id as below
-                    let id = +next.url[1].path;
-                    if (isNaN(id) || id < 1){
-                        ...
-                    }
-            }
-        }
-    - Or we can create a guard via Angular CLI with below syntax:
-        // ng g g Full_path_name_of_the_guard
-        ng g g products/product-detail
+- We can create a guard via Angular CLI with below syntax:
+    ng g g Full_path_name_of_the_guard      // ng g g products/product-detail
 
-+ Using a guard:
-    - Add guard class into the route path in app.module.ts
-        RouterModule.forRoot([
-            { path: 'products/:id', canActivate: [ComponentGuardClass], component: [ComponentClass] }
-        ])
+
+----------------------------------------------------------------------------------------------------
+    Protecting Routes with canActivate
+----------------------------------------------------------------------------------------------------
++ CanActivate guard prevents navigation to a route unless a specific condition is true.
+
++ Example:
+    import { Injectable } from '@angular/core'
+    import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+    // Register a guard as a service to root injector so we can inject to any component
+    @Injectable({
+        providedIn: 'root'
+    })
+    // Define a guard class and implement it to a specific guard interface
+    export class AuthGuard implements CanActivate {
+        // ActivatedRouteSnapshot contains the current route information
+        // RouterStateSnapshot contains router state information
+        canActivate(next: ActivatedRouteSnapshot,
+                    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+            this.authService.isAuthenticated()
+                .then((authen: boolean) => {
+                    return authen ? : ;
+                })
+        }
+    }
+
++ Using a guard: Add guard class into the route path in app.module.ts
+    RouterModule.forRoot([
+        { path: 'products/:id', canActivate: [ComponentGuardClass], component: [ComponentClass] }
+    ])
+
+
+----------------------------------------------------------------------------------------------------
+    Protecting Child Routes with CanActivateChild
+----------------------------------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------------------------------
+    Confirm action when user leaves the current route with CanDeactivate
+----------------------------------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------------------------------
+    Resolving Dynamic Data with the Resolve
+----------------------------------------------------------------------------------------------------

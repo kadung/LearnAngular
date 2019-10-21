@@ -36,9 +36,14 @@ the router how to compose navigation URLs:
 
 + Setting up the routes by adding RouterModule to import array in app.module.ts as:
     const appRoutes = [
-        { path: 'products', component: ProductsComponent },             // example.com/products
-        { path: 'products/:id', component: ProductDetailComponent },    // example.com/products/1
-        { path: '**', component: PageNotFoundComponent}                 // wildcard
+        // example.com/products
+        { path: 'products', component: ProductsComponent },
+        // example.com/products/1
+        { path: 'products/:id', component: ProductDetailComponent },
+        // example.com/products/1/edit
+        { path: 'products/:id/edit', component: ProductEditComponent },
+        // Wildcard - remain path
+        { path: '**', component: PageNotFoundComponent}
     ];
     @NgModule({
         ...
@@ -52,6 +57,24 @@ the router how to compose navigation URLs:
 associated component when the route is activated:
     <router-outlet></router-outlet>
     <!-- Routed components go here -->
+
++ Note: By default, Angular matching strategy is "prefix" , Angular checks if the path you entered
+in the URL does start with the path specified in the route. That means, that the following route
+will match both "/recipes" and "/"
+    { path: '', redirectTo: '/somewhere-else' }
+
+To fix this behavior, you need to change the matching strategy to "full" :
+    { path: '', redirectTo: '/somewhere-else', pathMatch: 'full' }
+
++ Hash style routes:
+    example.com/#/
+    example.com/#/product
+    example.com/#/product/1/edit
+
++  HTML5 style routes:
+    example.com/
+    example.com/product
+    example.com/product/1/edit
 
 
 ----------------------------------------------------------------------------------------------------
@@ -128,6 +151,10 @@ add relativeTo parameter:
         }
     }
 
++ Router service removes all query params after navigation so if you want to keep old query params,
+then you should add queryParamsHandling option:
+    this.router.navigate(['products', {relativeTo: this.route, queryParamsHandling: 'preserve'}]);
+
 ----------------------------------------------------------------------------------------------------
     Route parameters and fragments
 ----------------------------------------------------------------------------------------------------
@@ -182,10 +209,10 @@ destroyed.
                 (params: Params) => console.log(params)
             );
             this.route.queryParams.subscribe(
-                (queryParams: QueryParams) => console.log(queryParams)
+                (queryParams: Params) => console.log(queryParams)
             );
             this.route.fragment.subscribe(
-                (fragment: Fragment) => console.log(fragment)
+                (fragment: Params) => console.log(fragment)
             );
         }
     }
@@ -194,9 +221,41 @@ destroyed.
 ----------------------------------------------------------------------------------------------------
     Setting up Child (Nested) Routes
 ----------------------------------------------------------------------------------------------------
-+ Setting up the routes by adding RouterModule to import array in app.module.ts as:
++ Setting up the child routes by adding children parameter in parent path. For example, we change
+routes in Setting up router section to child routes:
     const appRoutes = [
-        { path: 'products', component: ProductsComponent },             // example.com/products
-        { path: 'products/:id', component: ProductDetailComponent },    // example.com/products/1
-        { path: '**', component: PageNotFoundComponent}                 // wildcard
+        { path: 'products', component: ProductsComponent, children: [
+            { path: ':id', component: ProductDetailComponent },
+            { path: ':id/edit', component: ProductEditComponent },
+        ] },
+        { path: '**', component: PageNotFoundComponent },
     ];
+
++ Add RouterOutlet directive to the parent component's template to inform Angular where to display the
+associated component when the child route is activated:
+    <router-outlet></router-outlet>
+    <!-- Routed components go here -->
+
+
+----------------------------------------------------------------------------------------------------
+    Outsourcing the Route Configuration
+----------------------------------------------------------------------------------------------------
++ Create and export separated route module:
+    import { ProductsComponent } from 'component_location';
+    const appRoutes = [
+        { path: 'products', component: ProductsComponent },
+    ];
+    @NgModule({
+        imports: [ RouterModule.forRoot(appRoutes, {useHash: false}) ],
+        export: [RouterModule],
+    })
+    export class AppRoutingModule {}
+
++ Add separated route module to main app module:
+    ...
+    import { AppRoutingModule } from 'AppRoutingModule_location';
+    @NgModule({
+        ...
+        imports: [ AppRoutingModule ],
+    })
+    export class AppModule {}

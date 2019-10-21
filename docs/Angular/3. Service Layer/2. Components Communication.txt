@@ -109,8 +109,51 @@ child's template.
 -------------------------------------------------------------------------------------------------------
     Parent and children communicate via a service
 -------------------------------------------------------------------------------------------------------
-+ A parent component and its children share a service whose interface enables bi-directional
-communication within the family.
++ The scope of the service instance:
+    - Service register in root injector: share same instance everywhere in the whole application.
+    - Service register in component injector: share same instance to a specific component and its child
+    component. The instances don't propagate up, they only go down that tree of that component. So if
+    the child component register same service as root or parent component, then it uses a different
+    instance of service with root or parent component.
 
-+ The scope of the service instance is the parent component and its children. Components outside this
-component subtree have no access to the service or their communications.
++ Example:
+    // Service register in root injector
+    @Injectable({
+        providedIn: 'root'
+    })
+    export class AuthService {
+        loggedIn = false;
+        isAuthenticated(){
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(this.loggedIn);
+                }, 800)
+            })
+        }
+        login() {
+            this.loggedIn = true;
+        }
+        logout(){
+            this.loggedIn = false;
+        }
+    }
+
+    // Any component
+    @Component({
+        selector: 'test-component',
+        template: `
+            <button (click="onClick()")>Sign in</button>
+            <p *ngIf= "isAuthenticated">You are logged in</p>
+    })
+    export class TestComponent implement OnInit {
+        isAuthenticated = false;
+        constructor(private authService: AuthService) {}
+        ngOnInit(){
+            this.isAuthenticated = this.authService.isAuthenticated();
+        }
+        onClick(){
+            this.authService.login();
+        }
+    }
+
+
