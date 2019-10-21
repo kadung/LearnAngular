@@ -1,7 +1,3 @@
-+ Since params, queryParams and fragment return as Observable so we can subscribe to update the
-params data in new URL if it is changed. Note: ActivatedRoute can manually unsubscribe or not since
-Angular automatically unsubscribe ActivatedRoute after the component is destroyed.
-
 Ref:
     1. https://blog.logrocket.com/understanding-rxjs-observables/
     2. https://rxjs-dev.firebaseapp.com/guide/overview
@@ -29,14 +25,13 @@ collections to solve async event management, the essential concepts in RxJS are:
     - A simple increment of numbers printed in 6 seconds (0,1,2,3,4,5)
     - The data value of inputs in a form or chat texts passed through web sockets or API responses.
 
-+ An Observable is a data source that can return a stream to an Observer over time, the data values
-returned can go from zero to an infinite range of values. Only the Observer that is subscribes to a
-specific Observable receives new values from that Observable.
++ An Observable is a data source that can return a stream to an Observer. When an Observable is
+subscribed via subscribe method, it starts collecting data and send to the Observer. The stream
+returned can go from zero to an infinite range of values.
 
-Observer that subscribes
 
 + An Observer is a function that listens to new values delivered by the Observable and executed some
-instructions
+instructions in the Observable.
 
 + Subscription is a object which represents the Observer execution, and primarily useful for
 cancelling the execution.
@@ -64,15 +59,14 @@ cancelling the execution.
 ----------------------------------------------------------------------------------------------------
     Create a Custom Observable
 ----------------------------------------------------------------------------------------------------
-+ The observer is in charge of executing instructions in the Observable, so each observer that
-subscribes can deliver three values to the Observable:
-    - next(): observer sends a value that can be a number, a string or an object. There can be more
-    than one next notifications set on a particular Observable
-    - error(): observer sends a JavaScript exception. If an error is found in the Observable,
++ The Observable can sends to the Observer with three values:
+    - next(): observer receives a value that can be a number, a string or an object. There can be
+    more than one next() set on a particular Observable.
+    - error(): observer receives a JavaScript exception. If an error is found in the Observable,
     nothing else can be delivered to the Observable
-    - complete(): observer sends no value. This usually signals that the subscriptions for that
-    particular Observable is complete. If the complete value is sent, nothing else can be delivered
-    to the Observable.
+    - complete(): observer receives no more value. This usually signals that the subscriptions for
+    that particular Observable is complete. If the complete value is sent, nothing else can be
+    delivered to the Observable.
 
 This can be illustrated with the code block below:
     import { Observable } from 'rxjs'

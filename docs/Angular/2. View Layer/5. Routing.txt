@@ -194,10 +194,9 @@ and fragment. For example, routing URL is /products/1#education?showImage=true (
         }
     }
 
-+ Since params, queryParams and fragment return as Observable so if the component is reloaded within
-that component then we can subscribe to update new URL for async action. ActivatedRoute can manually
-unsubscribe or not since Angular automatically unsubscribe ActivatedRoute after the component is
-destroyed.
++ Since params, queryParams and fragment return as Observable so we can subscribe to update the
+params data in new URL if it is changed. Note: ActivatedRoute can manually unsubscribe or not since
+Angular automatically unsubscribe ActivatedRoute after the component is destroyed.
     import { ActivatedRoute } from '@angular/router'
     @Component({
         selector: 'test-component',
