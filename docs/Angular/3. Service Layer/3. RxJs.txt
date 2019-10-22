@@ -1,6 +1,7 @@
 Ref:
     1. https://blog.logrocket.com/understanding-rxjs-observables/
     2. https://rxjs-dev.firebaseapp.com/guide/overview
+    3. https://www.learnrxjs.io/operators
 
 ----------------------------------------------------------------------------------------------------
     RxJS library (Lodash for events)
@@ -45,7 +46,7 @@ cancelling the execution.
             // Observer forever
             this.countSubscription = interval(1000).subscribe(
                 // Observer function listens to new value and executes instructions
-                (count) => console.log(params)
+                (count) => console.log(count)
             );
         }
         ngOnDestroy(){
@@ -101,3 +102,31 @@ cancelling the execution.
 ----------------------------------------------------------------------------------------------------
 + Operators are the magic feature of the RxJs library and they are the essential pieces that allow
 complex asynchronous code to be easily composed in a declarative manner.
+
++ Operators manipulate the value from Observable before sending it to the Observer.
+
++ All operators must use inside pipe() method and multiple operators can be used for the same
+Observable:
+    import { interval } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class TestComponent implements OnInit, OnDestroy {
+        private countSubscription: Subscription;
+        ngOnInit(){
+            this.countSubscription = interval(1000).pipe(
+                filter((data) => {
+                    return data/2 === 0;
+                }),
+                map((data) => {
+                    return "Cycle: " + data;
+                })
+            )
+            .subscribe(
+                (count) => console.log(count)
+            );
+        }
+        ngOnDestroy(){
+            this.countSubscription.unsubscribe();
+        }
+    }
+
++ Full list of operators can find at https://www.learnrxjs.io/operators/.
