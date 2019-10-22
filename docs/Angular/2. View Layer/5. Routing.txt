@@ -127,7 +127,6 @@ url changes, these classes will be removed.
 example, Save button saves the data to the server before do routing to next page.
 
 + Router service is used to activate a route via code.
-    import { Router } from '@angular/router'
     @Component({
         selector: 'test-component',
     })
@@ -140,7 +139,6 @@ example, Save button saves the data to the server before do routing to next page
 
 + Router service does not know the current URL. So if you want to use relative path, you have to
 add relativeTo parameter:
-    import { Router, ActivatedRoute } from '@angular/router'
     @Component({
         selector: 'test-component',
     })
@@ -181,7 +179,6 @@ and fragment. For example, routing URL is /products/1#education?showImage=true (
 
 + ActivatedRoute service is used to read parameters, query parameters and fragments from a route
 (URL). For example URL is /products/1#education?showImage=true:
-    import { ActivatedRoute } from '@angular/router'
     @Component({
         selector: 'test-component',
     })
@@ -197,7 +194,6 @@ and fragment. For example, routing URL is /products/1#education?showImage=true (
 + Since params, queryParams and fragment return as Observable so we can subscribe to update the
 params data in new URL if it is changed. Note: ActivatedRoute can manually unsubscribe or not since
 Angular automatically unsubscribe ActivatedRoute after the component is destroyed.
-    import { ActivatedRoute } from '@angular/router'
     @Component({
         selector: 'test-component',
     })

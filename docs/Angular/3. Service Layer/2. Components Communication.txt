@@ -116,11 +116,9 @@ child's template.
     the child component register same service as root or parent component, then it uses a different
     instance of service with root or parent component.
 
-+ Example:
++ Example for sharing data between different component:
     // Service register in root injector
-    @Injectable({
-        providedIn: 'root'
-    })
+    @Injectable({ providedIn: 'root' })
     export class AuthService {
         loggedIn = false;
         isAuthenticated(){
@@ -130,12 +128,8 @@ child's template.
                 }, 800)
             })
         }
-        login() {
-            this.loggedIn = true;
-        }
-        logout(){
-            this.loggedIn = false;
-        }
+        login() { this.loggedIn = true; }
+        logout(){ this.loggedIn = false; }
     }
 
     // Any component
@@ -156,4 +150,4 @@ child's template.
         }
     }
 
-
++ Example for sharing data between parent and child component:

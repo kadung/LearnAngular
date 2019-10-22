@@ -4,16 +4,16 @@ Ref:
 ----------------------------------------------------------------------------------------------------
     Protecting routes with Guards
 ----------------------------------------------------------------------------------------------------
-+ Guards uses to limit access of a route, for example:
++ Guards is a service which uses to limit access of a route, for example:
     - A route is only accessible to specific user, such as administrator.
     - Ask user to confirm a navigation operation, such as asking whether to save before navigating
     away from an edit page.
 
 + Angular router provides several guards, including:
-    - CanActivate: to guard navigation to a route
-    - CanDeactivate: to guard navigation away from the current route
-    - Resolve: to re-fetch data before activating a route
-    - CanLoad: to prevent async routing
+    - CanActivate: guards navigation to a route
+    - CanDeactivate: guards navigation away from the current route
+    - Resolve: pre-fetches data before activating a route
+    - CanLoad: prevent async routing
 
 - We can create a guard via Angular CLI with below syntax:
     ng g g Full_path_name_of_the_guard      // ng g g products/product-detail
@@ -24,8 +24,8 @@ Ref:
 ----------------------------------------------------------------------------------------------------
 + CanActivate guard prevents navigation to a route unless it returns true.
 
-+ Create new guard as can-activate.guard.ts:
-    @Injectable({ providedIn: 'root' })
++ Create new service as can-activate.guard.ts:
+    @Injectable()
     export class AuthGuard implements CanActivate {
         constructor(private router: Router,
                     private authService: AuthService) {}
@@ -41,21 +41,23 @@ Ref:
         }
     }
 
-+ To use new guard by add the guard class into the route which should be protected.
-Note: This guard will be applied to all child routes of this route automatically.
-    RouterModule.forRoot([
-        { path: 'products', canActivate: [AuthGuard], component: ProductsComponent, children: [
-            { path: ':id', component: ProductDetailComponent },
-            { path: ':id/edit', component: ProductEditComponent },
-        ]},
-    ])
++ To use new service guard:
+    - Register new service to Angular dependency injector (See Services & DI.txt).
+    - Add new service class into canActivate property of the route which should be protected.
+    Note: This guard will be applied to all child routes of this route automatically.
+        RouterModule.forRoot([
+            { path: 'products', canActivate: [AuthGuard], component: ProductsComponent, children: [
+                { path: ':id', component: ProductDetailComponent },
+                { path: ':id/edit', component: ProductEditComponent },
+            ]},
+        ])
 
 
 ----------------------------------------------------------------------------------------------------
     Only Protecting Child Routes with CanActivateChild
 ----------------------------------------------------------------------------------------------------
 + We can combine both canActivate and CanActivateChild in a same guard:
-    @Injectable({ providedIn: 'root' })
+    @Injectable()
     export class AuthGuard implements CanActivate {
         constructor(private router: Router,
                     private authService: AuthService) {}
@@ -75,19 +77,23 @@ Note: This guard will be applied to all child routes of this route automatically
         }
     }
 
-+ To use new guard by adding the guard class into the route which needs to protect the child routes:
-    RouterModule.forRoot([
-        {
-            path: 'products',
-            component: ProductsComponent,
-            canActivateChild: [AuthChildGuard],
-            children: [
-                { path: ':id', component: ProductDetailComponent },
-                { path: ':id/edit', component: ProductEditComponent },
-            ]
-        },
-        ...
-    ])
++ To use new service guard:
+    - Register new service to Angular dependency injector (See Services & DI.txt).
+    - Add new service class into canActivateChild property of the route which needs to protect its
+    child routes only:
+        RouterModule.forRoot([
+            {
+                path: 'products',
+                component: ProductsComponent,
+                canActivateChild: [AuthChildGuard],
+                children: [
+                    { path: ':id', component: ProductDetailComponent },
+                    { path: ':id/edit', component: ProductEditComponent },
+                ]
+            },
+            ...
+        ])
+
 
 ----------------------------------------------------------------------------------------------------
     Confirm action when user leaves the current route with CanDeactivate
@@ -98,7 +104,6 @@ Note: This guard will be applied to all child routes of this route automatically
     export interface CanComponentDeactivate {
         canDeactivate(): Observable<boolean> | Promise<boolean> | boolean;
     }
-    @Injectable({ providedIn: 'root' })
     export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
         canDeactivate(component: CanComponentDeactivate,
                       currentRoute: ActivatedRouteSnapshot,
@@ -109,20 +114,66 @@ Note: This guard will be applied to all child routes of this route automatically
     }
 
 + To use new guard:
-    - Implements canDeactivate method in the component class which requires the confirm action
-        canDeactivate() {
-            // condition verify form data is changed and not save
-            if(condition) {
-                return confirm('Do you want to discard this change?');
+    - Register new service to Angular dependency injector (See Services & DI.txt).
+    - Add new service class into canDeactivate property of the route which requires the confirm
+    action:
+        RouterModule.forRoot([
+            { path: 'products', canActivate: [AuthGuard], component: ProductsComponent, children: [
+                { path: ':id', component: ProductDetailComponent },
+                { path: ':id/edit', component: ProductEditComponent, canDeactivate: [CanDeactivateGuard] },
+            ]},
+        ])
+    - Implements canDeactivate method in the component class which requires the confirm action:
+        export class ProductEditComponent {
+            ...
+            canDeactivate() {
+                // condition verify form data is changed and not save
+                if(condition) {
+                    return confirm('Do you want to discard this change?');
+                }
+                return true;
             }
-            return true;
         }
 
 
 ----------------------------------------------------------------------------------------------------
     Resolving Dynamic Data with the Resolve
 ----------------------------------------------------------------------------------------------------
-+ Create new guard as *.guard.ts:
++ Resolve guard pre-fetch data from BE for the route's associated component before activating the
+route.
 
++ Create new resolver as *.resolver.ts:
+    interface Product {
+        id: number;
+        name: string;
+    }
+    export class FetchedDataResolver implements Resolve<FetchedDataTypes> {
+        constructor(private fetchedDataService: FetchedDataService) {}
+        resolve(currentRoute: ActivatedRouteSnapshot,
+                currentState: RouterStateSnapshot): Observable<Product[]> | Promise<Product[]> | Product[] {
+            return this.fetchedDataService.getData();
+        }
+    }
 
-+ To use new guard:
++ To use new service guard:
+    - Register new service to Angular dependency injector (See Services & DI.txt).
+    - Add new service into resolve property of the route which needs to pre-fetch data:
+        RouterModule.forRoot([
+            { path: 'products', component: ProductsComponent, resolve: {fetchedProducts: Product[]} }
+        ])
+    - The coponent listens to pre-fetched data via OnInit hook:
+        @Component({
+            selector: 'test-component',
+        })
+        export class TestComponent implements OnInit {
+            private products: Product[];
+            constructor (private route: ActivatedRoute) {}
+            ngOnInit() {
+                this.route.subcribe(
+                    (data: Data) => {
+                        // fetchedProducts gets in resolve property
+                        this.products = data['fetchedProducts'];
+                    }
+                );
+            }
+        }

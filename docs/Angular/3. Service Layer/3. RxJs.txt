@@ -29,9 +29,7 @@ collections to solve async event management, the essential concepts in RxJS are:
 subscribed via subscribe method, it starts collecting data and send to the Observer. The stream
 returned can go from zero to an infinite range of values.
 
-
-+ An Observer is a function that listens to new values delivered by the Observable and executed some
-instructions in the Observable.
++ An Observer is a function that executes some instructions when Observable delivers new value.
 
 + Subscription is a object which represents the Observer execution, and primarily useful for
 cancelling the execution.
@@ -43,9 +41,10 @@ cancelling the execution.
         // Subscription object
         private countSubscription: Subscription;
         ngOnInit(){
+            // When interval Observable is subscribed, it pushes new increment count to its
+            // Observer forever
             this.countSubscription = interval(1000).subscribe(
-                // Observer function which subscribe the interval Observable
-                // interval Observable push new increment count to this Observer each time
+                // Observer function listens to new value and executes instructions
                 (count) => console.log(params)
             );
         }
@@ -59,7 +58,7 @@ cancelling the execution.
 ----------------------------------------------------------------------------------------------------
     Create a Custom Observable
 ----------------------------------------------------------------------------------------------------
-+ The Observable can sends to the Observer with three values:
++ The Observable can emit to the Observer with three event types:
     - next(): observer receives a value that can be a number, a string or an object. There can be
     more than one next() set on a particular Observable.
     - error(): observer receives a JavaScript exception. If an error is found in the Observable,
@@ -68,7 +67,10 @@ cancelling the execution.
     that particular Observable is complete. If the complete value is sent, nothing else can be
     delivered to the Observable.
 
-This can be illustrated with the code block below:
++ When Observable is subscribed, we can handle 3 different events with 3 observer methods:
+    subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+
++ Below is the illustration:
     import { Observable } from 'rxjs'
     @Component({ selector: 'test-component' })
     export class AppComponent implements OnInit{
@@ -76,6 +78,7 @@ This can be illustrated with the code block below:
             // Create new custom observable
             var customObservable = Observable.create((subscriber) => {
                 // Things that Observable will push to Observer when it is subscribed
+                // Changes the position to see the expected result
                 subscriber.next('I am number 1')
                 subscriber.next('I am number 2')
                 subscriber.error('I am number 3')
@@ -85,7 +88,9 @@ This can be illustrated with the code block below:
 
             customObservable.subscribe(
                 // Observer function which subscribe the customObservable
-                (message) => { console.log(message);}
+                (message) => { console.log(message);},
+                (message) => { alert(message);},
+                (message) => { confirm(message);}
             );
         }
     }
@@ -94,3 +99,5 @@ This can be illustrated with the code block below:
 ----------------------------------------------------------------------------------------------------
     Observable's Operators
 ----------------------------------------------------------------------------------------------------
++ Operators are the magic feature of the RxJs library and they are the essential pieces that allow
+complex asynchronous code to be easily composed in a declarative manner.
