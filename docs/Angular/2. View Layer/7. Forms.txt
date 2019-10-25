@@ -1,6 +1,109 @@
 Ref:
-    1.
+    1. https://angular.io/start/forms
+    2. https://angular.io/guide/reactive-forms
+    3. https://angular.io/api/forms/Validators
 
 ---------------------------------------------------------------------------------------------------
+    Forms in Angular
+---------------------------------------------------------------------------------------------------
++ A form is used to collect user input then be sent to the server for further processing. It is a
+component of a Web page that has form controls, such as input, buttons, checkbox, ... that user can
+interact with.
+
++ Forms in Angular take the standard capabilities of the HTML based forms and add an orchestration
+layer to help with creating custom form controls, and to supply great validation experiences.
+
++ Angular provides two different approaches to handling user input through forms:
+    - Template driven forms:
+        . Using for adding a simple form that logic can be managed in the template, such as email
+        list or signup form
+        . Easy to add to an app, but they don't scale as well as reactive forms.
+    - Model-driven forms (Reactive forms):
+        . Form is created and synchronized with the DOM
+        . Scalable, reusable, and testable
 
 ---------------------------------------------------------------------------------------------------
+    Form States
+---------------------------------------------------------------------------------------------------
++ dirty: Value in Input is changed
++ tough: Input is focused (User clicks on it)
++ valid: Pass validation
+
+
+---------------------------------------------------------------------------------------------------
+    Template driven form
+---------------------------------------------------------------------------------------------------
++ In the template driven approach, when Angular detects a form element in HTML code (DOM), it
+creates a Javascript object representing the form.
+
++ Adding FormsModule to import array in app root module:
+    imports: [
+        ...
+        FormsModule,
+    ],
+
++ Step to create a template driven form in componen:
+    @Component({
+        selector: 'test-component',
+        template:`
+            // Adding form tag to create a new form
+            // Add local reference for the form to access its data via @ViewChild
+            <form ngOnSubmit="onSubmit()" #f="ngForm">
+                <div class="form-control">
+                    <label>Email:</label>
+                    // Form control should registers with angular via ngModel directive and name attribute
+                    // Form control uses email build-in validator
+                    <input type="text" ngModel name="email" email>
+
+                </div>
+                <div class="form-control">
+                    <label>Confirmation:</label>
+                    // Form control can set the default value via ngModel property biding
+                    <select [ngModel]="defaultValue" name="selection">
+                        <option value="above">I am above 18 year old</option>
+                        <option value="below">I am below 18 year old </option>
+                    </select>
+                </div>
+                <input type="submit" value="Submit">
+            </form>
+        `,
+    })
+    export class TestComponent {
+        @ViewChild('f') userForm: NgForm;
+        defaultValue = 'above';
+        onSubmit() {
+            console.log(this.userForm);
+        }
+    }
+
++ Full list of Angular build-in validators: https://angular.io/api/forms/Validators
+
++ By default, Angular disables HTML5 validation. We can enable HTML5 validation by adding the
+ngNativeValidate to a control in the template.
+
++ Instead of setting the default value for each form control via ngModel property biding, we can use:
+    - setValue: to set the whole form data
+        export class TestComponent {
+            @ViewChild('f') userForm: NgForm;
+            ngOnInit() {
+                this.userForm.form.setValue = {
+                    email: "test@test.com",
+                    selection: "above"
+                };
+            }
+        }
+
+    - patchValue: to overwrite parts of the form
+        export class TestComponent implements OnInit {
+            @ViewChild('f') userForm: NgForm;
+            ngOnInit() {
+                this.userForm.form.patchValue = {
+                    email: "test@test.com"
+                };
+            }
+        }
+
+---------------------------------------------------------------------------------------------------
+    Model-driven forms (Reactive forms)
+---------------------------------------------------------------------------------------------------
++

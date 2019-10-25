@@ -157,7 +157,7 @@ directive matching the selector in the view DOM. The following selectors are sup
 ----------------------------------------------------------------------------------------------------
    Two way data biding
 ----------------------------------------------------------------------------------------------------
-+ It is achieved by enclosing ngModel directive in square brackets then parentheses. Square
++ It is achieved by enclosing ngModel directive in FormModule in square brackets then parentheses. Square
 brackets indicates property binding from the class property and Parentheses indicates event
 binding which send notification of the user action back to the class property. Then we assign
 this to a template property which we want 2 way data binding on.
