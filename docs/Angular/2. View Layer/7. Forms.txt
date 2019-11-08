@@ -22,13 +22,6 @@ layer to help with creating custom form controls, and to supply great validation
         . Form is created and synchronized with the DOM
         . Scalable, reusable, and testable
 
----------------------------------------------------------------------------------------------------
-    Form States
----------------------------------------------------------------------------------------------------
-+ dirty: Value in Input is changed
-+ tough: Input is focused (User clicks on it)
-+ valid: Pass validation
-
 
 ---------------------------------------------------------------------------------------------------
     Template driven form
@@ -42,13 +35,14 @@ creates a Javascript object representing the form.
         FormsModule,
     ],
 
-+ Step to create a template driven form in componen:
++ Step to create a template driven form in component:
     @Component({
         selector: 'test-component',
         template:`
             // Adding form tag to create a new form
-            // Add local reference for the form to access its data via @ViewChild
-            <form ngOnSubmit="onSubmit()" #f="ngForm">
+            // Adding local reference to form tag to access form's data via @ViewChild
+            // Add ngSubmit directive to handle form when user submits
+            <form (ngSubmit)="onSubmit()" #testForm="ngForm">
                 <div class="form-control">
                     <label>Email:</label>
                     // Form control should registers with angular via ngModel directive and name attribute
@@ -60,16 +54,18 @@ creates a Javascript object representing the form.
                     <label>Confirmation:</label>
                     // Form control can set the default value via ngModel property biding
                     <select [ngModel]="defaultValue" name="selection">
+                    // or 2 way binding
+                    // <select [(ngModel)]="defaultValue" name="selection">
                         <option value="above">I am above 18 year old</option>
                         <option value="below">I am below 18 year old </option>
                     </select>
                 </div>
-                <input type="submit" value="Submit">
+                <input type="submit" value="Submit" [disabled]="!testForm.form.valid">
             </form>
         `,
     })
     export class TestComponent {
-        @ViewChild('f') userForm: NgForm;
+        @ViewChild('testForm') userForm: NgForm;
         defaultValue = 'above';
         onSubmit() {
             console.log(this.userForm);
@@ -81,7 +77,17 @@ creates a Javascript object representing the form.
 + By default, Angular disables HTML5 validation. We can enable HTML5 validation by adding the
 ngNativeValidate to a control in the template.
 
-+ Instead of setting the default value for each form control via ngModel property biding, we can use:
++ The NgModel directive will updates the control with special Angular CSS classes that reflect the
+control's state as below:
+----------------------------------------------------------------------
+    State	                       |  Class if true  |  Class if false
+-----------------------------------|-----------------|----------------
+The control has been visited.	   |  ng-touched	 |  ng-untouched
+The control's value has changed.   |  ng-dirty	     |  ng-pristine
+The control's value is valid.	   |  ng-valid	     |  ng-invalid
+
++ Instead of setting the default value for each form control via ngModel directive, we can
+2 form methods below:
     - setValue: to set the whole form data
         export class TestComponent {
             @ViewChild('f') userForm: NgForm;
@@ -103,7 +109,37 @@ ngNativeValidate to a control in the template.
             }
         }
 
+
 ---------------------------------------------------------------------------------------------------
     Model-driven forms (Reactive forms)
 ---------------------------------------------------------------------------------------------------
 +
+
++ + Step to create a template driven form in component:
+    @Component({
+        selector: 'test-component',
+        template:`
+            // Map form model in class with template form via formGroup directive
+            <form [formGroup]="signupForm">
+                <div class="form-control">
+                    <label>Email:</label>
+                    <input type="text" ngModel name="email" email>
+
+                </div>
+                <div class="form-control">
+                    <label>Confirmation:</label>
+                    <select [ngModel]="defaultValue" name="selection">
+                        <option value="above">I am above 18 year old</option>
+                        <option value="below">I am below 18 year old </option>
+                    </select>
+                </div>
+                <input type="submit" value="Submit">
+            </form>
+        `,
+    })
+    export class TestComponent {
+        constructor
+        onSubmit() {
+            console.log(this.userForm);
+        }
+    }
