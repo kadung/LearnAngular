@@ -1,7 +1,6 @@
 Ref:
     1. https://angular.io/start/forms
-    2. https://angular.io/guide/reactive-forms
-    3. https://angular.io/api/forms/Validators
+    2. https://angular.io/api/forms/Validators
 
 ---------------------------------------------------------------------------------------------------
     Forms in Angular
@@ -39,7 +38,6 @@ creates a Javascript object representing the form.
     @Component({
         selector: 'test-component',
         template:`
-            // Adding form tag to create a new form
             // Adding local reference to form tag to access form's data via @ViewChild
             // Add ngSubmit directive to handle form when user submits
             <form (ngSubmit)="onSubmit()" #testForm="ngForm">
@@ -48,25 +46,30 @@ creates a Javascript object representing the form.
                     // Form control should registers with angular via ngModel directive and name attribute
                     // Form control uses email build-in validator
                     <input type="text" ngModel name="email" email>
-
+                    <span class="help-block" *ngIf="!email.valid && email.touched">
+                        Please enter valid email!
+                    </span>
                 </div>
                 <div class="form-control">
                     <label>Confirmation:</label>
                     // Form control can set the default value via ngModel property biding
                     <select [ngModel]="defaultValue" name="selection">
                     // or 2 way binding
-                    // <select [(ngModel)]="defaultValue" name="selection">
-                        <option value="above">I am above 18 year old</option>
-                        <option value="below">I am below 18 year old </option>
+                    // <select [(ngModel)]="defaultValue" name="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
                     </select>
                 </div>
                 <input type="submit" value="Submit" [disabled]="!testForm.form.valid">
+                <p *ngIf="!testForm.valid && testForm.touched">
+                    User data is invalid. Please check again.
+                </p>
             </form>
         `,
     })
     export class TestComponent {
         @ViewChild('testForm') userForm: NgForm;
-        defaultValue = 'above';
+        defaultValue = 'male';
         onSubmit() {
             console.log(this.userForm);
         }
@@ -86,8 +89,8 @@ The control has been visited.	   |  ng-touched	 |  ng-untouched
 The control's value has changed.   |  ng-dirty	     |  ng-pristine
 The control's value is valid.	   |  ng-valid	     |  ng-invalid
 
-+ Instead of setting the default value for each form control via ngModel directive, we can
-2 form methods below:
++ Instead of setting the default value for each form control via ngModel directive, we can use
+below methods:
     - setValue: to set the whole form data
         export class TestComponent {
             @ViewChild('f') userForm: NgForm;
@@ -108,38 +111,3 @@ The control's value is valid.	   |  ng-valid	     |  ng-invalid
                 };
             }
         }
-
-
----------------------------------------------------------------------------------------------------
-    Model-driven forms (Reactive forms)
----------------------------------------------------------------------------------------------------
-+
-
-+ + Step to create a template driven form in component:
-    @Component({
-        selector: 'test-component',
-        template:`
-            // Map form model in class with template form via formGroup directive
-            <form [formGroup]="signupForm">
-                <div class="form-control">
-                    <label>Email:</label>
-                    <input type="text" ngModel name="email" email>
-
-                </div>
-                <div class="form-control">
-                    <label>Confirmation:</label>
-                    <select [ngModel]="defaultValue" name="selection">
-                        <option value="above">I am above 18 year old</option>
-                        <option value="below">I am below 18 year old </option>
-                    </select>
-                </div>
-                <input type="submit" value="Submit">
-            </form>
-        `,
-    })
-    export class TestComponent {
-        constructor
-        onSubmit() {
-            console.log(this.userForm);
-        }
-    }

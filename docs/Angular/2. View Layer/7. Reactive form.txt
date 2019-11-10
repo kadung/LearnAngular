@@ -1,0 +1,165 @@
+Ref:
+    1. https://angular.io/guide/reactive-forms
+    2. https://angular.io/guide/form-validation
+
+---------------------------------------------------------------------------------------------------
+    Reactive forms (Model-driven form)
+---------------------------------------------------------------------------------------------------
++ Adding ReactiveFormsModule to import array in app root module:
+    import { ReactiveFormsModule } from '@angular/forms';
+    ...
+    imports: [
+        ReactiveFormsModule,
+    ],
+
+ + Step to create a template driven form in component:
+    @Component({
+        selector: 'test-component',
+        template:`
+            // Map form group in class with template form via formGroup directive
+            // Add ngSubmit directive to handle form when user submits
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                <label>
+                    First Name:
+                    // Map firstName control in form group to this element via formControlName directive
+                    // And same with other controls
+                    <input type="text" formControlName="firstName">
+                </label>
+
+                <label>
+                    Last Name:
+                    <input type="text" formControlName="lastName">
+                </label>
+
+                <div formGroupName="address">
+                    <h3>Address</h3>
+                    <label>
+                        Street:
+                        <input type="text" formControlName="street">
+                    </label>
+
+                    <label>
+                        City:
+                        <input type="text" formControlName="city">
+                    </label>
+
+                    <label>
+                        State:
+                        <input type="text" formControlName="state">
+                    </label>
+                </div>
+
+                <button type="submit" [disabled]="!userForm.valid">Submit</button>
+            </form>
+
+        `,
+    })
+
+    import { FormBuilder } from '@angular/forms';
+    import { Validators } from '@angular/forms';
+    export class TestComponent implements OnInit {
+        // Inject FormBuilder serive to this component
+        constructor(private fb: FormBuilder) {}
+
+        // Define a form group for this component with FormBuilder service
+        userForm =  this.fb.group({
+            // See details at https://angular.io/api/forms/FormBuilder#methods
+            firstName: ['default first name', Validators.required],
+            lastName: [''],
+            // Nest form group
+            address: this.fb.group({
+                street: [''],
+                city: [''],
+                state: [''],
+            }),
+        });
+
+        onSubmit() {
+            console.log(this.userForm);
+        }
+
+        // setValue() adheres to the structure of the form group and replaces the entire value
+        this.userForm.setValue = {
+            firstName: 'Nancy',
+            lastName: 'Woo',
+            address: {
+                street: '123 Drew Street',
+                city: 'New York',
+                state: 'NY'
+            }
+        };
+
+        // patchValue() replace any changed properties defined in the form object
+        this.userForm.form.patchValue = {
+            firstName: 'Nancy',
+            address: {
+                street: '123 Drew Street'
+            }
+        };
+    }
+
+
+---------------------------------------------------------------------------------------------------
+    Dynamic form using form arrays
+---------------------------------------------------------------------------------------------------
++ FormArray is an alternative to FormGroup for managing group of controls which allows the user to
+dynamically insert or remove the controls into a form.
+
++ Step to create a dynamic form in component:
+    @Component({
+        selector: 'test-component',
+        template:`
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                <label>
+                    Your Name:
+                    <input type="text" formControlName="name">
+                </label>
+
+                <button (click)>Add more addresses</button>
+                <div formGroupName="address">
+                    <h3>Address</h3>
+                    <label>
+                        Street:
+                        <input type="text" formControlName="street">
+                    </label>
+
+                    <label>
+                        City:
+                        <input type="text" formControlName="city">
+                    </label>
+                </div>
+
+                <button type="submit" [disabled]="!userForm.valid">Submit</button>
+            </form>
+
+        `,
+    })
+
+    import { FormBuilder } from '@angular/forms';
+    import { Validators } from '@angular/forms';
+    export class TestComponent implements OnInit {
+        // Inject FormBuilder serive to this component
+        constructor(private fb: FormBuilder) {}
+
+        // Define a form group for this component with FormBuilder service
+        userForm =  this.fb.group({
+            name: ['default name', Validators.required],
+            address: this.fb.group({
+                street: [''],
+                city: [''],
+            }),
+            this.fb.array([
+
+            ])
+        });
+
+        onSubmit() {
+            console.log(this.userForm);
+        }
+
+
+
+---------------------------------------------------------------------------------------------------
+    Custom validators
+---------------------------------------------------------------------------------------------------
+- test form array and other stub again
