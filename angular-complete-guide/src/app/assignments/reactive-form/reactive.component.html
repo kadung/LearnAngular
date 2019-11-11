@@ -1,4 +1,6 @@
+<!-- Delare a FormGroup-->
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <h3>User's Name</h3>
     <label>
         First Name:
         <input type="text" formControlName="firstName">
@@ -9,6 +11,7 @@
         <input type="text" formControlName="lastName">
     </label>
 
+    <!-- Nest FormGroup-->
     <div formGroupName="address">
         <h3>Address</h3>
         <label>
@@ -27,6 +30,7 @@
         </label>
     </div>
 
+    <!-- Form array of single controls -->
     <div formArrayName="hobbies">
         <h3>Hobbies</h3>
         <input type="button" (click)="addHobby()" value="Add hobby">
@@ -39,23 +43,25 @@
         </div>
     </div>
 
-    <!-- Test form group in form array-->
+    <!-- Form array of multiple group -->
     <div formArrayName="repos">
         <h3>Repos</h3>
         <input type="button" (click)="addRepo()" value="Add repo">
 
         <div *ngFor="let control of repos.controls; let i=index">
-            <label>
-                Name:
-                <input (click)="console.log(control)" type="text" formControlName="{{repoName + i}}">
-            </label>
-            <label>
-                Contributors:
-                <input type="text" formControlName="{{repoContributors + i}}">
-            </label>
-
+            <div [formGroupName]="i">
+                <label>
+                    Name:
+                    <input type="text" formControlName="repoName">
+                </label>
+                <label>
+                    Contributors:
+                    <input type="text" formControlName="repoContributors">
+                </label>
+            </div>
         </div>
     </div>
 
+    <!-- Any input or button which has "submit" type will trigger the action in ngSubmit directive -->
     <input type="submit" [disabled]="!userForm.valid" value="Submit">
 </form>
