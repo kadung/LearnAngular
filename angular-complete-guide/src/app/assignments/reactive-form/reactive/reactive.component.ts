@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { Validators } from '@angular/forms';
+import { Component,  } from '@angular/core';
+import { FormBuilder, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-reactive',
   templateUrl: './reactive.component.html',
   styleUrls: ['./reactive.component.css']
 })
-export class ReactiveComponent implements OnInit {
+export class ReactiveComponent {
   constructor(private fb: FormBuilder) { }
 
   userForm = this.fb.group({
@@ -18,10 +17,38 @@ export class ReactiveComponent implements OnInit {
       city: [''],
       state: [''],
     }),
+    hobbies: this.fb.array([
+      this.fb.control(''),
+    ]),
+    repos: this.fb.array([
+      this.fb.group({
+        repoName: [''],
+        repoContributors: [''],
+      })
+    ])
   });
 
+  get hobbies() {
+    return this.userForm.get('hobbies') as FormArray;
+  }
+
+  get repos() {
+    return this.userForm.get('repos') as FormArray;
+  }
+
+  addHobby() {
+    this.hobbies.push(this.fb.control(''));
+  }
+
+  addRepo() {
+    this.repos.push(this.fb.group({
+      repoName: [''],
+      repoContributors: [''],
+    }))
+  }
+
   onSubmit() {
-    console.log(this.userForm);
+    console.log("Submit button", this.userForm);
   }
 
 }

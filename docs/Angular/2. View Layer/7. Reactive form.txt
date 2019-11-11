@@ -31,6 +31,7 @@ Ref:
                     <input type="text" formControlName="lastName">
                 </label>
 
+                // Map nest group in class with template form via formGroupName directive
                 <div formGroupName="address">
                     <h3>Address</h3>
                     <label>
@@ -55,9 +56,8 @@ Ref:
         `,
     })
 
-    import { FormBuilder } from '@angular/forms';
-    import { Validators } from '@angular/forms';
-    export class TestComponent implements OnInit {
+    import { FormBuilder, Validators } from '@angular/forms';
+    export class TestComponent {
         // Inject FormBuilder serive to this component
         constructor(private fb: FormBuilder) {}
 
@@ -109,54 +109,40 @@ dynamically insert or remove the controls into a form.
     @Component({
         selector: 'test-component',
         template:`
-            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-                <label>
-                    Your Name:
-                    <input type="text" formControlName="name">
-                </label>
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            // Map form array in class with template form via formArrayName directive
+                <div formArrayName="hobbies">
+                    <h3>Hobbies</h3>
+                    <input type="button" (click)="addHobby()" value="Add hobby">
 
-                <button (click)>Add more addresses</button>
-                <div formGroupName="address">
-                    <h3>Address</h3>
-                    <label>
-                        Street:
-                        <input type="text" formControlName="street">
-                    </label>
-
-                    <label>
-                        City:
-                        <input type="text" formControlName="city">
-                    </label>
+                    // Loop through array to display all items
+                    <div *ngFor="let control of hobbies.controls; let i=index">
+                        <label>
+                            Hobby:
+                            <input type="text" [formControlName]="i">
+                        </label>
+                    </div>
                 </div>
 
                 <button type="submit" [disabled]="!userForm.valid">Submit</button>
             </form>
-
         `,
     })
 
     import { FormBuilder } from '@angular/forms';
-    import { Validators } from '@angular/forms';
-    export class TestComponent implements OnInit {
-        // Inject FormBuilder serive to this component
+    export class TestComponent {
         constructor(private fb: FormBuilder) {}
 
-        // Define a form group for this component with FormBuilder service
         userForm =  this.fb.group({
-            name: ['default name', Validators.required],
-            address: this.fb.group({
-                street: [''],
-                city: [''],
-            }),
+            // Use array method in FormBuilder to create a form array
             this.fb.array([
-
+                this.fb.control(''),
             ])
         });
 
         onSubmit() {
             console.log(this.userForm);
         }
-
 
 
 ---------------------------------------------------------------------------------------------------
