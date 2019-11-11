@@ -1,0 +1,67 @@
+<!-- Delare a FormGroup-->
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <h3>User's Name</h3>
+    <label>
+        First Name:
+        <input type="text" formControlName="firstName">
+    </label>
+
+    <label>
+        Last Name:
+        <input type="text" formControlName="lastName">
+    </label>
+
+    <!-- Nest FormGroup-->
+    <div formGroupName="address">
+        <h3>Address</h3>
+        <label>
+            Street:
+            <input type="text" formControlName="street">
+        </label>
+
+        <label>
+            City:
+            <input type="text" formControlName="city">
+        </label>
+
+        <label>
+            State:
+            <input type="text" formControlName="state">
+        </label>
+    </div>
+
+    <!-- Form array of multiple controls -->
+    <div formArrayName="hobbies">
+        <h3>Hobbies</h3>
+        <input type="button" (click)="addHobby()" value="Add hobby">
+
+        <div *ngFor="let control of hobbies.controls; let i=index">
+            <label>
+                Hobby:
+                <input type="text" [formControlName]="i">
+            </label>
+        </div>
+    </div>
+
+    <!-- Form array of multiple groups -->
+    <div formArrayName="repos">
+        <h3>Repos</h3>
+        <input type="button" (click)="addRepo()" value="Add repo">
+
+        <div *ngFor="let control of repos.controls; let i=index">
+            <div [formGroupName]="i">
+                <label>
+                    Name:
+                    <input type="text" formControlName="repoName">
+                </label>
+                <label>
+                    Contributors:
+                    <input type="text" formControlName="repoContributors">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Any input or button which has "submit" type will trigger the action in ngSubmit directive -->
+    <input type="submit" [disabled]="!userForm.valid" value="Submit">
+</form>
