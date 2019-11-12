@@ -1,1 +1,23 @@
-<app-reactive-form></app-reactive-form>
+<div class="container-fluid">
+    <h3>Assignment List:</h3>
+    <ul>
+        <li>
+            <a routerLink="/form">Form</a>
+        </li>
+        <li>
+            <a routerLink="/form/reactive">Form + Reactive Form</a>
+        </li>
+    </ul>
+</div>
+
+<hr>
+
+<div class="container-fluid">
+    <router-outlet></router-outlet>
+</div>
+
+<hr>
+
+<div class="container-fluid">
+    <button (click)= goHomepage()>Homepage</button>
+</div>
