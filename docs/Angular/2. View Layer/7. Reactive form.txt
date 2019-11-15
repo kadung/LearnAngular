@@ -140,6 +140,14 @@ dynamically insert or remove the controls into a form.
             ])
         });
 
+        get hobbies() {
+            return this.userForm.get('hobbies') as FormArray;
+        }
+
+        addHobby() {
+            this.hobbies.push(this.fb.control(''));
+        }
+
         onSubmit() {
             console.log(this.userForm);
         }
