@@ -1,0 +1,5 @@
+<div class="text-danger" *ngIf="formControlItem && formControlItem.errors && (formControlItem.dirty || formControlItem.touched)">
+    <div *ngIf="formControlItem.errors.required"><small>This field is required</small></div>
+    <div *ngIf="formControlItem.errors.usedEmail"><small>This email is used</small></div>
+    <div *ngIf="formControlItem.errors.duplicateName"><small>This name is duplicated</small></div>
+</div>

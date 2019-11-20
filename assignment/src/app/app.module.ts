@@ -6,18 +6,22 @@ import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReactiveComponent } from './reactive-form/reactive-form.component';
 import { FormComponent } from './form/form.component';
+import { InputErrorComponent } from './shared/input-error/input-error.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     ReactiveComponent,
     FormComponent,
+    InputErrorComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
