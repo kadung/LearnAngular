@@ -1,0 +1,6 @@
+{
+    "git.ignoreLimitWarning": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.tabCompletion": "on",
+    "editor.formatOnPaste": true,
+}

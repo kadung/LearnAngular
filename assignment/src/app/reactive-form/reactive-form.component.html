@@ -1,0 +1,83 @@
+<h2>Reactive Form</h2>
+<!-- Delare a FormGroup -->
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <h3>User's Name</h3>
+    <div class="form-group">
+        <label>
+            User Name <font color="red">*</font>:
+            <input type="text" class="form-control" formControlName="userName">
+            <input-error [formControlItem]="userForm.controls.userName"></input-error>
+        </label>
+
+        <label>
+            Email:
+            <input type="text" class="form-control" formControlName="email">
+            <input-error [formControlItem]="userForm.controls.email"></input-error>
+        </label>
+    </div>
+
+    <!-- Nest FormGroup -->
+    <div formGroupName="address" class="form-group">
+        <h3>Address</h3>
+        <label>
+            Street:
+            <input type="text" class="form-control" formControlName="street">
+        </label>
+
+        <label>
+            City <font color="red">*</font>:
+            <input type="text" class="form-control" formControlName="city">
+        </label>
+
+        <label>
+            State:
+            <input type="text" class="form-control" formControlName="state">
+        </label>
+    </div>
+
+    <!-- Form array of multiple controls -->
+    <div formArrayName="hobbies" class="form-group">
+        <h3>Hobbies <font color="red">*</font></h3>
+        <input type="button" class="btn btn-default" (click)="addHobby()" value="Add hobby">
+        <input type="button" class="btn btn-default" (click)="removeHobby()" value="Remove hobby" [disabled]="hobbies.length < 2">
+
+        <div *ngFor="let control of hobbies.controls; let i=index">
+            <label>
+                Hobby:
+                <input type="text" class="form-control" [formControlName]="i">
+                <input-error [formControlItem]="hobbies.controls[i]"></input-error>
+            </label>
+        </div>
+    </div>
+
+    <!-- Form array of multiple groups -->
+    <div formArrayName="repos" class="form-group">
+        <h3>Repos</h3>
+        <input type="button" class="btn btn-default" (click)="addRepo()" value="Add repo">
+
+        <div *ngFor="let control of repos.controls; let i=index">
+            <div [formGroupName]="i">
+                <label>
+                    Name:
+                    <input type="text" class="form-control" formControlName="repoName">
+                </label>
+                <label>
+                    Contributors:
+                    <input type="text" class="form-control" formControlName="repoContributors">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Any input or button which has "submit" type will trigger the action in ngSubmit directive -->
+    <input type="submit" class="btn btn-primary" value="Submit">
+
+    <div>
+        <h3>Errors</h3>
+        <!-- Error scenario -->
+        <input type="button" name="Mark repo name duplicate within BE" (click)="onError()" value="Set Last Name to Error">
+        <input type="button" name="Set the whole form data" (click)="onSetValue()" value="Set value">
+        <input type="button" name="Overwrite parts of the form" (click)="onPatchValue()" value="Patch value">
+    </div>
+
+</form>

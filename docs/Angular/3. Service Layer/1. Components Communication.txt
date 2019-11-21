@@ -1,0 +1,165 @@
+Ref:
+    1. https://angular.io/guide/component-interaction
+    2. https://blog.angular-university.io/angular-ng-content/
+
+-------------------------------------------------------------------------------------------------------
+    Parent and children communicate via Input and Output decorator
+-------------------------------------------------------------------------------------------------------
++ @Input() and @Output() decorators allow child directives or components to share data with its parent.
+
++ @Input() allows data to be input into the child component from the parent component:
+    //// Child component
+    import { Component, Input } from '@angular/core';
+    @Component({
+        selector: 'app-child',
+        template: `<p>Parrent Name: {{name}}</p>`,
+    })
+    export class ChildComponent {
+        @Input() name: string;
+    }
+
+    //// Parent component
+    import {Component} from '@angular/core';
+    @Component({
+        selector: 'app-parent',
+        template: `<app-child [name]='parrentName'></app-child>`,
+    })
+    export class ParentComponent {
+        parrentName = 'Mike';
+    }
+
++ @Output() allows data to flow from the child out to the parent.
+    //// Child component
+    import {Component, Output, EventEmitter} from '@angular/core';
+    @Component({
+        selector: 'app-child',
+        template: `
+        <label>Add an item: <input #newItem></label>
+        <button (click)="addNewItem(newItem.value)">Add to parent's list</button>
+        `,
+    })
+    export class ChildComponent {
+        @Output() newItemEvent = new EventEmitter<string>();
+        addNewItem(value: string) {
+            this.newItemEvent.emit(value);
+        }
+    }
+
+    //// Parent component
+    import {Component} from '@angular/core';
+    @Component({
+        selector: 'app-parent',
+        template: `<app-child (newItemEvent)='addItem($event)'></app-child>`,
+    })
+    export class ParentComponent {
+        items = ['item1', 'item2', 'item3', 'item4'];
+        addItem(newItem: string) {
+            this.items.push(newItem);
+        }
+    }
+
+
+-------------------------------------------------------------------------------------------------------
+    Projecting Content into child components with ng-content
+-------------------------------------------------------------------------------------------------------
++ By default, everything between opening and closing tag of your own component is removed by Angular.
+Content projection is an Angular concept that helps developers build reusable components.
+
++ Content projection allows to pass data between opening and closing tag of a parent's template to a
+child's template.
+
++ To access data in ng-content directive, we use @ContentChild decorator.
+
++ Example:
+    //// Child component
+    @Component({
+        selector: 'child-selector',
+        template:
+            `<div class="heading">
+                <p>This is header</p>
+                <ng-content select="h1"><ng-content>
+            <div>
+            <div class="body">
+                <p>This is body</p>
+                <ng-content select="div"><ng-content>
+            <div>
+            <div class="footer">
+                <p>This is footer</p>
+                <ng-content><ng-content>
+            <div>`
+    })
+    export class ChildComponent {
+        @ContentChild('contentSpan') span: ElementRef;
+        console.log('Span content is ' + this.span.nativeElement.textContent)
+    }
+
+    //// Parent component
+    @Component({
+        selector: 'app-parent',
+        template:
+            `<child-selector>
+                <h1>Header for the first {{label}}</h1>
+                <div>Div for second {{label}}</div>
+                <span #contentSpan>Span for second {{label}}</span>
+            <child-selector>`
+    })
+    export class ParentComponent {
+        label = 'Awsome';
+    }
+
+
+-------------------------------------------------------------------------------------------------------
+    Parent and children communicate via a service
+-------------------------------------------------------------------------------------------------------
++ The scope of the service instance:
+    - Service register in root injector: share same instance everywhere in the whole application.
+    - Service register in component injector: share same instance to a specific component and its child
+    component. The instances don't propagate up, they only go down that tree of that component. So if
+    the child component register same service as root or parent component, then it uses a different
+    instance of service with root or parent component.
+
++ Example:
+    //// Create a share service class
+    import { Subject } from 'rxjs';
+    @Injectable({ providedIn: 'root' })
+    export class ShareService {
+        activateEmitter = new Subject<boolean>();
+    }
+
+    //// Create Child component
+    import { Component } from '@angular/core';
+    import { Subject } from 'rxjs'
+    @Component({
+        selector: 'app-child',
+        template: `<button class="btn" (click) = onClick()> Click </button>`
+    })
+    export class ChildComponent {
+        constructor(private shareService: ShareService) {}
+        onClick(){
+            this.shareService.activateEmitter.next(true);
+        }
+    }
+
+    //// Create Parent component
+    import {Component} from '@angular/core';
+    @Component({
+        selector: 'app-parent',
+        template: `
+            <p>Child button is clicked</p>
+            <app-child></app-child>`,
+    })
+    export class ParentComponent implements OnInit, OnDestroy {
+        childButtonClicked = false;
+        childButtonClicked_sub: Subscription;
+        constructor(private shareService: ShareService) {}
+        ngOnInit(){
+            childButtonClicked_sub = this.shareService.subscribe(
+                (isClicked) => {
+                    this.childButtonClicked = isClicked;
+                }
+            );
+        }
+        ngOnDestroy() {
+            this.childButtonClicked_sub.unsubscribe();
+        }
+    }

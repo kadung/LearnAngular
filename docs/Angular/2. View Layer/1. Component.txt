@@ -57,19 +57,15 @@ decorator is always prefix with @ sign.
 
 + Register the component to declarations array of angular module:
     @NgModule({
-        declarations: [ AppComponent, TestComponent ],
+        declarations: [
+            AppComponent,
+            TestComponent
+        ],
         ....
     })
 
 + Use the component in other template similar to other html tag:
     <test-component></test-component>
-
-
-----------------------------------------------------------------------------------------------------
-    Using Angular CLI
-----------------------------------------------------------------------------------------------------
-+ Use below Angular CLI command to create and register a new component:
-    ng g c [component_name]
 
 
 ---------------------------------------------------------------------------------------------------
@@ -133,24 +129,3 @@ view.
             nestedComponentClick(message: string): void{
                 // logic action
             }
-
-
----------------------------------------------------------------------------------------------------
-    Component Lifecycle Hooks
----------------------------------------------------------------------------------------------------
-+ Directive and component instances have a lifecycle as Angular creates, updates and destroys them.
-Lifecycle hooks provide visibility into these key life moments and the ability to act when they
-occur.
-
-+ Each interface has a single hook method whose name is the interface name prefixed with ng.
-
-+ List of available hooks in Angular: https://angular.io/guide/lifecycle-hooks#lifecycle-sequence
-. Some importance hooks:
-    - OnInit lifecycle hook: perform any component initialization action (ex: retrieve the data for
-    the template from the backend service, ... ).
-    - OnChanges lifecycle hook: perform any action after change (re-set) to input properties.
-    - OnDestroy lifecycle hook: perform any cleanup action before Angular destroys the component.
-
-+ Since interface is not supported in JavaScript so you can use any lifecycle hooks without adding
-the lifecycle hook interfaces. But it's good practice to add interfaces to TypeScript directive
-classes in order to benefit from strong typing and editor tooling.

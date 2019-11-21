@@ -1,0 +1,113 @@
+Ref:
+    1. https://angular.io/start/forms
+    2. https://angular.io/api/forms/Validators
+
+---------------------------------------------------------------------------------------------------
+    Forms in Angular
+---------------------------------------------------------------------------------------------------
++ A form is used to collect user input then be sent to the server for further processing. It is a
+component of a Web page that has form controls, such as input, buttons, checkbox, ... that user can
+interact with.
+
++ Forms in Angular take the standard capabilities of the HTML based forms and add an orchestration
+layer to help with creating custom form controls, and to supply great validation experiences.
+
++ Angular provides two different approaches to handling user input through forms:
+    - Template driven forms:
+        . Using for adding a simple form that logic can be managed in the template, such as email
+        list or signup form
+        . Easy to add to an app, but they don't scale as well as reactive forms.
+    - Model-driven forms (Reactive forms):
+        . Form is created and synchronized with the DOM
+        . Scalable, reusable, and testable
+
+
+---------------------------------------------------------------------------------------------------
+    Template driven form
+---------------------------------------------------------------------------------------------------
++ In the template driven approach, when Angular detects a form element in HTML code (DOM), it
+creates a Javascript object representing the form.
+
++ Adding FormsModule to import array in app root module:
+    imports: [
+        ...
+        FormsModule,
+    ],
+
++ Step to create a template driven form in component:
+    @Component({
+        selector: 'test-component',
+        template:`
+            // Adding local reference to form tag to access form's data via @ViewChild
+            // Add ngSubmit directive to handle form when user submits
+            <form (ngSubmit)="onSubmit()" #testForm="ngForm">
+                <div class="form-control">
+                    <label>Email:</label>
+                    // Form control should registers with angular via ngModel directive and name attribute
+                    // Form control uses email build-in validator
+                    <input type="text" ngModel name="email" email>
+                    <span class="help-block" *ngIf="!email.valid && email.touched">
+                        Please enter valid email!
+                    </span>
+                </div>
+                <div class="form-control">
+                    <label>Confirmation:</label>
+                    // Form control can set the default value via ngModel property biding
+                    <select [ngModel]="defaultValue" name="selection">
+                    // or 2 way binding
+                    // <select [(ngModel)]="defaultValue" name="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <input type="submit" value="Submit" [disabled]="!testForm.form.valid">
+                <p *ngIf="!testForm.valid && testForm.touched">
+                    User data is invalid. Please check again.
+                </p>
+            </form>
+        `,
+    })
+    export class TestComponent {
+        @ViewChild('testForm') userForm: NgForm;
+        defaultValue = 'male';
+        onSubmit() {
+            console.log(this.userForm);
+        }
+    }
+
++ Full list of Angular build-in validators: https://angular.io/api/forms/Validators
+
++ By default, Angular disables HTML5 validation. We can enable HTML5 validation by adding the
+ngNativeValidate to a control in the template.
+
++ The NgModel directive will updates the control with special Angular CSS classes that reflect the
+control's state as below:
+----------------------------------------------------------------------
+    State	                       |  Class if true  |  Class if false
+-----------------------------------|-----------------|----------------
+The control has been visited.	   |  ng-touched	 |  ng-untouched
+The control's value has changed.   |  ng-dirty	     |  ng-pristine
+The control's value is valid.	   |  ng-valid	     |  ng-invalid
+
++ Instead of setting the default value for each form control via ngModel directive, we can use
+below methods:
+    - setValue: to set the whole form data
+        export class TestComponent {
+            @ViewChild('f') userForm: NgForm;
+            ngOnInit() {
+                this.userForm.form.setValue = {
+                    email: "test@test.com",
+                    selection: "above"
+                };
+            }
+        }
+
+    - patchValue: to overwrite parts of the form
+        export class TestComponent implements OnInit {
+            @ViewChild('f') userForm: NgForm;
+            ngOnInit() {
+                this.userForm.form.patchValue = {
+                    email: "test@test.com"
+                };
+            }
+        }

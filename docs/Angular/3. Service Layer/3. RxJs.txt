@@ -1,0 +1,144 @@
+Ref:
+    1. https://blog.logrocket.com/understanding-rxjs-observables/
+    2. https://rxjs-dev.firebaseapp.com/guide/overview
+    3. https://www.learnrxjs.io/operators
+    4. https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+
+----------------------------------------------------------------------------------------------------
+    RxJS library (Lodash for events)
+----------------------------------------------------------------------------------------------------
++ Reactive programming is programming with asynchronous data streams.
+
++ A stream is a sequence of events which are emmitted over time, it can emit three different things:
+    - A value (of some type)
+    - An error
+    - A "completed" signal
+
++ Example stream are:
+    - A simple increment of numbers printed in 6 seconds (0,1,2,3,4,5)
+    - The data value of inputs in a form or chat texts passed through web sockets or API responses.
+
++ Emitted events is captured asynchronously by defining a function that will execute when a value is
+emitted, another function when an error is emitted, and another function when 'completed' is emitted.
+
++ RxJS is a framework for reactive programming that makes use of Observables, making it really easy
+to write asynchronous code. Historically, callbacks or promises are used for handling asynchronous
+code, Observables is just a different approach and Angular embraces to use it by its Operators
+advantages.
+
++ RxJS combines the Observer pattern with the Iterator pattern and functional programming with
+collections to solve async event management, the essential concepts in RxJS are:
+    - Observables   (Observer pattern)
+    - Observer      (Observer pattern)
+    - Subscription  (Observer pattern)
+    - Operators     (Functional programming with collections)
+
+
+----------------------------------------------------------------------------------------------------
+    Observables
+----------------------------------------------------------------------------------------------------
++ An Observable is a data source that returns a stream to an Observer. The stream returned can go
+from zero to an infinite range of values.
+
++ Observable are lazy, an Observable doesn't start emitting value until it is subscribed.
+
++ An Observer is a function that executes instructions when Observable delivers new value.
+
++ Subscription is a object which represents the Observer execution, and primarily useful for
+cancelling the execution.
+
++ Observables in Angular:
+    import { interval } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class TestComponent implements OnInit, OnDestroy {
+        // Subscription object
+        private countSubscription: Subscription;
+        ngOnInit(){
+            // When interval Observable is subscribed, it pushes new increment count to its
+            // Observer forever
+            this.countSubscription = interval(1000).subscribe(
+                // Observer function listens to new value and executes instructions
+                (count) => console.log(count)
+            );
+        }
+        ngOnDestroy(){
+            // Cancelling the execution
+            this.countSubscription.unsubscribe();
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Create a Custom Observable
+----------------------------------------------------------------------------------------------------
++ The Observable can emit to the Observer with three event types:
+    - next(): observer receives a value that can be a number, a string or an object. There can be
+    more than one next() set on a particular Observable.
+    - error(): observer receives a JavaScript exception. If an error is found in the Observable,
+    nothing else can be delivered to the Observable
+    - complete(): observer receives no more value. This usually signals that the subscriptions for
+    that particular Observable is complete. If the complete value is sent, nothing else can be
+    delivered to the Observable.
+
++ When Observable is subscribed, we can handle 3 different events with 3 observer methods:
+    subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+
++ Below is the illustration:
+    import { Observable } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class AppComponent implements OnInit{
+        ngOnInit(): void {
+            // Create new custom observable
+            var customObservable = Observable.create((subscriber) => {
+                // Things that Observable will push to Observer when it is subscribed
+                // Changes the position to see the expected result
+                subscriber.next('I am number 1')
+                subscriber.next('I am number 2')
+                subscriber.error('I am number 3')
+                subscriber.complete('I am number 4')
+                subscriber.next('I am number 5')
+            });
+
+            customObservable.subscribe(
+                // Observer function which subscribe the customObservable
+                (message) => { console.log(message);},
+                (message) => { alert(message);},
+                (message) => { confirm(message);}
+            );
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Observable's Operators
+----------------------------------------------------------------------------------------------------
++ Operators are the magic feature of the RxJs library and they are the essential pieces that allow
+complex asynchronous code to be easily composed in a declarative manner.
+
++ Operators manipulate the value from Observable before sending it to the Observer.
+
++ All operators must use inside pipe() method and multiple operators can be used for the same
+Observable:
+    import { interval } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class TestComponent implements OnInit, OnDestroy {
+        private countSubscription: Subscription;
+        ngOnInit(){
+            this.countSubscription = interval(1000).pipe(
+                filter((data) => {
+                    return data/2 === 0;
+                }),
+                map((data) => {
+                    return "Cycle: " + data;
+                })
+            )
+            .subscribe(
+                (count) => console.log(count)
+            );
+        }
+        ngOnDestroy(){
+            this.countSubscription.unsubscribe();
+        }
+    }
+
++ Full list of operators can find at https://www.learnrxjs.io/operators/.

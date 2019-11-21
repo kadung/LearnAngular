@@ -1,0 +1,256 @@
+Ref:
+    1. https://angular.io/api/router/RouterLink
+
+----------------------------------------------------------------------------------------------------
+    Routing in Angular
+----------------------------------------------------------------------------------------------------
++ Angular appllication is single page application. That means all of our views are displayed in one
+page, normally defined in index.html. So routing manages when and which view to display in the single
+page at that time.
+
++ Angular appllication has one router that is managed by Angular router service, it is RouterModule
+from @angular/router
+
++ How routing works:
+    - Routing is component based so we identify the set of components that we want to provide as
+    routing target and define a route for each one.
+    - Define option(hyperlink, picture , ...) or action (button click, ...) that allow the user to
+    select the view to display.
+    - Tie that route to each option/action so when user select the option or perform the action, the
+    associated route is activated and the view of that component is displayed.
+
+
+----------------------------------------------------------------------------------------------------
+    Setting up router
+----------------------------------------------------------------------------------------------------
++ A route definition requires a path and an associated component:
+    - A path defines the URL path segment, when the route is activated, this URL path segment is
+    appended to the URL of the application (No need to use leading splash in path segment)
+    - Associated component's template is displayed when the route is activated
+    - The route will be matched from the top to the botom the route array, so we should put the
+    general routes at the botom of the routes array.
+
++ Most routing applications should add a <base> element to the index.html of root app folder to tell
+the router how to compose navigation URLs:
+    <base href="/">
+
++ Setting up the routes by adding RouterModule to import array in app.module.ts as:
+    const appRoutes = [
+        // example.com/products
+        { path: 'products', component: ProductsComponent },
+        // example.com/products/1
+        { path: 'products/:id', component: ProductDetailComponent },
+        // example.com/products/1/edit
+        { path: 'products/:id/edit', component: ProductEditComponent },
+        // Wildcard - remain path
+        { path: '**', component: PageNotFoundComponent}
+    ];
+    @NgModule({
+        ...
+        imports: [
+            // Set useHash: true if use hash style routes instead of HTML5 style routes
+            RouterModule.forRoot(appRoutes, {useHash: false})
+        ]
+    })
+
++ Add RouterOutlet directive to the app component's template to inform Angular where to display the
+associated component when the route is activated:
+    <router-outlet></router-outlet>
+    <!-- Routed components go here -->
+
++ Note: By default, Angular matching strategy is "prefix" , Angular checks if the path you entered
+in the URL does start with the path specified in the route. That means, that the following route
+will match both "/recipes" and "/"
+    { path: '', redirectTo: '/somewhere-else' }
+
+To fix this behavior, you need to change the matching strategy to "full" :
+    { path: '', redirectTo: '/somewhere-else', pathMatch: 'full' }
+
++ Hash style routes:
+    example.com/#/
+    example.com/#/product
+    example.com/#/product/1/edit
+
++  HTML5 style routes:
+    example.com/
+    example.com/product
+    example.com/product/1/edit
+
+
+----------------------------------------------------------------------------------------------------
+    Navigating with Router Links
+----------------------------------------------------------------------------------------------------
++ For every link (href='/welcome) is clicked, the browser sends new requests to the server then it
+reloads to render new page.
+
++ In Angular, RouterLink directive is used to navigate around the application. It catches the click
+on the element, prevents browser to reload the application, and check if any matching route in the
+RouterModule.
+    // Assume current URL is example.com/welcome
+    <div>
+        // Absolute path
+        <a [routerLink]="['/products']">Products</a>    // example.com/products
+        <a [routerLink]="['./products']">Products</a>   // example.com/welcome/products
+        <a [routerLink]="['../products']">Products</a>  // example.com/products
+        // Relative path
+        <a [routerLink]="['products']">Products</a>     // example.com/welcome/products
+    </div>
+    <div class="container">
+        <router-outlet></router-outlet>
+    </div>
+
+
+----------------------------------------------------------------------------------------------------
+    Styling Active Router Links
+----------------------------------------------------------------------------------------------------
++ RouterLinkActive directive adds a CSS class to an element when the link's route becomes active.
+
++ When the url is either '/user' or '/user/bob', these classes will be added to the a tag. If the
+url changes, these classes will be removed.
+    <a [routerLink]="['/users']" routerLinkActive="active link">Users</a>
+    <a [routerLink]="['/users']" [routerLinkActive]="['active', 'link']"">Users</a>
+
++ RouterLinkActive can be configured to add the classes only when the url matches the link exactly.
+    <a routerLink="/user/bob" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}">Bob</a>
+
++ RouterLinkActive directive can be applied to an ancestor of a RouterLink
+    <div routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <a [routerLink]="['/products']">Products</a>
+        <a [routerLink]="['/user']">Users</a>
+    </div>
+
+
+----------------------------------------------------------------------------------------------------
+    Activate route with code
+----------------------------------------------------------------------------------------------------
++ Component class or service can activeate a route instead of routerLink in component template. For
+example, Save button saves the data to the server before do routing to next page.
+
++ Router service is used to activate a route via code.
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent {
+        constructor (private router: Router) {}
+        onBack() {
+            this.router.navigate(['/products']);
+        }
+    }
+
++ Router service does not know the current URL. So if you want to use relative path, you have to
+add relativeTo parameter:
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent {
+        constructor (private router: Router, private route: ActivatedRoute) {}
+        onBack() {
+            this.router.navigate(['products', {relativeTo: this.route}]);
+        }
+    }
+
++ Router service removes all query params after navigation so if you want to keep old query params,
+then you should add queryParamsHandling option:
+    this.router.navigate(['products', {relativeTo: this.route, queryParamsHandling: 'preserve'}]);
+
+----------------------------------------------------------------------------------------------------
+    Route parameters and fragments
+----------------------------------------------------------------------------------------------------
++ Configure the route with parameter in module.app.ts file using a slash, a colon and a placeholder
+for the parameter. If multiple parameter are need, we repeat that syntax:
+    { path: 'products/:id', component: ProductDetailComponent }
+    { path: 'products/:id/:companyid', component: CompanyComponent }
+
++ Parameters are passing to a route by adding second agrument in routerLink:
+    <a [routerLink] = "['/products', product.productId]">
+        {{product.name}}
+    </a>
+    <a [routerLink] = "['/products', product.productId, product.companyId]">
+        {{product.companyName}}
+    </a>
+
++ Query parameters and fragments are passing to a route by adding property binding to queryParams
+and fragment. For example, routing URL is /products/1#education?showImage=true (assume productId is
+1):
+    <a [routerLink]="['/products', product.productId]" [queryParams]="{showImage: true}"
+    fragment="education">
+        Link to user component
+    </a>
+
++ ActivatedRoute service is used to read parameters, query parameters and fragments from a route
+(URL). For example URL is /products/1#education?showImage=true:
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent implements OnInit {
+        constructor(private route: ActivatedRoute) {}
+        ngOnInit(){
+            console.log(this.route.snapshot.paramMap.get('id');                 // 1
+            console.log(this.route.snapshot.queryParamMap.get('showImage'));    // true
+            console.log(this.route.snapshot.fragment)                           // education
+        }
+    }
+
++ Since params, queryParams and fragment return as Observable so we can subscribe to update the
+params data in new URL if it is changed. Note: ActivatedRoute can manually unsubscribe or not since
+Angular automatically unsubscribe ActivatedRoute after the component is destroyed.
+    @Component({
+        selector: 'test-component',
+    })
+    export class TestComponent implements OnInit {
+        constructor(private route: ActivatedRoute) {}
+        ngOnInit(){
+            this.route.params.subscribe(
+                (params: Params) => console.log(params)
+            );
+            this.route.queryParams.subscribe(
+                (queryParams: Params) => console.log(queryParams)
+            );
+            this.route.fragment.subscribe(
+                (fragment: Params) => console.log(fragment)
+            );
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+    Setting up Child (Nested) Routes
+----------------------------------------------------------------------------------------------------
++ Setting up the child routes by adding children parameter in parent path. For example, we change
+routes in Setting up router section to child routes:
+    const appRoutes = [
+        { path: 'products', component: ProductsComponent, children: [
+            { path: ':id', component: ProductDetailComponent },
+            { path: ':id/edit', component: ProductEditComponent },
+        ] },
+        { path: '**', component: PageNotFoundComponent },
+    ];
+
++ Add RouterOutlet directive to the parent component's template to inform Angular where to display the
+associated component when the child route is activated:
+    <router-outlet></router-outlet>
+    <!-- Routed components go here -->
+
+
+----------------------------------------------------------------------------------------------------
+    Outsourcing the Route Configuration
+----------------------------------------------------------------------------------------------------
++ Create and export separated route module:
+    import { ProductsComponent } from 'component_location';
+    const appRoutes = [
+        { path: 'products', component: ProductsComponent },
+    ];
+    @NgModule({
+        imports: [ RouterModule.forRoot(appRoutes, {useHash: false}) ],
+        export: [RouterModule],
+    })
+    export class AppRoutingModule {}
+
++ Add separated route module to main app module:
+    ...
+    import { AppRoutingModule } from 'AppRoutingModule_location';
+    @NgModule({
+        ...
+        imports: [ AppRoutingModule ],
+    })
+    export class AppModule {}

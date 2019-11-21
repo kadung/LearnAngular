@@ -1,9 +1,33 @@
 Ref:
-    -
+    1. https://angular.io/guide/user-input
+    2. https://blog.angular-university.io/angular-viewchild/
 
 ----------------------------------------------------------------------------------------------------
     Data Binding
 ----------------------------------------------------------------------------------------------------
++ Data binding is the process that establishes a connection between an application UI element and a
+data source.
+
++ There are 2 types of data binding:
+    1. Two-way data binding:
+        - Information flow is in both direction. So when the data changes its value, the element
+        which is bound to the data reflect changes automatically and vice versa.
+        - For example, you have a variable "X" in database and you bind it with an input textbox in
+        UI, so input textbox displays value of "X", then:
+            . If the value of "X" is changed in the database then UI textbox automatically updates
+            the change
+            . If an user updates value of the textbox then the value of "X" automatically updates
+            to the value of "X" in databse
+
+    2. One-way data binding:
+        - Information flows is in only one direction, typicaly from the data source to the element.
+        This makes the data read-only from the user's perspective.
+        - With the same above example, then:
+            . If the value of "X" is changed in the database then UI textbox automatically updates
+            the change
+            . If an user updates value of the textbox then the value of "X" does not automatically
+            updates to database. And this action is manually trigger by an event.
+
 + Data binding in Angular is the communication between the component's class (bussiness logic) and
 the template (html):
     - Ouput data from class to template:
@@ -11,16 +35,22 @@ the template (html):
         . Property binding
     - React to user event with template:
         . Event binding
+    - Input data from template to class:
+        . Template references and Event binding
+        . @ViewChild decorator
     - Two way data biding: react to user event and output data same time
 
 
 ----------------------------------------------------------------------------------------------------
    Interpolation
 ----------------------------------------------------------------------------------------------------
++ Interpolation (Sting Interpolation) is a technique that allows the user to bind a dynamic value to
+a UI element. It refers to embedding expressions into marked up text.
+
 + Interpolation is identified with an template expression in the middle of double curly brace. It is
 not allow multiple line or block expression in side double curly brace.
 
-+ It is is one way data binding from component's class property to template.
++ Interpolation is one way data binding from component's class property to template.
 
 + It supports multiple ways:
     - Binding simple property:
@@ -51,20 +81,83 @@ an element property to a non-string data value, you must use property binding.
    Event binding
 ----------------------------------------------------------------------------------------------------
 + Event is the response for any DOM events which are trigger by user action such as clicking a link,
-pushing a button, or entering text. List of DOM event: https://developer.mozilla.org/en-US/docs/Web/Events
+pushing a button, or entering text. List of DOM event:
+    https://developer.mozilla.org/en-US/docs/Web/Events
 
 + It is is one way Data binding from template to component's class property.
 
 + To bind to a DOM event, surround the DOM event name in parentheses and assign a quoted template
 statement to it.
-    <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
-    <input type="text" (input)="onInput($event)">           // $event contains event data
+    @Component({
+        template:`
+            <button (click) = "onClickMe()"> Click me! </button>    // (click): DOM event
+            <input type="text" (input)="onInput($event)">`          // $event contains event data
+    })
+    export class SomeComponent(){
+        onClickMe(){ console.log('Clicked') }
+        onInput(data){ console.log(data + ' is entered.') }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+   Template References
+----------------------------------------------------------------------------------------------------
++ A template reference variable is often a reference to a DOM element within a template. It can also
+refer to a directive (which contains a component), an element, TemplateRef, or a web component.
+
++ Use the hash symbol (#) to declare a reference variable.
+
++ The scope of a reference variable is the entire template. So, don't define the same variable name
+more than once in the same template as the runtime value will be unpredictable.
+
++ Getting access to the template (DOM) with template references and event binding:
+    @Component({
+        template:`
+            <input #phone placeholder="phone number" />
+            <button (click)="savePhone(phone.value)">Save</button>`
+    })
+    export class SomeComponent(){
+        savePhone(number){
+            this.phoneNumber = number;
+        }
+    }
+
+
+----------------------------------------------------------------------------------------------------
+   @ViewChild decorator
+----------------------------------------------------------------------------------------------------
++ @ViewChild is property decorator that configures a view query, it returns the first element or the
+directive matching the selector in the view DOM. The following selectors are supported:
+    - Any class with the @Component or @Directive decorator which is used in the current template:
+        @ViewChild(ComponentClass) componentClass: ComponentClass;
+
+    - A template reference variable (e.g. query <my-component #cmp></my-component>):
+        @ViewChild('cmp')
+
+    - Any provider defined in the child component tree of the current component:
+        @ViewChild(SomeService) someService: SomeService
+
+    - A TemplateRef (e.g. query <ng-template></ng-template>):
+        @ViewChild(TemplateRef) template;
+
++ Getting access to the template (DOM) directly from component's class:
+    @Component({
+        template:`
+            <input #phone placeholder="phone number" />
+            <button (click)="savePhone()">Call</button>`
+    })
+    export class SomeComponent(){
+        @ViewChild('phone') phoneInput: ElementRef;
+        savePhone(){
+            this.phoneNumber = this.phoneInput.nativeElement.value;
+        }
+    }
 
 
 ----------------------------------------------------------------------------------------------------
    Two way data biding
 ----------------------------------------------------------------------------------------------------
-+ It is achieved by enclosing ngModel directive in square brackets then parentheses. Square
++ It is achieved by enclosing ngModel directive in FormModule in square brackets then parentheses. Square
 brackets indicates property binding from the class property and Parentheses indicates event
 binding which send notification of the user action back to the class property. Then we assign
 this to a template property which we want 2 way data binding on.
