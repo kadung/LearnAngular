@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { Subject, throwError } from 'rxjs';
+import { Subject, throwError, Subscription } from 'rxjs';
 
 import { Post } from '../models/post.model';
+import { post } from 'selenium-webdriver/http';
 
 @Injectable({ providedIn: 'root' })
 export class PostsShareService {
+    posts = new Subject<Post[]>();
     error = new Subject<string>();
+    isLoaded = new Subscription<boolean>I();
 
     constructor(private http: HttpClient) { }
 
@@ -20,7 +23,8 @@ export class PostsShareService {
     }
 
     fetchPosts() {
-        return this.http
+        this.isLoaded.next(true);
+        this.http
             .get<{ [key: string]: Post }>('https://learnangular-d5ce1.firebaseio.com/posts.json')
             .pipe(
                 map(responseData => {
@@ -30,10 +34,12 @@ export class PostsShareService {
                             postsArray.push({ ...responseData[key], id: key });
                         }
                     }
-                    return postsArray;
+                    this.posts.next(postsArray);
+                    this.isLoaded.next(false);
                 }),
-                catchError(errorRes => {
-                    return throwError(errorRes);
+                catchError(error => {
+                    this.error.next(error);
+                    this.isLoaded.next(false);
                 })
             );
     }

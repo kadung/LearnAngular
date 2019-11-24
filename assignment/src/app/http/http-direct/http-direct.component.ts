@@ -5,7 +5,6 @@ import { Post } from 'src/app/shared/models/post.model';
 @Component({
   selector: 'app-http-direct',
   templateUrl: './http-direct.component.html',
-  styleUrls: ['./http-direct.component.css']
 })
 export class HttpDirectComponent implements OnInit{
   loadedPosts: Post[] = [];
@@ -41,7 +40,6 @@ export class HttpDirectComponent implements OnInit{
         this.error = err.message;
       }
     );
-
   }
 
   clearPosts() {

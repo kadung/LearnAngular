@@ -18,7 +18,6 @@ import { SignupService } from '../shared/services/signup.service';
 @Component({
   selector: 'app-reactive-form',
   templateUrl: './reactive-form.component.html',
-  styleUrls: ['./reactive-form.component.css']
 })
 export class ReactiveComponent implements OnInit, OnDestroy {
   constructor(
