@@ -10,7 +10,7 @@ import { post } from 'selenium-webdriver/http';
 export class PostsShareService {
     posts = new Subject<Post[]>();
     error = new Subject<string>();
-    isLoaded = new Subscription<boolean>I();
+    isLoaded = new Subscription<boolean>();
 
     constructor(private http: HttpClient) { }
 

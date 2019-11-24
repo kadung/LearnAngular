@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Post } from 'src/app/shared/models/post.model';
 import { PostsDirectService } from 'src/app/shared/services/post-direct.service';
 import { Subscription } from 'rxjs';
@@ -14,7 +14,9 @@ export class HttpServiceComponent implements OnInit, OnDestroy {
   isFetching = false;
 
   // Subscription
-  loadedPostsSub, errorSub, isFetchingSub: Subscription;
+  loadedPostsSub: Subscription;
+  errorSub: Subscription;
+  isFetchingSub: Subscription;
 
   constructor(private postService: PostsShareService) { }
 
@@ -24,7 +26,7 @@ export class HttpServiceComponent implements OnInit, OnDestroy {
       (posts) => { this.loadedPosts = posts; }
     );
     this.errorSub = this.postService.error.subscribe(
-      (error) => this.error = error; }
+      (error) => { this.error = error; }
     );
     this.isFetchingSub = this.postService.isLoaded.subscribe(
       (isLoading) => { this.isFetching = isLoading; }
