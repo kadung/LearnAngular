@@ -1,8 +1,9 @@
 Ref:
     1. https://blog.logrocket.com/understanding-rxjs-observables/
     2. https://rxjs-dev.firebaseapp.com/guide/overview
-    3. https://www.learnrxjs.io/operators
-    4. https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+    3. https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+    4. https://www.learnrxjs.io/operators
+    5. https://www.learnrxjs.io/subjects/
 
 ----------------------------------------------------------------------------------------------------
     RxJS library (Lodash for events)
@@ -69,6 +70,86 @@ cancelling the execution.
 
 
 ----------------------------------------------------------------------------------------------------
+    Subject
+----------------------------------------------------------------------------------------------------
++ An Observable is unicast which means that each subscribed observer owns an independent execution
+of the Observable:
+    const observable = Observable.create((observer) => {
+        observer.next(Math.random());
+    });
+
+    // Subscriber 1
+    observable.subscribe((data) => {
+        console.log(data);  // 0.24957144215097515
+    });
+
+    // Subscriber 2
+    observable.subscribe((data) => {
+        console.log(data);  // 0.004617340049055896
+    });
+
++ A Subject is a multicast Observable which shares a single execution path (same values) among
+Observers:
+    const subject = new Rx.Subject();
+    subject.next(Math.random());
+
+    // Subscriber 1
+    subject.subscribe((data) => {
+        console.log(data);  // 0.24957144215097515
+    });
+
+    // Subscriber 2
+    subject.subscribe((data) => {
+        console.log(data);  // 0.24957144215097515
+    });
+
++ There are 4 variants of subjects:
+    - Subject: No initial value or replay behavior.
+
+    - AsyncSubject: Emits latest value to observers upon completion.
+
+    - BehaviorSubject: Requires an initial value and emits its current value (last emitted item) to
+    new subscribers.
+
+    - ReplaySubject: Emits specified number of last emitted values (a replay) to new subscribers.
+
+
+----------------------------------------------------------------------------------------------------
+    Observable's Operators
+----------------------------------------------------------------------------------------------------
++ Operators are the magic feature of the RxJs library and they are the essential pieces that allow
+complex asynchronous code to be easily composed in a declarative manner.
+
++ Operators manipulate the value from Observable before sending it to the Observer.
+
++ All operators must use inside pipe() method and multiple operators can be used for the same
+Observable:
+    import { interval } from 'rxjs'
+    @Component({ selector: 'test-component' })
+    export class TestComponent implements OnInit, OnDestroy {
+        private countSubscription: Subscription;
+        ngOnInit(){
+            this.countSubscription = interval(1000).pipe(
+                filter((data) => {
+                    return data/2 === 0;
+                }),
+                map((data) => {
+                    return "Cycle: " + data;
+                })
+            )
+            .subscribe(
+                (count) => console.log(count)
+            );
+        }
+        ngOnDestroy(){
+            this.countSubscription.unsubscribe();
+        }
+    }
+
++ Full list of operators can find at https://www.learnrxjs.io/operators/.
+
+
+----------------------------------------------------------------------------------------------------
     Create a Custom Observable
 ----------------------------------------------------------------------------------------------------
 + The Observable can emit to the Observer with three event types:
@@ -107,38 +188,3 @@ cancelling the execution.
             );
         }
     }
-
-
-----------------------------------------------------------------------------------------------------
-    Observable's Operators
-----------------------------------------------------------------------------------------------------
-+ Operators are the magic feature of the RxJs library and they are the essential pieces that allow
-complex asynchronous code to be easily composed in a declarative manner.
-
-+ Operators manipulate the value from Observable before sending it to the Observer.
-
-+ All operators must use inside pipe() method and multiple operators can be used for the same
-Observable:
-    import { interval } from 'rxjs'
-    @Component({ selector: 'test-component' })
-    export class TestComponent implements OnInit, OnDestroy {
-        private countSubscription: Subscription;
-        ngOnInit(){
-            this.countSubscription = interval(1000).pipe(
-                filter((data) => {
-                    return data/2 === 0;
-                }),
-                map((data) => {
-                    return "Cycle: " + data;
-                })
-            )
-            .subscribe(
-                (count) => console.log(count)
-            );
-        }
-        ngOnDestroy(){
-            this.countSubscription.unsubscribe();
-        }
-    }
-
-+ Full list of operators can find at https://www.learnrxjs.io/operators/.

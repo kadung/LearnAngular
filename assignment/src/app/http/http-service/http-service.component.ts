@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Post } from 'src/app/shared/models/post.model';
-import { PostsDirectService } from 'src/app/shared/services/post-direct.service';
+import { PostsShareService } from 'src/app/shared/services/post-share.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -34,22 +34,14 @@ export class HttpServiceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    this.loadedPostsSub.subscribe();
+    this.loadedPostsSub.unsubscribe();
     this.isFetchingSub.unsubscribe();
     this.errorSub.unsubscribe();
   }
 
   // Component methods
   onAddPost(formData: Post) {
-    this.postService.createPost(formData).subscribe(
-      (res) => {
-        console.log(res);
-        this.fetchPosts();
-      },
-      (err) => {
-        console.log(err)
-      }
-    );
+    this.postService.createPost(formData);
   }
 
   fetchPosts() {
@@ -57,14 +49,7 @@ export class HttpServiceComponent implements OnInit, OnDestroy {
   }
 
   clearPosts() {
-    this.postService.deletePosts().subscribe(
-      () => {
-        this.loadedPosts = [];
-      },
-      (err) => {
-        console.log(err);
-      }
-    )
+    this.postService.deletePosts();
   }
 
   onError() {
