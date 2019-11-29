@@ -2,6 +2,70 @@ Ref:
     1. https://angular.io/guide/http
 
 ----------------------------------------------------------------------------------------------------
+    HttpClient library
+----------------------------------------------------------------------------------------------------
++ Angular's HttpClient library is used as a simplified client HTTP API. To use the HttpClient, we
+need to import the HttpClientModule to Angular module:
+    @NgModule({
+        imports: [
+            ...
+            HttpClientModule,
+        ],
+        ...
+
++ After that we can inject the HttpClient into an application class to make any API requests:
+    export class SomeService {
+        constructor(private http: HttpClient) { }
+
+        this.http.get(API_EndPoint, httpOptions);            // Get data
+        this.http.post(API_EndPoint, body, httpOptions);     // Create new data
+        this.http.put(API_EndPoint, body, httpOptions);      // Update new data
+        this.http.delete(API_EndPoint, httpOptions);         // Delete data
+    }
+
 
 ----------------------------------------------------------------------------------------------------
-+
+    Reading the full response
+----------------------------------------------------------------------------------------------------
++ By default, the received data is the response's body. Sometimes servers return special headers or
+status codes to indicate certain conditions that are important to the application workflow. We can
+tell HttpClient that we want the full response with the observe option:
+    this.http.get(API_EndPoint, { observe: 'response' });
+
+
+----------------------------------------------------------------------------------------------------
+    HTTP header
+----------------------------------------------------------------------------------------------------
++ Many servers require extra headers for save operations. For example, they may require a "Content-
+Type" header to explicitly declare the MIME type of the request body, or the server may require an
+authorization token.
+
++ Adding new headers:
+    import { HttpHeaders } from '@angular/common/http';
+    const httpOptions = {
+        headers: new HttpHeaders({
+            'Content-Type':  'application/json',
+            'Authorization': 'my-auth-token'
+        })
+    };
+
++ Existing headers within the previous options object can't be directly modified because instances
+of the HttpHeaders class are immutable. Below is an example which updates the authorization header
+(after the old token expired) before making the next request:
+    httpOptions.headers =  httpOptions.headers.set('Authorization', 'my-new-auth-token');
+
+
+----------------------------------------------------------------------------------------------------
+    HTTP params
+----------------------------------------------------------------------------------------------------
++ We can add URL query string as:
+    import { HttpParams } from '@angular/common/http';
+    const httpOptions = {
+        params: new HttpParams().set('name', 'dung');        // domain/?name=dung
+    };
+
++ You can also create HTTP parameters directly from a query string by using the fromString variable:
+    const params = new HttpParams({fromString: 'name=foo'});
+
++ The HttpParams are immutable so you'll have to save the returned value of the .set() method in
+order to update the options.

@@ -1,0 +1,12 @@
+Ref:
+    1. https://angular.io/guide/http#http-interceptors
+
+----------------------------------------------------------------------------------------------------
+    HTTP Interception
+----------------------------------------------------------------------------------------------------
++ With interception, we declare interceptors that inspect and transform HTTP requests from the app
+to the server. The same interceptors may also inspect and transform the server's responses on their
+way back to the app.
+
++ Interceptors can perform a variety of implicit tasks, from authentication to logging, in a routine,
+standard way, for every HTTP request/response.

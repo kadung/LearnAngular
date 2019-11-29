@@ -1,42 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Post } from 'src/app/shared/models/post.model';
 import { PostsShareService } from 'src/app/shared/services/post-share.service';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-http-service',
   templateUrl: './http-service.component.html',
 })
-export class HttpServiceComponent implements OnInit, OnDestroy {
+export class HttpServiceComponent implements OnInit {
   // Component variables
-  loadedPosts: Post[] = [];
-  error = null;
-  isFetching = false;
-
-  // Subscription
-  loadedPostsSub: Subscription;
-  errorSub: Subscription;
-  isFetchingSub: Subscription;
+  private loadedPosts$: Observable<Post[]>;
+  private error$: Observable<string>;
+  private isFetching$: Observable<boolean>;
 
   constructor(private postService: PostsShareService) { }
 
   ngOnInit() {
     this.fetchPosts();
-    this.loadedPostsSub = this.postService.posts.subscribe(
-      (posts) => { this.loadedPosts = posts; }
-    );
-    this.errorSub = this.postService.error.subscribe(
-      (error) => { this.error = error; }
-    );
-    this.isFetchingSub = this.postService.isLoaded.subscribe(
-      (isLoading) => { this.isFetching = isLoading; }
-    );
-  }
-
-  ngOnDestroy(){
-    this.loadedPostsSub.unsubscribe();
-    this.isFetchingSub.unsubscribe();
-    this.errorSub.unsubscribe();
+    this.loadedPosts$ = this.postService.posts;
+    this.error$ = this.postService.error;
+    this.isFetching$ = this.postService.isLoaded;
   }
 
   // Component methods
@@ -53,6 +36,6 @@ export class HttpServiceComponent implements OnInit, OnDestroy {
   }
 
   onError() {
-    this.error = null;
+    this.error$ = new Observable<string>();
   }
 }

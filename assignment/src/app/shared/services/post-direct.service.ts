@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { Subject, throwError } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { Post } from '../models/post.model';
+import { ErrorHandler } from '../common/error-handler';
 
 @Injectable({ providedIn: 'root' })
 export class PostsDirectService {
-    error = new Subject<string>();
-
     constructor(private http: HttpClient) { }
 
     createPost(postData: Post) {
@@ -32,9 +31,6 @@ export class PostsDirectService {
                     }
                     return postsArray;
                 }),
-                catchError(errorRes => {
-                    return throwError(errorRes);
-                })
             );
     }
 

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
-import { Subject, throwError, Subscription } from 'rxjs';
+import { map, retry } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 import { Post } from '../models/post.model';
-import { post } from 'selenium-webdriver/http';
+import { ErrorHandler } from '../common/error-handler';
 
 @Injectable({ providedIn: 'root' })
 export class PostsShareService {
-    posts = new Subject<Post[]>();
-    error = new Subject<string>();
-    isLoaded = new Subject<boolean>();
+    posts = new BehaviorSubject<Post[]>([]);
+    error = new BehaviorSubject<string>("");
+    isLoaded = new BehaviorSubject<boolean>(false);
 
     constructor(private http: HttpClient) { }
 
@@ -24,8 +24,8 @@ export class PostsShareService {
                 () => {
                     this.fetchPosts();
                 },
-                (err) => {
-                    this.error.next(err.message);
+                (errRes) => {
+                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
                 }
             );;
     }
@@ -35,23 +35,27 @@ export class PostsShareService {
         this.http
             .get<{ [key: string]: Post }>('https://learnangular-d5ce1.firebaseio.com/posts.json')
             .pipe(
-                map(responseData => {
-                    const postsArray: Post[] = [];
-                    for (const key in responseData) {
-                        if (responseData.hasOwnProperty(key)) {
-                            postsArray.push({ ...responseData[key], id: key });
+                retry(2),       // retry a failed request up to 2 times
+                map(
+                    (responseData) => {
+                        const postsArray: Post[] = [];
+                        for (const key in responseData) {
+                            if (responseData.hasOwnProperty(key)) {
+                                postsArray.push({ ...responseData[key], id: key });
+                            }
                         }
+                        return postsArray;
                     }
-                    return postsArray;
-                })
+                ),
             )
             .subscribe(
                 (postsArray) => {
                     this.posts.next(postsArray);
                     this.isLoaded.next(false);
+                    this.error.next("");
                 },
-                (err) => {
-                    this.error.next(err.message);
+                (errRes) => {
+                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
                     this.isLoaded.next(false);
                 }
             );
@@ -62,10 +66,11 @@ export class PostsShareService {
             .delete('https://learnangular-d5ce1.firebaseio.com/posts.json')
             .subscribe(
                 () => {
+                    this.error.next("");
                     this.posts.next([]);
                 },
-                (err) => {
-                    this.error.next(err.message);
+                (errRes) => {
+                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
                 }
             );
     }
