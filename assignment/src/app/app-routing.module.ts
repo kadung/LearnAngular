@@ -5,6 +5,7 @@ import { FormComponent } from './form/form.component'
 import { HttpComponent } from './http/http.component';
 import { HttpDirectComponent } from './http/http-direct/http-direct.component';
 import { HttpServiceComponent } from './http/http-service/http-service.component';
+import { AuthComponent } from './auth/auth.component'
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
       { path: 'input-decorator', component: HttpDirectComponent },
       { path: 'share-service', component: HttpServiceComponent },
     ]
+  },
+  {
+    path: 'signup',
+    component: AuthComponent,
   },
   // Wildcard - remain path
   { path: '**', redirectTo: '/', pathMatch: 'full' }

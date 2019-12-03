@@ -13,6 +13,7 @@ import { InputErrorComponent } from './shared/components/input-error/input-error
 import { HttpComponent } from './http/http.component';
 import { HttpDirectComponent } from './http/http-direct/http-direct.component';
 import { HttpServiceComponent } from './http/http-service/http-service.component';
+import { AuthComponent } from './auth/auth.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { HttpServiceComponent } from './http/http-service/http-service.component
     HttpComponent,
     HttpDirectComponent,
     HttpServiceComponent,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
