@@ -18,13 +18,13 @@ import { SignupService } from '../shared/services/signup.service';
 @Component({
   selector: 'app-reactive-form',
   templateUrl: './reactive-form.component.html',
+  styleUrls: ['./reactive-form.component.css'],
 })
 export class ReactiveComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private signupServices: SignupService,
   ) { }
-
 
   // Component variables
   userForm: FormGroup;
@@ -35,7 +35,7 @@ export class ReactiveComponent implements OnInit, OnDestroy {
   ngOnInit (){
     // Define form structure
     this.userForm = this.fb.group({
-      userName: ['default name', Validators.required],
+      userName: ['', Validators.required],
       email: ['', , AsyncValidators.validateEmailNotTaken(this.signupServices)],
       address: this.fb.group({
         street: [''],
@@ -113,9 +113,15 @@ export class ReactiveComponent implements OnInit, OnDestroy {
 
 
   // Submit action
-  onSubmit() {
+  onSubmit(item) {
     this.userForm.markAllAsTouched();
-    console.log("Submit button", this.userForm);
+    //console.log(this.userForm.get('hobbies'));
+    // console.log("Submit button", this.userForm);
+    //this.userForm.reset();
+  }
+
+  test(item){
+    console.log("data = ", item);
   }
 
 

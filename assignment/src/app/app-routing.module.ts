@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ReactiveComponent } from './reactive-form/reactive-form.component';
+import { ReactiveComponent } from './form-reactive/reactive-form.component';
 import { FormComponent } from './form/form.component'
 import { HttpComponent } from './http/http.component';
 import { HttpDirectComponent } from './http/http-direct/http-direct.component';

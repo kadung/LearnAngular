@@ -6,13 +6,13 @@
         <label>
             User Name <font color="red">*</font>:
             <input type="text" class="form-control" formControlName="userName">
-            <input-error [formControlItem]="userForm.controls.userName"></input-error>
+            <input-error [formControlItem]="userForm.get('userName')"></input-error>
         </label>
 
         <label>
             Email:
-            <input type="text" class="form-control" formControlName="email">
-            <input-error [formControlItem]="userForm.controls.email"></input-error>
+            <input type="text" class="form-control" formControlName="email" email>
+            <input-error [formControlItem]="userForm.get('email')"></input-error>
         </label>
     </div>
 
@@ -27,6 +27,7 @@
         <label>
             City <font color="red">*</font>:
             <input type="text" class="form-control" formControlName="city">
+            <input-error [formControlItem]="userForm.get('address.city')"></input-error>
         </label>
 
         <label>
@@ -45,7 +46,7 @@
             <label>
                 Hobby:
                 <input type="text" class="form-control" [formControlName]="i">
-                <input-error [formControlItem]="hobbies.controls[i]"></input-error>
+                <input-error [formControlItem]="hobbies.get(i.toString())"></input-error>
             </label>
         </div>
     </div>

@@ -197,7 +197,6 @@ dynamically insert or remove the controls into a form.
 + Sometimes however, you’ll want a validator that actually validates a value with a backend API.
 For this, Angular provides an easy way to define custom async validators.
 
-+
 
 ---------------------------------------------------------------------------------------------------
     Setting and Patching value to reactive form
