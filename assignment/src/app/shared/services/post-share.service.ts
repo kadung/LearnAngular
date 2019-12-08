@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { map, retry } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
-import { Post } from '../models/post.model';
-import { ErrorHandler } from '../common/error-handler';
+import { Post } from '../interfaces/post.model';
+import { ErrorHandlers } from '../common/error-handler';
 
 @Injectable({ providedIn: 'root' })
 export class PostsShareService {
@@ -25,7 +25,7 @@ export class PostsShareService {
                     this.fetchPosts();
                 },
                 (errRes) => {
-                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
+                    this.error.next(ErrorHandlers.httpErrorHandler(errRes));
                 }
             );;
     }
@@ -55,7 +55,7 @@ export class PostsShareService {
                     this.error.next("");
                 },
                 (errRes) => {
-                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
+                    this.error.next(ErrorHandlers.httpErrorHandler(errRes));
                     this.isLoaded.next(false);
                 }
             );
@@ -70,7 +70,7 @@ export class PostsShareService {
                     this.posts.next([]);
                 },
                 (errRes) => {
-                    this.error.next(ErrorHandler.httpErrorHandler(errRes));
+                    this.error.next(ErrorHandlers.httpErrorHandler(errRes));
                 }
             );
     }

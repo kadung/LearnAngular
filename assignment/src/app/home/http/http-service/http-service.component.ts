@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Post } from 'src/app/shared/models/post.model';
+import { Post } from 'src/app/shared/interfaces/post.model';
 import { PostsShareService } from 'src/app/shared/services/post-share.service';
 import { Observable } from 'rxjs';
 

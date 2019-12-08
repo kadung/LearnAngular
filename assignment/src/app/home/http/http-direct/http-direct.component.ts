@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PostsDirectService } from 'src/app/shared/services/post-direct.service';
-import { Post } from 'src/app/shared/models/post.model';
-import { ErrorHandler } from 'src/app/shared/common/error-handler';
+import { Post } from 'src/app/shared/interfaces/post.model';
+import { ErrorHandlers } from 'src/app/shared/common/error-handler';
 
 @Component({
   selector: 'app-http-direct',
@@ -24,7 +24,7 @@ export class HttpDirectComponent implements OnInit{
         this.fetchPosts();
       },
       (errRes) => {
-        this.error = ErrorHandler.httpErrorHandler(errRes);
+        this.error = ErrorHandlers.httpErrorHandler(errRes);
       }
     );
   }
@@ -37,7 +37,7 @@ export class HttpDirectComponent implements OnInit{
         this.loadedPosts = postsArray;
       },
       (errRes) => {
-        this.error = ErrorHandler.httpErrorHandler(errRes);
+        this.error = ErrorHandlers.httpErrorHandler(errRes);
       }
     );
   }
@@ -48,7 +48,7 @@ export class HttpDirectComponent implements OnInit{
         this.loadedPosts = [];
       },
       (errRes) => {
-        this.error = ErrorHandler.httpErrorHandler(errRes);
+        this.error = ErrorHandlers.httpErrorHandler(errRes);
       }
     )
   }

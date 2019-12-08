@@ -1,34 +1,44 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { AuthResponse } from '../shared/models/auth-response.model';
+import { Subject, throwError } from 'rxjs';
+import { AuthResponse } from '../shared/interfaces/auth-response.model';
+import { catchError } from 'rxjs/operators';
+import { ErrorHandlers } from '../shared/common/error-handler';
+import { User } from '../shared/models/user.model';
+import { FireBaseConstants } from '../shared/constants/firebase.constant';
 
 @Injectable({
     providedIn: "root",
 })
 export class AuthService {
-    API_Key = "AIzaSyCgBQDs7SL56Z4FacObjITa5tc4oSMgKUM";
-    firebaseURI = "https://identitytoolkit.googleapis.com/v1/]"
-
-    token: Subject<string>;
+    user = new Subject<User>();
 
     constructor(private http: HttpClient) {}
 
     signup(email: string, password: string){
-        return this.http.post<AuthResponse>(
-            "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + this.API_Key,
+        this.http.post<AuthResponse>(
+            "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + FireBaseConstants.API_Key,
             {
                 email: email,
                 password: password,
                 returnSecureToken: true,
             }
         )
+        .subscribe(
+            // Continue
+        )
     }
 
-    login(){
-        this.http.post(
-            "url",
-            "body"
+    login(email: string, password: string){
+        return this.http.post<AuthResponse>(
+            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + FireBaseConstants.API_Key,
+            {
+                email: email,
+                password: password,
+                returnSecureToken: true,
+            }
+        ).pipe(
+            catchError(ErrorHandlers.firebaseErrorHanler)
         )
     }
 }

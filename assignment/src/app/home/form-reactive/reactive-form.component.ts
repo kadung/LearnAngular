@@ -11,9 +11,9 @@ import {
   FormGroup
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { CustomValidators } from '../shared/validators/custom.validator'
-import { AsyncValidators } from '../shared/validators/async.validator';
-import { SignupService } from '../shared/services/signup.service';
+import { CustomValidators } from '../../shared/validators/custom.validator'
+import { AsyncValidators } from '../../shared/validators/async.validator';
+import { SignupService } from '../../shared/services/signup.service';
 
 @Component({
   selector: 'app-reactive-form',

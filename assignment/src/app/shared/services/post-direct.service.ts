@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { Post } from '../models/post.model';
-import { ErrorHandler } from '../common/error-handler';
+import { Post } from '../interfaces/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostsDirectService {
