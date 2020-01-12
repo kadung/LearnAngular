@@ -14,7 +14,7 @@ export class AuthComponent{
   isLoginMode = true;
   isLoading = false;
   error = '';
-  isRegisterSuccess = false;
+  isAuthSuccess = false;
 
   constructor(
     private authService: AuthService,
@@ -26,37 +26,39 @@ export class AuthComponent{
   }
 
   onSubmit(form: NgForm) {
-    // if (!form.valid) return;
-    // this.isLoading = true;
+    if (!form.valid) return;
+    this.isLoading = true;
 
-    // const email = form.value.email;
-    // const pass = form.value.pass;
+    const email = form.value.email;
+    const pass = form.value.pass;
 
-    // let authObs: Observable<AuthResponse>;
+    let authObs: Observable<AuthResponse>;
 
-    // if (this.isLoginMode) {
-    //   authObs = this.authService.login(email, pass);
-    // }
-    // else {
-    //   authObs = this.authService.signup(email, pass);
-    // }
+    if (this.isLoginMode) {
+      authObs = this.authService.login(email, pass);
+    }
+    else {
+      authObs = this.authService.signup(email, pass);
+    }
 
-    // authObs.subscribe(
-    //   (res) => {
-    //     if (this.isLoginMode) {
-    //       this.router.navigate(['/home']);
-    //     }
-    //     else {
-    //       this.isLoading = false;
-    //       this.isRegisterSuccess = true;
-    //       form.reset();
-    //     }
-    //   },
-    //   (errMessage) => {
-    //     this.error = errMessage;
-    //     this.isLoading = false;
-    //   }
-    // )
+    authObs.subscribe(
+      (res) => {
+        console.log(res);
+
+        this.isLoading = false;
+        if (this.isLoginMode) {
+          this.router.navigate(['/home']);
+        }
+        else {
+          this.isLoading = false;
+          this.isAuthSuccess = true;
+        }
+      },
+      (errMessage) => {
+        this.error = errMessage;
+        this.isLoading = false;
+      }
+    )
   }
 
 }

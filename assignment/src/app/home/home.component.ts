@@ -14,4 +14,8 @@ export class HomeComponent {
     goHomepage() {
         this.router.navigate(['/home']);
     }
+
+    logout() {
+        this.router.navigate(['/auth']);
+    }
 }

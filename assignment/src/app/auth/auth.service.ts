@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Subject, throwError } from 'rxjs';
 import { AuthResponse } from '../shared/interfaces/auth-response.model';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { ErrorHandlers } from '../shared/common/error-handler';
 import { User } from '../shared/models/user.model';
 import { FireBaseConstants } from '../shared/constants/firebase.constant';
@@ -16,7 +16,7 @@ export class AuthService {
     constructor(private http: HttpClient) {}
 
     signup(email: string, password: string){
-        this.http.post<AuthResponse>(
+        return this.http.post<AuthResponse>(
             "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + FireBaseConstants.API_Key,
             {
                 email: email,
@@ -24,8 +24,8 @@ export class AuthService {
                 returnSecureToken: true,
             }
         )
-        .subscribe(
-            // Continue
+        .pipe(
+            catchError(ErrorHandlers.firebaseErrorHanler)
         )
     }
 
@@ -38,7 +38,20 @@ export class AuthService {
                 returnSecureToken: true,
             }
         ).pipe(
-            catchError(ErrorHandlers.firebaseErrorHanler)
+            catchError(ErrorHandlers.firebaseErrorHanler),
+            tap(
+                resData => this.handleAuth(
+                    resData.email,
+                    resData.localId,
+                    resData.idToken,
+                    resData.expiresIn)
+            )
         )
+    }
+
+    private handleAuth(email, id, idToken, expiresIn) {
+        const expirationTime = new Date(new Date().getTime() + expiresIn * 1000)
+        const user = new User(email, id, idToken, expirationTime)
+        this.user.next(user);
     }
 }

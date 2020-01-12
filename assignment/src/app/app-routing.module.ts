@@ -10,6 +10,10 @@ import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   {
+    path: 'auth',
+    component: AuthComponent,
+  },
+  {
     path: 'home',
     component: HomeComponent,
     children: [
@@ -29,10 +33,6 @@ const routes: Routes = [
         ]
       },
     ]
-  },
-  {
-    path: 'auth',
-    component: AuthComponent,
   },
   // Wildcard - remain path
   // { path: '**', redirectTo: '/', pathMatch: 'full' }
